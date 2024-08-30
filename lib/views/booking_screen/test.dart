@@ -1,4 +1,5 @@
 import 'package:customerapp/utils/themes/text_style.dart';
+import 'package:customerapp/utils/themes/textfield_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -57,6 +58,7 @@ class _AirportScreenState extends State<AirportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
           'Booking'.tr,

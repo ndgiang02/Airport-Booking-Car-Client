@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         fallbackLocale: Locale('en', 'US'),
         translations: AppTranslations(),
         builder: EasyLoading.init(),
-        initialRoute: AppRoutes.airportScreen,
+        initialRoute: AppRoutes.homeScreen,
         getPages: AppRoutes.pages,
       ),
     );

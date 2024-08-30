@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:customerapp/service/fakeapi.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +11,16 @@ import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
 import 'package:vietmap_flutter_plugin/vietmap_flutter_plugin.dart';
 
 import '../constant/constant.dart';
+import '../constant/show_dialog.dart';
 import '../models/vehicle_model.dart';
+import '../service/api.dart';
 
 class BookingController extends GetxController {
   var isLoading = true.obs;
   RxString selectedVehicle = "".obs;
   RxDouble distance = 0.0.obs;
   RxDouble duration = 0.0.obs;
+  RxInt selectedPassengerCount = 1.obs;
 
   var pickupLatLong = Rxn<LatLng>();
   var destinationLatLong = Rxn<LatLng>();
@@ -31,12 +35,17 @@ class BookingController extends GetxController {
   var isRoundTrip = false.obs;
   var startDateTime = Rx<DateTime?>(null);
   var returnDateTime = Rx<DateTime?>(null);
+
+
   final TextEditingController pickupController = TextEditingController();
   final TextEditingController destinationController = TextEditingController();
+  final TextEditingController passengerController = TextEditingController();
   final RxList<TextEditingController> stopoverControllers = <TextEditingController>[].obs;
+
   var pickupText = ''.obs;
   var destinationText = ''.obs;
   var stopoverTexts = <RxString>[].obs;
+
 
   @override
   void onInit() {
@@ -97,97 +106,35 @@ class BookingController extends GetxController {
     returnDateTime.value = dateTime;
   }
 
-  Future<void> setPickUpMarker(LatLng pickup, VietmapController? mapController) async {
-    pickupLatLong.value = pickup;
-
-    if (points.isNotEmpty) {
-      points[0] = pickupLatLong.value!;
-    } else {
-      points.insert(0, pickupLatLong.value!);
-    }
-
-    // Xóa biểu tượng điểm đón cũ nếu có
-    if (mapController != null) {
-      await mapController.addSymbol(
-        SymbolOptions(
-          geometry: pickup,
-          iconImage: ic_pickup,
-          iconSize: 1.5,
-        ),
-      );
-
-      mapController.animateCamera(
-        CameraUpdate.newCameraPosition(CameraPosition(
-          target: LatLng(pickup.latitude, pickup.longitude),
-          zoom: 14,
-        )),
-      );
-
-      await fetchRouteData();
-      await addPolyline(mapController);
-
-      if (pickupLatLong.value != null && destinationLatLong.value != null) {
-        isMapDrawn.value = true;
-      }
-    }
-  }
-
-  Future<void> setDestinationMarker(LatLng destination, VietmapController? mapController) async {
-    destinationLatLong.value = destination;
-
-    if (points.isNotEmpty) {
-      points[points.length - 1] = destinationLatLong.value!;
-    } else {
-      points.add(destinationLatLong.value!);
-    }
-
-    if (mapController != null) {
-      mapController.animateCamera(
-        CameraUpdate.newCameraPosition(CameraPosition(
-          target: LatLng(destination.latitude, destination.longitude),
-          zoom: 14,
-        )),
-      );
-
-      await fetchRouteData();
-
-      if (pickupLatLong.value != null && destinationLatLong.value != null) {
-        isMapDrawn.value = true;
-        await addPolyline(mapController);
-      }
-
-      for (var point in points) {
-        debugPrint('Lat: ${point.latitude}, Lng: ${point.longitude}');
-      }
-    }
-  }
-
   Future<void> setStopoverMarker(List<LatLng> stopovers, VietmapController? mapController) async {
+
     if (points.length > 2) {
       points.removeRange(1, points.length - 1);
     }
 
-    points.addAll(stopovers);
-
-    if (pickupLatLong.value != null) {
-      points.insert(0, pickupLatLong.value!);
-    }
-    if (destinationLatLong.value != null) {
-      points.add(destinationLatLong.value!);
+    // Insert stopovers in between the pickup and destination points
+    if (points.length > 1) {
+      points.insertAll(1, stopovers);
+    } else {
+      points.addAll(stopovers);
     }
 
     if (mapController != null) {
       await fetchRouteData();
-      await addPolyline(mapController);
+      addPolyline(mapController);
 
       if (pickupLatLong.value != null && destinationLatLong.value != null) {
         isMapDrawn.value = true;
       }
     }
+
+    for (var point in points) {
+      debugPrint('Lat: ${point.latitude}, Lng: ${point.longitude}');
+    }
   }
 
-
-/*  Future<void> setPickUpMarker(LatLng pickup, VietmapController? mapController) async {
+  Future<void> setPickUpMarker(
+      LatLng pickup, VietmapController? mapController) async {
     pickupLatLong.value = pickup;
 
     if (points.isNotEmpty) {
@@ -210,20 +157,15 @@ class BookingController extends GetxController {
         zoom: 14,
       )),
     );
-
     await fetchRouteData();
     addPolyline(mapController);
-
-    if (pickupLatLong.value != null && destinationLatLong.value != null) {
-      isMapDrawn.value = true;
-    }
   }
 
-  Future<void> setDestinationMaker(LatLng destination, VietmapController? mapController) async {
+  Future<void> setDestinationMarker(
+      LatLng destination, VietmapController? mapController) async {
     destinationLatLong.value = destination;
-
-    if (points.length > 1) {
-      points[points.length - 1] = destinationLatLong.value!;
+    if (points.length >= 2) {
+      points[1] = destinationLatLong.value!;
     } else {
       points.add(destinationLatLong.value!);
     }
@@ -245,19 +187,213 @@ class BookingController extends GetxController {
     }
   }
 
-  Future<void> setStopoverMarker(List<LatLng> stopovers, VietmapController? mapController) async {
+  Future<void> fetchRouteData() async {
+    final url = Uri.parse(
+        '${Constant.baseUrl}/route?api-version=1.1&apikey=${Constant.VietMapApiKey}&point=${points.map((p) => '${p.latitude},${p.longitude}').join('&point=')}&points_encoded=false&vehicle=car');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final paths = data['paths'] as List<dynamic>;
+        if (paths.isNotEmpty) {
+          final firstPath = paths[0];
 
+          final coordinates = firstPath['points']['coordinates'] as List<dynamic>;
+          polylinePoints.value = coordinates.map((coordinate) {
+            return LatLng(coordinate[1], coordinate[0]);
+          }).toList();
 
-    points.addAll(stopovers);
+          final distanceInMeters = (firstPath['distance'] as num).toDouble();
+          final timeInMillis = (firstPath['time'] as num).toInt();
 
-    await fetchRouteData();
+          distance.value = distanceInMeters / 1000.0;
+          duration.value = timeInMillis / 60000.0;
 
-    if (pickupLatLong.value != null && destinationLatLong.value != null) {
-      isMapDrawn.value = true;
+          debugPrint("Distance: ${distance.value} km");
+          debugPrint("Duration: ${duration.value} minutes");
+        } else {
+          throw Exception('No paths found in the response');
+        }
+      } else {
+        throw Exception('Failed to load route data');
+      }
+    } catch (e) {
+      print('Error fetching route data: $e');
+    } finally {
+      isLoading.value = false;
     }
-  }*/
+  }
+
+  Future<void> addPolyline(VietmapController? mapController) async {
+    if (mapController != null && polylinePoints.isNotEmpty) {
+      await mapController.addPolyline(
+        PolylineOptions(
+          geometry: polylinePoints,
+          polylineColor: Colors.blue,
+          polylineWidth: 5.0,
+        ),
+      );
+
+      await mapController.addSymbol(
+        SymbolOptions(
+          geometry: polylinePoints.first,
+          iconImage: ic_pickup,
+          iconSize: 1.5,
+        ),
+      );
+
+      await mapController.addSymbol(
+        SymbolOptions(
+          geometry: polylinePoints.last,
+          iconImage: ic_dropoff,
+          iconSize: 1.5,
+        ),
+      );
+
+      double? minLat, minLng, maxLat, maxLng;
+
+      for (var point in polylinePoints) {
+        if (minLat == null || point.latitude < minLat) {
+          minLat = point.latitude;
+        }
+        if (minLng == null || point.longitude < minLng) {
+          minLng = point.longitude;
+        }
+        if (maxLat == null || point.latitude > maxLat) {
+          maxLat = point.latitude;
+        }
+        if (maxLng == null || point.longitude > maxLng) {
+          maxLng = point.longitude;
+        }
+      }
+
+      final bounds = LatLngBounds(
+        southwest: LatLng(minLat!, minLng!),
+        northeast: LatLng(maxLat!, maxLng!),
+      );
+
+      await mapController.setCameraBounds(
+          west: minLng,
+          north: maxLat,
+          south: minLat,
+          east: maxLng,
+          padding: 100);
+
+      await mapController.animateCamera(
+        CameraUpdate.newLatLngBounds(bounds),
+      );
+    }
+  }
+
+/*
+  Future<List<LatLng>> fetchRouteDataForSegment(LatLng start, LatLng end) async {
+    final url = Uri.parse(
+        '${Constant.baseUrl}/route?api-version=1.1&apikey=${Constant.VietMapApiKey}&point=${start.latitude},${start.longitude}&point=${end.latitude},${end.longitude}&points_encoded=false&vehicle=car');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final paths = data['paths'] as List<dynamic>;
+        if (paths.isNotEmpty) {
+          final firstPath = paths[0];
+          final coordinates = firstPath['points']['coordinates'] as List<dynamic>;
+          return coordinates.map((coordinate) {
+            return LatLng(coordinate[1], coordinate[0]);
+          }).toList();
+        } else {
+          throw Exception('No paths found in the response');
+        }
+      } else {
+        throw Exception('Failed to load route data');
+      }
+    } catch (e) {
+      print('Error fetching route data for segment: $e');
+      return [];
+    }
+  }
 
 
+  Future<void> fetchAndDrawRoute(VietmapController? mapController) async {
+    polylinePoints.clear();
+
+    // Lặp qua các điểm để lấy dữ liệu cho từng đoạn và vẽ lên bản đồ
+    for (int i = 0; i < points.length - 1; i++) {
+      final segmentPoints = await fetchRouteDataForSegment(points[i], points[i + 1]);
+      polylinePoints.addAll(segmentPoints);
+
+      if (mapController != null && segmentPoints.isNotEmpty) {
+        // Vẽ đoạn tuyến đường lên bản đồ
+        await mapController.addPolyline(
+          PolylineOptions(
+            geometry: segmentPoints,
+            polylineColor: Colors.blue,
+            polylineWidth: 5.0,
+          ),
+        );
+      }
+    }
+
+    if (mapController != null && polylinePoints.isNotEmpty) {
+      // Thêm biểu tượng cho điểm xuất phát
+      await mapController.addSymbol(
+        SymbolOptions(
+          geometry: polylinePoints.first,
+          iconImage: ic_pickup,
+          iconSize: 1.5,
+        ),
+      );
+
+      // Thêm biểu tượng cho điểm đến
+      await mapController.addSymbol(
+        SymbolOptions(
+          geometry: polylinePoints.last,
+          iconImage: ic_dropoff,
+          iconSize: 1.5,
+        ),
+      );
+
+      // Tính toán giới hạn bản đồ để bao phủ tất cả các điểm
+      double? minLat, minLng, maxLat, maxLng;
+
+      for (var point in polylinePoints) {
+        if (minLat == null || point.latitude < minLat) {
+          minLat = point.latitude;
+        }
+        if (minLng == null || point.longitude < minLng) {
+          minLng = point.longitude;
+        }
+        if (maxLat == null || point.latitude > maxLat) {
+          maxLat = point.latitude;
+        }
+        if (maxLng == null || point.longitude > maxLng) {
+          maxLng = point.longitude;
+        }
+      }
+
+      final bounds = LatLngBounds(
+        southwest: LatLng(minLat!, minLng!),
+        northeast: LatLng(maxLat!, maxLng!),
+      );
+
+      await mapController.setCameraBounds(
+          west: minLng,
+          north: maxLat,
+          south: minLat,
+          east: maxLng,
+          padding: 100);
+
+      // Di chuyển camera để hiển thị toàn bộ tuyến đường
+      await mapController.animateCamera(
+        CameraUpdate.newLatLngBounds(bounds),
+      );
+    }
+  }
+*/
+
+
+  /*
+  ** Use API
+   */
   Future<Map<String, dynamic>?> getCurrentLocation(
       VietmapController mapController) async {
     try {
@@ -311,7 +447,7 @@ class BookingController extends GetxController {
 
   Future<List<Map<String, String>>> getAutocompleteData(String value) async {
     LocationData position = await location.getLocation();
-    final result = await Vietmap.autocomplete(
+       final result = await Vietmap.autocomplete(
         VietMapAutoCompleteParams(textSearch: value,focusLocation: LatLng(position.latitude!, position.longitude!) ));
     return result.fold(
       (failure) {
@@ -336,233 +472,26 @@ class BookingController extends GetxController {
     );
   }
 
-  ///Route
-
-  Future<void> fetchRouteData() async {
-    final url = Uri.parse(
-        '${Constant.baseUrl}/route?api-version=1.1&apikey=${Constant.VietMapApiKey}&point=${points.map((p) => '${p.latitude},${p.longitude}').join('&point=')}&points_encoded=true&vehicle=car');
-
-    try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final paths = data['paths'] as List<dynamic>;
-        if (paths.isNotEmpty) {
-          final firstPath = paths[0];
-
-          final encodedPolyline = firstPath['points'];
-          polylinePoints.value = decodePolyline(encodedPolyline);
-
-          final distanceInMeters = (firstPath['distance'] as num).toDouble();
-          final timeInMillis = (firstPath['time'] as num).toInt();
-
-          distance.value = distanceInMeters / 1000.0;
-          duration.value = timeInMillis / 60000.0;
-
-          debugPrint("Distance: ${distance.value} km");
-          debugPrint("Duration: ${duration.value} minutes");
-        } else {
-          throw Exception('No paths found in the response');
-        }
-      } else {
-        throw Exception('Failed to load route data');
-      }
-    } catch (e) {
-      print('Error fetching route data: $e');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  List<LatLng> decodePolyline(String encoded) {
-    List<LatLng> points = [];
-    int index = 0, len = encoded.length;
-    int lat = 0, lng = 0;
-
-    while (index < len) {
-      int b, shift = 0, result = 0;
-      do {
-        b = encoded.codeUnitAt(index++) - 63;
-        result |= (b & 0x1f) << shift;
-        shift += 5;
-      } while (b >= 0x20);
-      int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-      lat += dlat;
-      shift = 0;
-      result = 0;
-      do {
-        b = encoded.codeUnitAt(index++) - 63;
-        result |= (b & 0x1f) << shift;
-        shift += 5;
-      } while (b >= 0x20);
-      int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-      lng += dlng;
-      points.add(LatLng(
-        (lat / 1E5).toDouble(),
-        (lng / 1E5).toDouble(),
-      ));
-    }
-    return points;
-  }
-
-  /*Future<void> addPolyline(VietmapController? mapController) async {
-
-    if (mapController != null && polylinePoints.isNotEmpty) {
-      await mapController.addPolyline(
-        PolylineOptions(
-          geometry: polylinePoints,
-          polylineColor: Colors.blue,
-          polylineWidth: 5.0,
-        ),
-      );
-
-      await mapController.addSymbol(
-        SymbolOptions(
-          geometry: polylinePoints.first,
-          iconImage: ic_pickup,
-          iconSize: 1.5,
-        ),
-      );
-
-      await mapController.addSymbol(
-        SymbolOptions(
-          geometry: polylinePoints.last,
-          iconImage: ic_dropoff,
-          iconSize: 1.5,
-        ),
-      );
-
-      double? minLat, minLng, maxLat, maxLng;
-
-      for (var point in polylinePoints) {
-        if (minLat == null || point.latitude < minLat) {
-          minLat = point.latitude;
-        }
-        if (minLng == null || point.longitude < minLng) {
-          minLng = point.longitude;
-        }
-        if (maxLat == null || point.latitude > maxLat) {
-          maxLat = point.latitude;
-        }
-        if (maxLng == null || point.longitude > maxLng) {
-          maxLng = point.longitude;
-        }
-      }
-
-      final bounds = LatLngBounds(
-        southwest: LatLng(minLat!, minLng!),
-        northeast: LatLng(maxLat!, maxLng!),
-      );
-
-      await mapController.setCameraBounds(
-          west: minLng, // minLng
-          north: maxLat, // maxLat
-          south: minLat, // minLat
-          east: maxLng, // maxLng
-          padding: 100);
-
-      await mapController.animateCamera(
-        CameraUpdate.newLatLngBounds(bounds),
-      );
-    }
-  }*/
-
-  Future<void> addPolyline(VietmapController? mapController) async {
-    if (mapController != null && polylinePoints.isNotEmpty) {
-
-      await mapController.addPolyline(
-        PolylineOptions(
-          geometry: polylinePoints,
-          polylineColor: Colors.blue,
-          polylineWidth: 5.0,
-        ),
-      );
-
-      if (polylinePoints.isNotEmpty) {
-        await mapController.addSymbol(
-          SymbolOptions(
-            geometry: polylinePoints.first,
-            iconImage: ic_pickup,
-            iconSize: 1.5,
-          ),
-        );
-
-        await mapController.addSymbol(
-          SymbolOptions(
-            geometry: polylinePoints.last,
-            iconImage: ic_dropoff,
-            iconSize: 1.5,
-          ),
-        );
-      }
-
-      for (var stopover in stopoverLatLng) {
-
-        await mapController.addSymbol(
-          SymbolOptions(
-            geometry: stopover,
-            iconImage: ic_stop,
-            iconSize: 1.5,
-          ),
-        );
-      }
-
-      double? minLat, minLng, maxLat, maxLng;
-
-      for (var point in polylinePoints) {
-        if (minLat == null || point.latitude < minLat) {
-          minLat = point.latitude;
-        }
-        if (minLng == null || point.longitude < minLng) {
-          minLng = point.longitude;
-        }
-        if (maxLat == null || point.latitude > maxLat) {
-          maxLat = point.latitude;
-        }
-        if (maxLng == null || point.longitude > maxLng) {
-          maxLng = point.longitude;
-        }
-      }
-
-      for (var stopover in stopoverLatLng) {
-        if (minLat == null || stopover.latitude < minLat) {
-          minLat = stopover.latitude;
-        }
-        if (minLng == null || stopover.longitude < minLng) {
-          minLng = stopover.longitude;
-        }
-        if (maxLat == null || stopover.latitude > maxLat) {
-          maxLat = stopover.latitude;
-        }
-        if (maxLng == null || stopover.longitude > maxLng) {
-          maxLng = stopover.longitude;
-        }
-      }
-
-      final bounds = LatLngBounds(
-        southwest: LatLng(minLat!, minLng!),
-        northeast: LatLng(maxLat!, maxLng!),
-      );
-
-      await mapController.setCameraBounds(
-          west: minLng,
-          north: maxLat,
-          south: minLat,
-          east: maxLng,
-          padding: 100);
-
-      await mapController.animateCamera(
-        CameraUpdate.newLatLngBounds(bounds),
-      );
-    }
-  }
-
-
   // getVehicle
   Future<VehicleCategoryModel> getVehicleCategoryModel() async {
     final jsonString = await FakeAPI.fetchVehicleCategoryData();
     final jsonMap = json.decode(jsonString);
     return VehicleCategoryModel.fromJson(jsonMap);
+  }
+
+  double calculateTripPrice(
+      {required double distance,
+      required double minimumDeliveryChargesWithin,
+      required double minimumDeliveryCharges,
+      required double deliveryCharges}) {
+    double cout = 0.0;
+
+    if (distance > minimumDeliveryChargesWithin) {
+      cout = (distance * deliveryCharges).toDouble();
+    } else {
+      cout = minimumDeliveryCharges;
+    }
+    return cout;
   }
 
 /*  Future<VehicleCategoryModel?> getVehicleCategory() async {
@@ -596,18 +525,40 @@ class BookingController extends GetxController {
     return null;
   }*/
 
-  double calculateTripPrice(
-      {required double distance,
-      required double minimumDeliveryChargesWithin,
-      required double minimumDeliveryCharges,
-      required double deliveryCharges}) {
-    double cout = 0.0;
+  Future<dynamic> bookRide(Map<String, dynamic> bodyParams) async {
+    try {
+      ShowDialog.showLoader("Please wait");
+      final response = await http.post(Uri.parse(API.bookRides), headers: API.header, body: jsonEncode(bodyParams));
 
-    if (distance > minimumDeliveryChargesWithin) {
-      cout = (distance * deliveryCharges).toDouble();
-    } else {
-      cout = minimumDeliveryCharges;
+      Map<String, dynamic> responseBody = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        ShowDialog.closeLoader();
+        return responseBody;
+      } else {
+        ShowDialog.closeLoader();
+        ShowDialog.showToast('Something want wrong. Please try again later');
+        throw Exception('Failed to load album');
+      }
+    } on TimeoutException catch (e) {
+      ShowDialog.closeLoader();
+
+      ShowDialog.showToast(e.message.toString());
+    } on SocketException catch (e) {
+      ShowDialog.closeLoader();
+
+      ShowDialog.showToast(e.message.toString());
+    } on Error catch (e) {
+      ShowDialog.closeLoader();
+
+      ShowDialog.showToast(e.toString());
+    } catch (e) {
+      ShowDialog.closeLoader();
+
+      ShowDialog.showToast(e.toString());
     }
-    return cout;
+    return null;
   }
+
+
 }
