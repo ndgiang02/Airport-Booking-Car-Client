@@ -1,7 +1,7 @@
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class ShowDialog {
-  static showToast(String? message, {EasyLoadingToastPosition position = EasyLoadingToastPosition.top}) {
+  static showToast(String? message, {EasyLoadingToastPosition position = EasyLoadingToastPosition.bottom}) {
     EasyLoading.showToast(message!, toastPosition: position);
   }
 

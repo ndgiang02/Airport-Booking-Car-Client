@@ -1,436 +1,295 @@
-/*
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
-import 'package:location/location.dart';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
-import 'package:vietmap_flutter_plugin/vietmap_flutter_plugin.dart';
-
-import '../../constant/constant.dart';
-import '../../controllers/booking_controller.dart';
-import '../../utils/themes/button.dart';
-import '../../utils/themes/contant_colors.dart';
+import '../../controllers/book_controller.dart';
 import '../../utils/themes/text_style.dart';
-import '../../utils/themes/textfield_theme.dart';
+import 'map_screen.dart';
 
-class AirportScreen extends StatefulWidget {
+class AirportScreen1 extends StatefulWidget {
+  const AirportScreen1({super.key});
+
   @override
-  _AirportScreenState createState() => _AirportScreenState();
+  State<AirportScreen1> createState() => _AirportScreen1State();
 }
 
-class _AirportScreenState extends State<AirportScreen> {
-  final bookController = Get.find<BookingController>();
+class _AirportScreen1State extends State<AirportScreen1> {
 
-  String apiKey = Constant.VietMapApiKey;
-
-  final CameraPosition _kInitialPosition =
-      const CameraPosition(target: LatLng(10.762317, 106.654551), zoom: 15);
-
-  final TextEditingController pickupController = TextEditingController();
-  final TextEditingController destinationController = TextEditingController();
-
-  final GlobalKey pickupKey = GlobalKey();
-  final GlobalKey destinationKey = GlobalKey();
-
-  VietmapController? _mapController;
-
-  LatLng? pickupLatLong;
-  LatLng? destinationLatLong;
-
-  final Map<String, StaticMarkerLayer> _markers = {};
-
-  final Location currentLocation = Location();
-
-  @override
-  void initState() {
-    super.initState();
-    pickupController.addListener(() {
-      setState(() {});
-    });
-    destinationController.addListener(() {
-      setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    pickupController.dispose();
-    destinationController.dispose();
-    super.dispose();
-  }
+  final bookController = Get.find<BookController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Booking'.tr,
+        elevation: 0,
+        title: const Text(
+          'Ban muon di dau ?',
           style: CustomTextStyles.header,
         ),
-        backgroundColor: ConstantColors.primary,
-      ),
-      body: Stack(children: [
-        VietmapGL(
-          dragEnabled: true,
-          compassEnabled: false,
-          trackCameraPosition: true,
-          myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
-          myLocationEnabled: true,
-          minMaxZoomPreference: MinMaxZoomPreference(0, 18),
-          rotateGesturesEnabled: false,
-          styleString:
-              '${Constant.baseUrl}/maps/light/styles.json?apikey=${Constant.VietMapApiKey}',
-          initialCameraPosition: _kInitialPosition,
-          onMapCreated: (VietmapController controller) async {
-            LocationData location = await currentLocation.getLocation();
-            setState(() {
-              _mapController = controller;
-              _mapController!.moveCamera(CameraUpdate.newLatLngZoom(
-                  LatLng(location.latitude ?? 0.0, location.longitude ?? 0.0),
-                  14));
-            });
-          },
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blueAccent, Colors.lightBlueAccent],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
         ),
-        for (var layer in _markers.values) layer,
-        Column(
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
-                  child: Column(
-                    children: [
-                      Row(
+            // Pickup TextField
+            buildTextField(
+              controller: bookController.pickupController,
+              textObserver: bookController.pickupText,
+              prefixIcon: const Icon(
+                Icons.location_on,
+                size: 20,
+                color: Colors.redAccent,
+              ),
+              hintText: 'from'.tr,
+              onClear: () {
+                bookController.pickupController.clear();
+                bookController.pickupLatLong.value = null;
+                bookController.clearData();
+              },
+              onGetCurrentLocation: () => _getCurrentLocation(true),
+              focusedFieldName: 'pickup',
+            ),
+            const Divider(),
+            // Stopover TextFields
+            Obx(() => Column(
+                  children: List.generate(
+                    bookController.stopoverControllers.length,
+                    (index) {
+                      return Column(
                         children: [
-                          Image.asset(
-                            "assets/icons/ic_pic_drop_location.png",
-                            height: 80,
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 8),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: InkWell(
-                                            onTap: () {},
-                                            child: buildPickupTypeAhead()),
-                                      ),
-                                    ],
-                                  ),
-                                  Divider(),
-                                  InkWell(
-                                    child: buildDestinationTypeAhead(),
-                                  ),
-                                ],
-                              ),
+                          buildTextField(
+                            controller:
+                                bookController.stopoverControllers[index],
+                            prefixIcon: const Icon(
+                              Icons.pin_drop,
+                              size: 20,
+                              color: Colors.amber,
                             ),
+                            hintText: 'Stopover ${index + 1}',
+                            onClear: () {
+                              bookController.stopoverControllers[index].clear();
+                            },
+                            onDeleteStop: () {
+                              bookController.removeStopover(index);
+                              if (bookController.stopoverLatLng.length >
+                                  index + 1) {
+                                bookController.stopoverLatLng
+                                    .removeAt(index + 1);
+                              }
+                            },
+                            textObserver: bookController.stopoverTexts[index],
+                            focusedFieldName: 'stopover_$index'.tr,
                           ),
+                          const Divider(),
                         ],
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                ),
+                )),
+            // Destination TextField
+            buildTextField(
+              controller: bookController.destinationController,
+              textObserver: bookController.destinationText,
+              prefixIcon: const Icon(
+                Icons.flag_circle,
+                size: 20,
+                color: Colors.cyan,
+              ),
+              hintText: 'to'.tr,
+              onClear: () {
+                bookController.destinationController.clear();
+                bookController.destinationLatLong.value = null;
+                bookController.clearData();
+              },
+              focusedFieldName: 'destination',
+            ),
+            const SizedBox(height: 10.0),
+            TextButton(
+              onPressed: () {
+                bookController.addStopover();
+              },
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.add_circle,
+                    color: Colors.blue,
+                    size: 16,
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    'add stopover'.tr,
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
+            const SizedBox(height: 20.0),
+            const Text(
+              'Điểm đến phổ biến',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            Expanded(
+              child: Obx(() {
+                return ListView.builder(
+                  itemCount: bookController.suggestions.length,
+                  itemBuilder: (context, index) {
+                    final suggestion = bookController.suggestions[index];
+                    return ListTile(
+                      leading: const Icon(Icons.pin_drop_outlined,
+                          color: Colors.blue),
+                      title: Text(suggestion['display']!),
+                      onTap: () async {
+                        final selectedText = suggestion['display']!;
+                        LatLng? latLong = await bookController
+                            .reverseGeocode(suggestion['ref_id']!);
+                        if (bookController.focusedField.value == 'pickup') {
+                          bookController.pickupController.text = selectedText;
+                          bookController.pickupLatLong.value = latLong;
+                        } else if (bookController.focusedField.value ==
+                            'destination') {
+                          bookController.destinationController.text =
+                              selectedText;
+                          bookController.destinationLatLong.value = latLong;
+                          bookController.isMapDrawn.value = true;
+                          Get.to(() => const MapScreen(),
+                              duration: const Duration(milliseconds: 400),
+                              transition: Transition.rightToLeft);
+                        } else if (bookController.focusedField.value
+                            .startsWith('stopover_')) {
+                          try {
+                            final index = int.parse(bookController
+                                .focusedField.value
+                                .split('_')[1]);
+                            while (bookController.stopoverControllers.length <=
+                                index) {
+                              bookController.stopoverControllers
+                                  .add(TextEditingController());
+                            }
+                            while (
+                                bookController.stopoverLatLng.length <= index) {
+                              bookController.stopoverLatLng.add(LatLng(0, 0));
+                            }
+                            bookController.stopoverControllers[index].text =
+                                selectedText;
+                            bookController.stopoverLatLng[index] = latLong!;
+                          } catch (e) {
+                            debugPrint('$e');
+                          }
+                        }
+                        bookController.suggestions.clear();
+                        FocusScope.of(context).unfocus();
+                      },
+                    );
+                  },
+                );
+              }),
+            ),
           ],
-        )
-      ]),
+        ),
+      ),
+    );
+  }
+
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    RxString? textObserver,
+    Widget? prefixIcon,
+    void Function()? onClear,
+    void Function()? onGetCurrentLocation,
+    void Function()? onFocus,
+    void Function()? onDeleteStop,
+    required String focusedFieldName,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.grey.shade100,
+      ),
+      child: Obx(() {
+        return Focus(
+          onFocusChange: (hasFocus) {
+            if (hasFocus) {
+              bookController.focusedField.value = focusedFieldName;
+              if (onFocus != null) {
+                onFocus();
+              }
+            }
+          },
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              prefixIcon: prefixIcon,
+              suffixIcon: textObserver?.value.isNotEmpty ?? false
+                  ? IconButton(
+                      icon: const Icon(Icons.cancel,
+                          color: Colors.grey, size: 20),
+                      onPressed: onClear,
+                    )
+                  : onDeleteStop != null
+                      ? IconButton(
+                          icon: const Icon(Icons.clear,
+                              color: Colors.grey, size: 20),
+                          onPressed: onDeleteStop,
+                        )
+                      : onGetCurrentLocation != null
+                          ? IconButton(
+                              icon: const Icon(Icons.my_location,
+                                  color: Colors.grey, size: 20),
+                              onPressed: onGetCurrentLocation,
+                            )
+                          : null,
+              hintText: hintText,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.grey, width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.blue, width: 2),
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            ),
+            onChanged: (pattern) async {
+              if (controller == bookController.destinationController) {
+                bookController.suggestions.value = await bookController
+                    .getAutocompleteData(pattern.isEmpty ? 'San bay' : pattern);
+              } else {
+                bookController.suggestions.value =
+                    await bookController.getAutocompleteData(pattern);
+              }
+            },
+          ),
+        );
+      }),
     );
   }
 
   Future<void> _getCurrentLocation(bool pickup) async {
-    final current = await bookController.getCurrentLocation();
+    final current = await bookController.currentLocation();
     if (current != null) {
-      pickupController.text = current['address'];
+      bookController.pickupController.text = current['display'];
+      bookController.pickupController.selection =
+          TextSelection.fromPosition(const TextPosition(offset: 0));
     }
-  }
-
-  setPickUpMarker(LatLng pickup) {
-    pickupLatLong = pickup;
-    setState(() {
-      _markers.remove('Pickup');
-      if (_mapController != null)
-      _markers['Pickup'] = StaticMarkerLayer(
-          ignorePointer: true,
-          mapController: _mapController!,
-          markers: [
-            StaticMarker(child:Container(
-          width: 50,
-          height: 50,
-          child:Icon(Icons.location_on, color: Colors.red,)), latLng:  LatLng(pickup.latitude, pickup.longitude), bearing: 0),
-          ]);
-    });
-    _mapController!.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(pickup.latitude, pickup.longitude), zoom: 14)));
-    if (pickupLatLong != null && destinationLatLong != null) {
-      conformationBottomSheet(context);
-    }
-  }
-
-  setDestinationMaker(LatLng destination) {
-    setState(() {
-      _markers.remove('Destination');
-      if (_mapController != null)
-        _markers['Destination'] = StaticMarkerLayer(
-            ignorePointer: true,
-            mapController: _mapController!,
-            markers: [
-              StaticMarker(child:Container(
-                  width: 50,
-                  height: 50,
-                  child:Icon(Icons.location_on, color: Colors.red,)), latLng:  LatLng(destination.latitude, destination.longitude), bearing: 0),
-            ]);
-    });
-    destinationLatLong = destination;
-    _mapController!.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(destination.latitude, destination.longitude),
-        zoom: 14)));
-    if (pickupLatLong != null && destinationLatLong != null) {
-      conformationBottomSheet(context);
-    }
-  }
-
-  Widget buildPickupTypeAhead() {
-    return TypeAheadField<Map<String, String>>(
-      controller: pickupController,
-      hideOnEmpty: true,
-      hideOnLoading: true,
-      hideKeyboardOnDrag: true,
-      builder: (context, controller, focusNode) {
-        return TextField(
-          controller: controller,
-          focusNode: focusNode,
-          autofocus: true,
-          onChanged: (text) {},
-          decoration: InputDecoration(
-            isDense: true,
-            suffixIcon: pickupController.text.isNotEmpty
-                ? IconButton(
-                    icon: Icon(Icons.clear, color: Colors.grey),
-                    onPressed: () {
-                      pickupController.clear();
-                      pickupLatLong = null;
-                      setState(() {});
-                    },
-                  )
-                : IconButton(
-                    icon: Icon(
-                      Icons.my_location,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () {
-                      _getCurrentLocation(true);
-                    }),
-            hintText: 'From',
-            border: InputBorder.none,
-            focusedBorder: InputBorder.none,
-          ),
-        );
-      },
-      suggestionsCallback: (pattern) async {
-        return await bookController.getAutocompleteData(pattern);
-      },
-      itemBuilder: (context, suggestion) {
-        return ListTile(
-          leading: Icon(Icons.pin_drop_outlined, color: Colors.blue),
-          title: Text(suggestion['display']!),
-        );
-      },
-      onSelected: (suggestion) async {
-        pickupController.text = suggestion['display']!;
-        pickupLatLong =
-            await bookController.reverseGeocode(suggestion['ref_id']!);
-        pickupController.selection =
-            TextSelection.fromPosition(const TextPosition(offset: 0));
-        FocusScope.of(context).unfocus();
-        bookController.suggestions.clear();
-        setPickUpMarker(pickupLatLong!);
-      },
-    );
-  }
-
-  Widget buildDestinationTypeAhead() {
-    return TypeAheadField<Map<String, String>>(
-      controller: destinationController,
-      hideOnEmpty: true,
-      hideOnLoading: true,
-      hideKeyboardOnDrag: true,
-      builder: (context, controller, focusNode) {
-        return TextField(
-          controller: controller,
-          focusNode: focusNode,
-          autofocus: true,
-          onChanged: (text) {},
-          decoration: InputDecoration(
-            isDense: true,
-            suffixIcon: destinationController.text.isNotEmpty
-                ? IconButton(
-                    icon: Icon(Icons.clear, color: Colors.grey),
-                    onPressed: () {
-                      destinationController.clear();
-                      destinationLatLong = null;
-                    },
-                  )
-                : Icon(
-                    Icons.access_time_outlined,
-                    color: Colors.white,
-                  ),
-            hintText: 'To',
-            border: InputBorder.none,
-            focusedBorder: InputBorder.none,
-          ),
-        );
-      },
-      suggestionsCallback: (pattern) async {
-        return await bookController.getAutocompleteData(pattern);
-      },
-      itemBuilder: (context, suggestion) {
-        return ListTile(
-          leading: Icon(Icons.pin_drop_outlined, color: Colors.blue),
-          title: Text(suggestion['display']!),
-        );
-      },
-      onSelected: (suggestion) async {
-        destinationController.text = suggestion['display']!;
-        destinationLatLong =
-            await bookController.reverseGeocode(suggestion['ref_id']!);
-        destinationController.selection =
-            TextSelection.fromPosition(TextPosition(offset: 0));
-        FocusScope.of(context).unfocus();
-        bookController.suggestions.clear();
-        setDestinationMaker(destinationLatLong!);
-      },
-    );
-  }
-
-  conformationBottomSheet(BuildContext context) {
-    return showModalBottomSheet(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(15), topLeft: Radius.circular(15))),
-        context: context,
-        isDismissible: false,
-        backgroundColor: Colors.transparent,
-        builder: (context) {
-          return StatefulBuilder(builder: (context, setState) {
-            return Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: ButtonThem.buildIconButton(context,
-                        iconSize: 16.0,
-                        icon: Icons.arrow_back_ios,
-                        iconColor: Colors.black,
-                        btnHeight: 40,
-                        btnWidthRatio: 0.25,
-                        title: "Back",
-                        btnColor: ConstantColors.cyan,
-                        txtColor: Colors.black, onPress: () {
-                      Get.back();
-                    }),
-                  ),
-                  Expanded(
-                    child: ButtonThem.buildButton(context,
-                        btnHeight: 40,
-                        title: "Continue".tr,
-                        btnColor: ConstantColors.primary,
-                        txtColor: Colors.white, onPress: () {
-                      debugPrint("Hello Trip");
-                      tripOptionBottomSheet(context);
-                    }),
-                  ),
-                ],
-              ),
-            );
-          });
-        });
-  }
-
-  tripOptionBottomSheet(BuildContext context) {
-    return showModalBottomSheet(
-        context: context,
-        isDismissible: false,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (context) {
-          return Container(
-            decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(15))),
-            margin: const EdgeInsets.all(10),
-            child: StatefulBuilder(builder: (context, setState) {
-              return Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
-                child: Obx(
-                  () => Padding(
-                    padding: MediaQuery.of(context).viewInsets,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            "Trip option",
-                            style: TextStyle(fontSize: 18, color: Colors.black),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Colors.grey, width: 1.0),
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              child: DropdownButton<String>(
-                                items: <String>[
-                                  'General',
-                                  'Business',
-                                  'Executive',
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  ); //DropMenuItem
-                                }).toList(),
-                                value: bookController.tripOptionCategory.value,
-                                onChanged: (newValue) {
-                                  bookController.tripOptionCategory.value =
-                                      newValue!;
-                                },
-                                underline: Container(),
-                                //OnChange
-                                isExpanded: true,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }),
-          );
-        });
   }
 }
-*/

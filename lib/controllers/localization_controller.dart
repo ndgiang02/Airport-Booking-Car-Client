@@ -41,6 +41,7 @@ class LocalizationController extends GetxController {
   void loadSelectedLanguage() {
     String? storedLanguageCode =
         Preferences.getString(Preferences.languageCodeKey);
+    debugPrint('Stored language code: $storedLanguageCode');
     if (storedLanguageCode != null && storedLanguageCode.isNotEmpty) {
       selectedLanguage(storedLanguageCode);
     } else {
@@ -60,6 +61,7 @@ class LocalizationController extends GetxController {
   void changeLanguage(String languageCode) {
     selectedLanguage(languageCode);
     Preferences.setString(Preferences.languageCodeKey, languageCode);
+    debugPrint('Language changed to: $languageCode');
     updateLocale();
   }
 }

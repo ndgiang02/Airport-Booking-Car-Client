@@ -2,11 +2,14 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
+
 
 class HomeController extends GetxController {
 
-  final String apiKey = '800b6d416dmshdac099f12cfae94p1edc37jsnb7d60789a7ba'; // Thay bằng API Key thật
+  final String apiKey = '800b6d416dmshdac099f12cfae94p1edc37jsnb7d60789a7ba';
   final String host = 'flightera-flight-data.p.rapidapi.com';
+
 
   var date = DateTime.now().obs;
   var flightInfo = <String, dynamic>{}.obs;
@@ -21,6 +24,7 @@ class HomeController extends GetxController {
       fetchFlightInfo(flightCode.value, formatDate(newDate));
     });
   }
+
 
   void updateFlightCode(String newCode) {
     flightCode.value = newCode;
@@ -102,4 +106,5 @@ class HomeController extends GetxController {
       return 'Unknown';
     }
   }
+
 }

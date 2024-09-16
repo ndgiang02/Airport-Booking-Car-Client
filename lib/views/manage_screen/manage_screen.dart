@@ -23,6 +23,9 @@ class ManageScreen extends StatelessWidget {
 
   final ManageController controller = Get.put(ManageController());
 
+  String? name =  Preferences.getString(Preferences.userName);
+  String? email =  Preferences.getString(Preferences.userEmail);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,11 +83,11 @@ class ManageScreen extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  'Giang Nguyen',
+                  name!,
                   style: CustomTextStyles.header,
                 ),
                 Text(
-                  "giangcoi@gmail.com",
+                  email!,
                   style: CustomTextStyles.body,
                 ),
                 SizedBox(
@@ -93,19 +96,25 @@ class ManageScreen extends StatelessWidget {
                 TextFieldTheme.buildListTile(
                   title: 'intro'.tr,
                   icon: LineAwesomeIcons.info_circle_solid,
-                  onPress: () {Get.to(() => IntroductionScreen());},
+                  onPress: () {
+                    Get.to(() => IntroductionScreen());
+                  },
                   endIcon: true,
                 ),
                 TextFieldTheme.buildListTile(
                   title: 'term_policy'.tr,
                   icon: LineAwesomeIcons.terminal_solid,
-                  onPress: () {Get.to(() => TermsOfServiceScreen());},
+                  onPress: () {
+                    Get.to(() => TermsOfServiceScreen());
+                  },
                   endIcon: true,
                 ),
                 TextFieldTheme.buildListTile(
                   title: 'support'.tr,
                   icon: LineAwesomeIcons.hands_helping_solid,
-                  onPress: () {Get.to(() => SupportScreen());},
+                  onPress: () {
+                    Get.to(() => SupportScreen());
+                  },
                   endIcon: true,
                 ),
                 TextFieldTheme.buildListTile(
@@ -113,7 +122,7 @@ class ManageScreen extends StatelessWidget {
                   icon: LineAwesomeIcons.language_solid,
                   onPress: () async {
                     bool? languageChanged = await Get.to(
-                          () => LocalizationScreen(),
+                      () => LocalizationScreen(),
                     );
                     if (languageChanged == true) {
                       controller.update();
@@ -124,18 +133,20 @@ class ManageScreen extends StatelessWidget {
                 TextFieldTheme.buildListTile(
                   title: 'share'.tr,
                   icon: LineAwesomeIcons.share_square,
-                  onPress: () {Clipboard.setData(
-                      ClipboardData(text: "https://yourapp.link"))
-                      .then((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('copy'.tr)),
-                    );
-                  });},
+                  onPress: () {
+                    Clipboard.setData(
+                            ClipboardData(text: "https://yourapp.link"))
+                        .then((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('copy'.tr)),
+                      );
+                    });
+                  },
                   endIcon: true,
                 ),
                 Divider(
-                  indent: Responsive.width(100,context) * 0.05,
-                  endIndent:  Responsive.width(100,context) * 0.05,
+                  indent: Responsive.width(100, context) * 0.05,
+                  endIndent: Responsive.width(100, context) * 0.05,
                 ),
                 TextFieldTheme.buildListTile(
                   title: 'sign_out'.tr,
@@ -159,5 +170,3 @@ class ManageScreen extends StatelessWidget {
         ));
   }
 }
-
-

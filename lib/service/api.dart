@@ -2,6 +2,50 @@ import 'dart:io';
 import '../utils/preferences/preferences.dart';
 
 class API {
+  static const baseUrl = "http://192.168.11.20:8000/api/";
+  static const apiKey = "";
+
+  static Map<String, String> authheader = {
+    HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+    'apikey': apiKey,
+  };
+
+  static Map<String, String> header = {
+    HttpHeaders.contentTypeHeader: 'application/json; charset=UTF-8',
+    HttpHeaders.acceptHeader: 'application/json',
+    'Authorization': 'Bearer ${Preferences.getString(Preferences.token) ?? ''}',
+    'apikey': apiKey,
+  };
+
+
+  static const userSignUP = "${baseUrl}register";
+  static const userLogin = "${baseUrl}login";
+  static const sendResetPasswordOtp = "${baseUrl}send-otp";
+  static const resetPasswordOtp = "${baseUrl}reset-password-otp";
+  static const changePassword = "${baseUrl}change-password";
+  static const fetchTrips = "${baseUrl}fetch-trips";
+  static const bookRides = "${baseUrl}trip-booking";
+  static const fetchVehicle = "${baseUrl}vehicle-types";
+
+  static const deleteUser = "${baseUrl}delete-user-account";
+  static const logOut = "${baseUrl}logout";
+
+
+  static const updateName = "${baseUrl}user-name";
+  static const contactUs = "${baseUrl}contact-us";
+  static const updateToken = "${baseUrl}update-fcm";
+  static const rentVehicle = "${baseUrl}vehicle-get";
+  static const transaction = "${baseUrl}transaction";
+  static const getFcmToken = "${baseUrl}fcm-token";
+  static const deleteFavouriteRide = "${baseUrl}delete-favorite-ride";
+  static const rejectRide = "${baseUrl}set-rejected-requete";
+
+  static const introduction = "${baseUrl}introduction";
+}
+
+
+/*
+class API {
   static const baseUrl = ""; // live
   static const apiKey = "";
 
@@ -18,16 +62,11 @@ class API {
   static const userSignUP = "${baseUrl}user";
   static const userLogin = "${baseUrl}user-login";
   static const sendResetPasswordOtp = "${baseUrl}reset-password-otp";
-  static const resetPasswordOtp = "${baseUrl}resert-password";
-  static const getProfileByPhone = "${baseUrl}profilebyphone";
-  static const getExistingUserOrNot = "${baseUrl}existing-user";
-  static const updateUserNic = "${baseUrl}update-user-nic";
-  static const updateUserEmail = "${baseUrl}update-user-email";
+  static const resetPasswordOtp = "${baseUrl}reset-password";
   static const changePassword = "${baseUrl}update-user-mdp";
   static const updateName = "${baseUrl}user-name";
   static const contactUs = "${baseUrl}contact-us";
   static const updateToken = "${baseUrl}update-fcm";
-  static const favorite = "${baseUrl}favorite";
   static const rentVehicle = "${baseUrl}vehicle-get";
   static const transaction = "${baseUrl}transaction";
   static const getFcmToken = "${baseUrl}fcm-token";
@@ -61,3 +100,4 @@ class API {
   static const privacyPolicy = "${baseUrl}privacy-policy";
   static const termsOfCondition = "${baseUrl}terms-of-condition";
 }
+*/

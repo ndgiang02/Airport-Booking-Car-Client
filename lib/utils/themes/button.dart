@@ -3,6 +3,37 @@ import 'package:flutter/material.dart';
 
 class ButtonThem {
 
+  static buildCustomButton({
+    required String label,
+    required VoidCallback onPressed,
+    Color backgroundColor = Colors.cyan,
+    double borderRadius = 8.0,
+    EdgeInsetsGeometry padding = const EdgeInsets.symmetric(vertical: 15),
+    TextStyle textStyle = const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+      color: Colors.white,
+    ),
+  }) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: backgroundColor,
+        padding: padding,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+        minimumSize: const Size(double.infinity, 50),
+      ),
+
+      onPressed: onPressed,
+      child: Text(
+        label,
+        style: textStyle,
+      ),
+    );
+  }
+
+
   static buildButton(
       BuildContext context, {
         required String title,

@@ -1,11 +1,11 @@
 import 'package:customerapp/controllers/bottomnavigation_controller.dart';
 import 'package:customerapp/utils/themes/contant_colors.dart';
-import 'package:customerapp/views/activities_screen/activitis_screen.dart';
 import 'package:customerapp/views/home_screens/home_screen.dart';
 import 'package:customerapp/views/notifition_screen/notifition_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../activities_screen/activities_screen.dart';
 import '../manage_screen/manage_screen.dart';
 
 class NavigationPage extends StatelessWidget {
@@ -79,7 +79,7 @@ class NavigationPage extends StatelessWidget {
                   top: 0,
                   left: bottomNavigationController.selectedIndex.value * (MediaQuery.of(context).size.width / 4),
                   child: AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 300),
                     height: 2,
                     width: MediaQuery.of(context).size.width / 4,
                     color: ConstantColors.primary,

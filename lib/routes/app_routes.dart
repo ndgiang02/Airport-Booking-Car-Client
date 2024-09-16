@@ -2,21 +2,30 @@ import 'package:customerapp/bindings/activities_binding/activities_binding.dart'
 import 'package:customerapp/bindings/booking_binding/booking_binding.dart';
 import 'package:customerapp/bindings/home_binding/home_binding.dart';
 import 'package:customerapp/bindings/notification_binding/notification_binding.dart';
-import 'package:customerapp/views/activities_screen/activitis_screen.dart';
-import 'package:customerapp/views/booking_screen/longtrip_screen.dart';
 import 'package:customerapp/views/home_screens/home_screen.dart';
+import 'package:customerapp/views/notifition_screen/notification_detail.dart';
 import 'package:customerapp/views/notifition_screen/notifition_screen.dart';
 import 'package:customerapp/views/splash_screen/splash_screen.dart';
-import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:get/get.dart';
 
+
+import '../views/activities_screen/activities_screen.dart';
+import '../views/booking_screen/airport_screen.dart';
 import '../views/booking_screen/booking_screen.dart';
 
 class AppRoutes {
+
+  static const String loginScreen = '/login';
+
+  static const String registerScreen = '/register';
+
   static const String homeScreen = '/home';
 
   static const String activitiesScreen = '/activities';
 
-  static const String notificationScreen = '/notification';
+  static const String notificationScreen = '/notifications';
+
+  static const String notificationDetail = '/notificationdetail';
 
   static const String manageScreen = '/manage';
 
@@ -28,12 +37,14 @@ class AppRoutes {
 
   static const String longtripScreen = '/longtrip';
 
+  static const String test = '/test';
+
   static const String initialRoute = '/initialRoute';
 
   static List<GetPage> pages = [
     GetPage(
       name: initialRoute,
-      page: () => SplashScreen(),
+      page: () => const SplashScreen(),
     ),
     GetPage(
       name: homeScreen,
@@ -58,16 +69,23 @@ class AppRoutes {
     ),
     GetPage(
       name: airportScreen,
-      page: () => AirportScreen(),
+      page: () => const AirportScreen(),
       bindings: [
         BookingBinding(),
       ],
     ),
     GetPage(
       name: longtripScreen,
-      page: () => LongtripScreen(),
+      page: () => const AirportScreen1(),
       bindings: [
         BookingBinding(),
+      ],
+    ),
+    GetPage(
+      name: notificationDetail,
+      page: () => NotificationDetailScreen(notification: Get.arguments),
+      bindings: [
+        NotificationBinding(),
       ],
     ),
 

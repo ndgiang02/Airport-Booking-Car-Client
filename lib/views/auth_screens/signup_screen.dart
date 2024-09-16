@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:customerapp/constant/constant.dart';
 import 'package:flutter/gestures.dart';
@@ -14,13 +15,14 @@ import '../../utils/themes/textfield_theme.dart';
 import 'login_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
+
   String? phoneNumber;
 
-  SignUpScreen({Key? key, required this.phoneNumber}) : super(key: key);
+  SignUpScreen({Key? key}) : super(key: key);
 
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  var _phoneController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _conformPasswordController = TextEditingController();
@@ -29,7 +31,6 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _phoneController = TextEditingController(text: phoneNumber);
     return Scaffold(
       backgroundColor: ConstantColors.background,
       body: SafeArea(
@@ -73,7 +74,6 @@ class SignUpScreen extends StatelessWidget {
                                   controller: _nameController,
                                   textInputType: TextInputType.text,
                                   maxLength: 22,
-                                  contentPadding: EdgeInsets.zero,
                                   validators: (String? value) {
                                     if (value!.isNotEmpty) {
                                       return null;
@@ -92,8 +92,6 @@ class SignUpScreen extends StatelessWidget {
                               controller: _phoneController,
                               textInputType: TextInputType.number,
                               maxLength: 13,
-                              enabled: false,
-                              contentPadding: EdgeInsets.zero,
                               validators: (String? value) {
                                 if (value!.isNotEmpty) {
                                   return null;
@@ -109,7 +107,6 @@ class SignUpScreen extends StatelessWidget {
                               hintText: 'email'.tr,
                               controller: _emailController,
                               textInputType: TextInputType.emailAddress,
-                              contentPadding: EdgeInsets.zero,
                               validators: (String? value) {
                                 bool emailValid = RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$').hasMatch(value!);
                                 if (!emailValid) {
@@ -120,58 +117,66 @@ class SignUpScreen extends StatelessWidget {
                               },
                             ),
                           ),
-                          // Padding(
-                          //   padding: const EdgeInsets.only(top: 16),
-                          //   child: TextFieldThem.boxBuildTextField(
-                          //     hintText: 'address'.tr,
-                          //     controller: _addressController,
-                          //     textInputType: TextInputType.text,
-                          //     contentPadding: EdgeInsets.zero,
-                          //     validators: (String? value) {
-                          //       if (value!.isNotEmpty) {
-                          //         return null;
-                          //       } else {
-                          //         return 'required'.tr;
-                          //       }
-                          //     },
-                          //   ),
-                          // ),
                           Padding(
                             padding: const EdgeInsets.only(top: 16),
-                            child: TextFieldTheme.boxBuildTextField(
-                              hintText: 'password'.tr,
-                              controller: _passwordController,
-                              textInputType: TextInputType.text,
-                              obscureText: false,
-                              contentPadding: EdgeInsets.zero,
-                              validators: (String? value) {
-                                if (value!.length >= 6) {
-                                  return null;
-                                } else {
-                                  return 'Password required at least 6 characters'.tr;
-                                }
-                              },
+                            child: Obx(() => TextFieldTheme.boxBuildTextField(
+                                hintText: 'password'.tr,
+                                controller: _passwordController,
+                                textInputType: TextInputType.text,
+                                obscureText: controller.isObscure.value,
+                                validators: (String? value) {
+                                  if (value!.length >= 6) {
+                                    return null;
+                                  } else {
+                                    return 'Password required at least 6 characters'.tr;
+                                  }
+                                },
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    controller.isObscure.value
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    size: 20
+                                  ),
+                                  onPressed: () {
+                                    controller.isObscure.value =
+                                    !controller.isObscure.value;
+                                  },
+                                ),
+                              ),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 16),
-                            child: TextFieldTheme.boxBuildTextField(
-                              hintText: 'confirm_password'.tr,
-                              controller: _conformPasswordController,
-                              textInputType: TextInputType.text,
-                              obscureText: false,
-                              contentPadding: EdgeInsets.zero,
-                              validators: (String? value) {
-                                if (_passwordController.text != value) {
-                                  return 'Confirm password is invalid'.tr;
-                                } else {
-                                  return null;
-                                }
-                              },
+                            child: Obx( () =>TextFieldTheme.boxBuildTextField(
+                                hintText: 'confirm_password'.tr,
+                                controller: _conformPasswordController,
+                                textInputType: TextInputType.text,
+                                obscureText: controller.isObscure.value,
+                                validators: (String? value) {
+                                  if (_passwordController.text != value) {
+                                    return 'Confirm password is invalid'.tr;
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    controller.isObscure.value
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    size: 20
+                                  ),
+                                  onPressed: () {
+                                    controller.isObscure.value =
+                                    !controller.isObscure.value;
+                                  },
+                                ),
+                              ),
                             ),
                           ),
                           Padding(
-                              padding: const EdgeInsets.only(top: 50),
+                              padding: const EdgeInsets.only(top: 40),
                               child: ButtonThem.buildButton(
                                 context,
                                 title: 'sign_up'.tr,
@@ -182,19 +187,20 @@ class SignUpScreen extends StatelessWidget {
                                   FocusScope.of(context).unfocus();
                                   if (_formKey.currentState!.validate()) {
                                     Map<String, String> bodyParams = {
-                                      'name': _nameController.text.trim().toString(),
-                                      'phone': _phoneController.text.trim(),
+                                      'name': _nameController.text.trim(),
                                       'email': _emailController.text.trim(),
                                       'password': _passwordController.text,
-                                      'login_type': 'phone',
-                                      'tonotify': 'yes',
-                                      'account_type': 'customer',
+                                      'mobile': _phoneController.text.trim(),
+                                      'user_type': 'customer',
                                     };
                                     await controller.signUp(bodyParams).then((value) {
                                       if (value != null) {
-                                        if (value.success == "success") {
-                                          Preferences.setInt(Preferences.userId, value.data!.id!);
-                                          Preferences.setString(Preferences.user, jsonEncode(value));
+                                        if (value.status == true) {
+                                          _nameController.clear();
+                                          _emailController.clear();
+                                          _passwordController.clear();
+                                          _phoneController.clear();
+                                          Get.to(() => LoginScreen());
                                         } else {
                                           ShowDialog.showToast(value.error);
                                         }

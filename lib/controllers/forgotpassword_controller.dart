@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 
@@ -12,11 +13,19 @@ class ForgotPasswordController extends GetxController {
   Future<bool?> sendEmail(Map<String, String> bodyParams) async {
     try {
       ShowDialog.showLoader("Please wait");
-      final response = await http.post(Uri.parse(API.sendResetPasswordOtp), headers: API.header, body: jsonEncode(bodyParams));
+      final response = await http.post(Uri.parse(API.sendResetPasswordOtp),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...API.authheader,
+          },
+          body: jsonEncode(bodyParams));
 
       Map<String, dynamic> responseBody = json.decode(response.body);
 
-      if (response.statusCode == 200 && responseBody['success'] == "success") {
+      log('Response body: ${response.body}');
+
+      if (response.statusCode == 200 && responseBody['success'] == "Success") {
         ShowDialog.closeLoader();
         return true;
       } else if (response.statusCode == 200 && responseBody['success'] == "Failed") {
@@ -50,10 +59,12 @@ class ForgotPasswordController extends GetxController {
 
       Map<String, dynamic> responseBody = json.decode(response.body);
 
-      if (response.statusCode == 200 && responseBody['success'] == "success") {
+      log('Response body: ${response.body}');
+
+      if (response.statusCode == 200 && responseBody['status'] == true) {
         ShowDialog.closeLoader();
         return true;
-      } else if (response.statusCode == 200 && responseBody['success'] == "Failed") {
+      } else if (response.statusCode == 400 && responseBody['status'] == false) {
         ShowDialog.closeLoader();
         ShowDialog.showToast(responseBody['error']);
       } else {

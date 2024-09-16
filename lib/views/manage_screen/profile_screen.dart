@@ -10,24 +10,26 @@ import '../../models/user_model.dart';
 import '../../utils/preferences/preferences.dart';
 import '../../utils/themes/button.dart';
 import '../../utils/themes/contant_colors.dart';
+import '../../utils/themes/custom_dialog_box.dart';
 import '../../utils/themes/reponsive.dart';
 import '../../utils/themes/textfield_theme.dart';
 import '../auth_screens/login_screen.dart';
 
 class MyProfileScreen extends StatelessWidget {
-
   MyProfileScreen({super.key});
 
   final GlobalKey<FormState> _passwordKey = GlobalKey();
 
-  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
 
-  final TextEditingController currentPasswordController = TextEditingController();
+  final TextEditingController currentPasswordController =
+      TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +92,11 @@ class MyProfileScreen extends StatelessWidget {
                               Center(
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(16),
-                                  child: Image.asset(meme, fit: BoxFit.cover, height: 60, width: 60,
+                                  child: Image.asset(
+                                    meme,
+                                    fit: BoxFit.cover,
+                                    height: 60,
+                                    width: 60,
                                   ),
                                 ),
                               ),
@@ -102,7 +108,8 @@ class MyProfileScreen extends StatelessWidget {
                   ),
                   SingleChildScrollView(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -114,21 +121,31 @@ class MyProfileScreen extends StatelessWidget {
                             onPress: () {
                               buildAlertChangeData(
                                 context,
-                                onSubmitBtn: (){
-                                  if (fullNameController.text.isNotEmpty) {
+                                onSubmitBtn: () {
+                                  if (nameController.text.isNotEmpty) {
                                     Map<String, String> bodyParams = {
-                                      'id_user': Preferences.getInt(Preferences.userId).toString(),
-                                      'user_cat': myProfileController.userCat.value,
-                                      'name': fullNameController.text,
+                                      'id_user':
+                                          Preferences.getInt(Preferences.userId)
+                                              .toString(),
+                                      'user_type':
+                                          myProfileController.userType.value,
+                                      'name': nameController.text,
                                     };
-                                    myProfileController.updateName(bodyParams).then((value) {
+                                    myProfileController
+                                        .updateName(bodyParams)
+                                        .then((value) {
                                       if (value != null) {
                                         if (value["success"] == "success") {
-                                          UserModel userModel = Constant.getUserData();
-                                          userModel.data!.name = value['data']['name'];
-                                          Preferences.setString(Preferences.user, jsonEncode(userModel.toJson()));
+                                          UserModel userModel =
+                                              Constant.getUserData();
+                                          userModel.data!.name =
+                                              value['data']['name'];
+                                          Preferences.setString(
+                                              Preferences.user,
+                                              jsonEncode(userModel.toJson()));
                                           myProfileController.getUsrData();
-                                          ShowDialog.showToast(value['message']);
+                                          ShowDialog.showToast(
+                                              value['message']);
                                           Get.back();
                                         } else {
                                           ShowDialog.showToast(value['error']);
@@ -140,7 +157,7 @@ class MyProfileScreen extends StatelessWidget {
                                     ShowDialog.showToast("Please Enter Name");
                                   }
                                 },
-                                controller: fullNameController,
+                                controller: nameController,
                                 title: "Full Name",
                                 iconData: Icons.person_outline,
                                 validators: (String? name) {
@@ -150,7 +167,7 @@ class MyProfileScreen extends StatelessWidget {
                             },
                           ),
                           buildShowDetails(
-                            subtitle: myProfileController.phoneNo.toString(),
+                            subtitle: myProfileController.mobile.toString(),
                             title: 'phone'.tr,
                             iconData: Icons.phone,
                             isEditIcon: false,
@@ -181,60 +198,34 @@ class MyProfileScreen extends StatelessWidget {
                             isEditIcon: false,
                             iconData: Icons.delete,
                             onPress: () async {
-                              await showDialog(
-                                context: context,
-                                useSafeArea: true,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    title: Text('Are_you_sure_you_want_to_delete_account?'.tr),
-                                    actions: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: ButtonThem.buildButton(
-                                              context,
-                                              title: 'no'.tr,
-                                              btnColor: Colors.red,
-                                              txtColor: Colors.white,
-                                              onPress: () {
-                                                Get.back();
-                                              },
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: ButtonThem.buildButton(
-                                              context,
-                                              title: 'yes'.tr,
-                                              btnColor: ConstantColors.primary,
-                                              txtColor: Colors.white,
-                                              onPress: () {
-                                                myProfileController.deleteAccount(myProfileController.userId.toString()).then((value) {
-                                                  if (value != null) {
-                                                    if (value["success"] == "success") {
-                                                      ShowDialog.showToast(value['message']);
-                                                      Get.back();
-                                                      Preferences.clearSharPreference();
-                                                      Get.offAll(LoginScreen());
-                                                    }
-                                                  }
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  );
-                                },
-                              );
+                              await CustomAlert.showCustomDialog(
+                                  context: context,
+                                  title: 'yes'.tr,
+                                  content:
+                                      'Are_you_sure_you_want_to_delete_account?'
+                                          .tr,
+                                  callButtonText: 'delete'.tr,
+                                  onCallPressed: () {
+                                    myProfileController
+                                        .deleteAccount()
+                                        .then((value) {
+                                      if (value != null) {
+                                        if (value["status"] == true) {
+                                          ShowDialog.showToast(
+                                              "Account Delete");
+                                          Get.back();
+                                          Preferences.clearSharPreference();
+                                          Get.offAll(() => LoginScreen());
+                                        }
+                                      }
+                                    });
+                                  });
                             },
                           ),
                         ],
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -300,15 +291,14 @@ class MyProfileScreen extends StatelessWidget {
     );
   }
 
-
   buildAlertChangeData(
-      BuildContext context, {
-        required String title,
-        required TextEditingController controller,
-        required IconData iconData,
-        required String? Function(String?) validators,
-        required Function() onSubmitBtn,
-      }) {
+    BuildContext context, {
+    required String title,
+    required TextEditingController controller,
+    required IconData iconData,
+    required String? Function(String?) validators,
+    required Function() onSubmitBtn,
+  }) {
     return Get.defaultDialog(
       titlePadding: const EdgeInsets.only(top: 20),
       radius: 6,
@@ -356,9 +346,9 @@ class MyProfileScreen extends StatelessWidget {
   }
 
   buildAlertChangePassword(
-      BuildContext context, {
-        required MyProfileController myProfileController,
-      }) {
+    BuildContext context, {
+    required MyProfileController myProfileController,
+  }) {
     return Get.defaultDialog(
       titlePadding: const EdgeInsets.only(top: 20),
       radius: 6,
@@ -432,16 +422,16 @@ class MyProfileScreen extends StatelessWidget {
                       if (_passwordKey.currentState!.validate()) {
                         Map<String, String> bodyParams = {
                           'id_user':
-                          Preferences.getInt(Preferences.userId).toString(),
-                          'user_cat': myProfileController.userCat.value,
-                          'anc_mdp': currentPasswordController.text,
-                          'new_mdp': newPasswordController.text,
+                              Preferences.getInt(Preferences.userId).toString(),
+                          'user_type': myProfileController.userType.value,
+                          'old_password': currentPasswordController.text,
+                          'new_password': newPasswordController.text,
                         };
                         myProfileController
                             .updatePassword(bodyParams)
                             .then((value) {
                           if (value != null) {
-                            if (value["success"] == "Success") {
+                            if (value['status'] == true) {
                               ShowDialog.showToast(
                                   "Password change successfully");
                               Get.back();
@@ -471,6 +461,4 @@ class MyProfileScreen extends StatelessWidget {
       ),
     );
   }
-
-
 }

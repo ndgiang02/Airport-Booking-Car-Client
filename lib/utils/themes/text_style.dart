@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class CustomTextStyles {
   static const TextStyle header = TextStyle(
@@ -8,31 +7,37 @@ class CustomTextStyles {
     color: Colors.black,
   );
 
+  static const TextStyle app = TextStyle(
+    fontSize: 20.0,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  );
+
+
   static const TextStyle body = TextStyle(
     fontSize: 14.0,
     color: Colors.black54,
   );
 
   static const TextStyle normal = TextStyle(
-    fontSize: 16,
+    fontSize: 16.0,
     color: Colors.black,
-    fontWeight: FontWeight.bold
+    fontWeight: FontWeight.bold,
   );
 
-  static const TextStyle mini = TextStyle(
-    fontSize: 12,
+  static const TextStyle small = TextStyle(
+    fontSize: 12.0,
     color: Colors.grey,
   );
 
-  static const TextStyle tiltle = TextStyle(
+  static const TextStyle title = TextStyle(
     fontSize: 14.0,
     color: Colors.black54,
     fontWeight: FontWeight.bold,
   );
 
-  static const TextStyle normal_2 = TextStyle(
+  static const TextStyle regular = TextStyle(
     fontSize: 16.0,
     color: Colors.black,
   );
-
 }

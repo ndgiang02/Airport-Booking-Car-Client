@@ -3,56 +3,54 @@ import 'contant_colors.dart';
 
 class TextFieldTheme {
 
-  static boxBuildTextField({
+  static Widget boxBuildTextField({
     required String hintText,
     required TextEditingController controller,
-    String? Function(String?)? validators,
     TextInputType textInputType = TextInputType.text,
-    bool obscureText = true,
-    EdgeInsets contentPadding = EdgeInsets.zero,
-    maxLine = 1,
-    bool enabled = true,
-    maxLength = 300,
-    Widget? prefixIcon,  void Function(String)? onChanged,
+    bool obscureText = false,
+    int maxLines = 1,
+    Widget? prefixIcon,
+    Widget? suffixIcon,
+    void Function(String)? onChanged,
+    String? Function(String?)? validators,
+    int maxLength = 300,
   }) {
     return TextFormField(
-        obscureText: !obscureText,
-        validator: validators,
-        keyboardType: textInputType,
-        textCapitalization: TextCapitalization.sentences,
-        controller: controller,
-        maxLines: maxLine,
-        maxLength: maxLength,
-        enabled: enabled,
-        decoration: InputDecoration(
-            counterText: "",
-            contentPadding: const EdgeInsets.all(10),
-            fillColor: Colors.white,
-            filled: true,
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: ConstantColors.textFieldFocusColor, width: 2),
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: ConstantColors.textFieldBoarderColor, width: 2),
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: ConstantColors.textFieldBoarderColor, width: 2),
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            border: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: ConstantColors.textFieldBoarderColor, width: 2),
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            hintText: hintText,
-            prefixIcon: prefixIcon,
-            hintStyle: TextStyle(color: ConstantColors.hintTextColor)));
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: textInputType,
+      maxLines: maxLines,
+      validator: validators,
+      maxLength: maxLength,
+      decoration: InputDecoration(
+        hintText: hintText,
+        prefixIcon: prefixIcon,
+        suffixIcon:suffixIcon,
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+              color: ConstantColors.textFieldFocusColor, width: 2),
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+              color: ConstantColors.textFieldBoarderColor, width: 2),
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: BorderSide(
+            width: 1.0,
+            color: Colors.cyan,
+          ),
+        ),
+        counterText: "",
+      ),
+      onChanged: onChanged,
+    );
   }
+
 
 
   static buildCustomTextField({

@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
 
 import '../../utils/extensions/load.dart';
+import '../../utils/preferences/preferences.dart';
 import '../../utils/themes/text_style.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,7 +16,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeState extends State<HomeScreen> {
   final TextEditingController codeController = TextEditingController();
+
   final homeController = Get.put(HomeController());
+
+  String? name =  Preferences.getString(Preferences.userName);
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +34,8 @@ class _HomeState extends State<HomeScreen> {
               children: [
                 SizedBox(width: 8),
                 Text(
-                  'Giang Nguyen Duy',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                  'hello'.tr +' ' + name!,
+                  style: CustomTextStyles.app,
                 ),
               ],
             ),
@@ -54,7 +58,7 @@ class _HomeState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Select_service'.tr,
+                'Select service'.tr,
                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -336,7 +340,7 @@ class _HomeState extends State<HomeScreen> {
           SizedBox(
             width: 100,
             child: Text(flightInfo['departure_city'] ?? 'Unknown',
-                style: CustomTextStyles.mini),
+                style: CustomTextStyles.body),
           ),
           Text(
             flightInfo['flnr'] ?? "",
@@ -345,7 +349,7 @@ class _HomeState extends State<HomeScreen> {
           SizedBox(
             width: 100,
             child: Text(flightInfo['arrival_city'] ?? 'Unknown',
-                textAlign: TextAlign.end, style: CustomTextStyles.mini),
+                textAlign: TextAlign.end, style: CustomTextStyles.body),
           ),
         ],
       ),
@@ -356,7 +360,7 @@ class _HomeState extends State<HomeScreen> {
               homeController.convertTo12HourFormat(
                   flightInfo['scheduled_departure_local'] ?? 'Unknown'),
               style: CustomTextStyles.normal),
-          Text("Dự kiến", style: CustomTextStyles.mini),
+          Text("Dự kiến", style: CustomTextStyles.body),
           Text(
               homeController.convertTo12HourFormat(
                   flightInfo['scheduled_arrival_local'] ?? 'Unknown'),
@@ -441,12 +445,12 @@ class _HomeState extends State<HomeScreen> {
                 width: 10,
               ),
               Text(flightInfo['airline_name'] ?? "Unknown",
-                  style: CustomTextStyles.tiltle),
+                  style: CustomTextStyles.title),
             ],
           ),
           Text(
             homeController.formatDate(flightInfo['actual_arrival_local']),
-            style: CustomTextStyles.mini,
+            style: CustomTextStyles.body,
             textAlign: TextAlign.end,
           ),
         ],

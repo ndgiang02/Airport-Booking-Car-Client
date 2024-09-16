@@ -1,37 +1,58 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 
 import '../models/notification_model.dart';
+import '../views/notifition_screen/notification_detail.dart';
 
 class NotificationController extends GetxController {
-
-  var notifications = <Notification>[].obs;
+  var notifications = <NotificationModel>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    // Thêm thông báo mẫu
-    notifications.addAll([
-      Notification(
-        title: 'Thông báo 1',
-        message: 'Bạn có một tin nhắn mới từ quản trị viên.',
-        date: DateTime.now().subtract(Duration(days: 1)),
-      ),
-      Notification(
-        title: 'Thông báo 2',
-        message: 'Hãy kiểm tra các cập nhật mới trên ứng dụng.',
-        date: DateTime.now().subtract(Duration(hours: 5)),
-      ),
-      Notification(
-        title: 'Thông báo 3',
-        message: 'Đã có một lỗi xảy ra khi tải dữ liệu.',
-        date: DateTime.now().subtract(Duration(minutes: 30)),
-      ),
-    ]);
+    _initMessaging();
+    _initFirebaseMessaging();
+    _handleInitialMessage();
   }
 
-  // Thêm thông báo mới
-  void addNotification(Notification notification) {
-    notifications.add(notification);
+  void _initFirebaseMessaging() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        notifications.add(
+          NotificationModel(
+            title: message.notification!.title ?? 'Thông báo',
+            message: message.notification!.body ?? '',
+            date: DateTime.now(),
+          ),
+        );
+      }
+    });
   }
 
+  void _initMessaging() {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        notifications.add(
+          NotificationModel(
+            title: message.notification!.title ?? 'Thông báo',
+            message: message.notification!.body ?? '',
+            date: DateTime.now(),
+          ),
+        );
+      }
+    });
+  }
+
+  Future<void> _handleInitialMessage() async {
+    RemoteMessage? message =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (message != null) {
+      final notification = NotificationModel(
+        title: message.data['title'] ?? 'No Title',
+        message: message.data['message'] ?? 'No Message',
+        date: DateTime.now(),
+      );
+      Get.to(() => NotificationDetailScreen(notification: notification));
+    }
+  }
 }

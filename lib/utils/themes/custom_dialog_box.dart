@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomAlert {
-
   static showCustomDialog({
     required BuildContext context,
     required String title,
@@ -38,14 +37,22 @@ class CustomAlert {
                   onPressed: onCallPressed,
                   child: Row(
                     children: [
-                      Text(callButtonText,
-                          style: TextStyle(color: callButtonColor)),
+                      Text(
+                        callButtonText,
+                        style: TextStyle(
+                          color: callButtonColor, // Màu cho button "Call"
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 TextButton(
-                  child: Text(cancelButtonText,
-                      style: TextStyle(color: cancelButtonColor)),
+                  child: Text(
+                    cancelButtonText,
+                    style: TextStyle(
+                      color: cancelButtonColor, // Màu cho button "Cancel"
+                    ),
+                  ),
                   onPressed: () {
                     Get.back();
                   },
@@ -57,5 +64,4 @@ class CustomAlert {
       },
     );
   }
-
 }

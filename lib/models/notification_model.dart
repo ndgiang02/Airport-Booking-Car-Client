@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class Notification {
+class NotificationModel {
   final String title;
   final String message;
   final DateTime date;
 
-  Notification({
-    required this.title,
-    required this.message,
-    required this.date,
-     });
+  NotificationModel({required this.title, required this.message, required this.date});
 
   String get formattedDate {
-    return DateFormat('dd/MM/yyyy').format(date);
+    return ' ${date.hour}:${date.minute}  ${date.day}/${date.month}/${date.year}';
   }
 }

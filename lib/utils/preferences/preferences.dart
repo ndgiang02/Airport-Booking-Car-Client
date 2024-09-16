@@ -6,10 +6,11 @@ class Preferences {
   static const isLogin = "isLogin";
   static const userId = "userId";
   static const user = "userData";
+  static const userName = "userName";
+  static const userEmail = "userEmail";
   static const paymentSetting = "paymentSetting";
   static const currency = "currency";
-  static const accesstoken = "accesstoken";
-  static const admincommission = "adminCommission";
+  static const token = "token";
 
   static late SharedPreferences pref;
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:customerapp/views/auth_screens/signup_screen.dart';
 import 'package:customerapp/views/navigation_screen/navigation_bar.dart';
 import 'package:flutter/gestures.dart';
@@ -5,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constant/constant.dart';
+import '../../constant/show_dialog.dart';
 import '../../controllers/login_controller.dart';
+import '../../utils/preferences/preferences.dart';
 import '../../utils/themes/button.dart';
 import '../../utils/themes/contant_colors.dart';
 import '../../utils/themes/textfield_theme.dart';
@@ -63,7 +67,6 @@ class LoginScreen extends StatelessWidget {
                               hintText: 'Email'.tr,
                               controller: _phoneController,
                               textInputType: TextInputType.emailAddress,
-                              contentPadding: EdgeInsets.zero,
                               prefixIcon: Icon(Icons.email),
                               validators: (String? value) {
                                 if (value!.isNotEmpty) {
@@ -75,20 +78,32 @@ class LoginScreen extends StatelessWidget {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 15),
-                              child: TextFieldTheme.boxBuildTextField(
-                                hintText: 'password'.tr,
-                                controller: _passwordController,
-                                textInputType: TextInputType.text,
-                                obscureText: false,
-                                contentPadding: EdgeInsets.zero,
-                                prefixIcon: Icon(Icons.lock_outline),
-                                validators: (String? value) {
-                                  if (value!.isNotEmpty) {
-                                    return null;
-                                  } else {
-                                    return 'required'.tr;
-                                  }
-                                },
+                              child: Obx( () => TextFieldTheme.boxBuildTextField(
+                                  hintText: 'password'.tr,
+                                  controller: _passwordController,
+                                  textInputType: TextInputType.text,
+                                  prefixIcon: Icon(Icons.lock_outline),
+                                  obscureText: controller.isObscure.value,
+                                  validators: (String? value) {
+                                    if (value!.isNotEmpty) {
+                                      return null;
+                                    } else {
+                                      return 'required'.tr;
+                                    }
+                                  },
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                        controller.isObscure.value
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        size: 20
+                                    ),
+                                    onPressed: () {
+                                      controller.isObscure.value =
+                                      !controller.isObscure.value;
+                                    },
+                                  ),
+                                ),
                               ),
                             ),
                             Padding(
@@ -100,25 +115,25 @@ class LoginScreen extends StatelessWidget {
                                   btnColor: ConstantColors.primary,
                                   txtColor: Colors.white,
                                   onPress: () async {
-                                    /*
                                     FocusScope.of(context).unfocus();
                                     if (_loginFormKey.currentState!.validate()) {
                                       Map<String, String> bodyParams = {
                                         'email': _phoneController.text.trim(),
-                                        'mdp': _passwordController.text,
-                                        'user_cat': "customer",
+                                        'password': _passwordController.text,
+                                        'user_type': "customer",
                                       };
                                       await controller.loginAPI(bodyParams).then((value) {
                                         if (value != null) {
-                                          if (value.success == "Success") {
+                                          if (value.status == true) {
                                             Preferences.setInt(Preferences.userId, value.data!.id!);
                                             Preferences.setString(Preferences.user, jsonEncode(value));
+                                            Preferences.setString(Preferences.userName, value.data!.name!);
+                                            Preferences.setString(Preferences.userEmail, value.data!.email!);
                                             _phoneController.clear();
                                             _passwordController.clear();
-                                              Preferences.setBoolean(Preferences.isLogin, true);
-                                              Get.offAll(HomeScreen(),
+                                            Preferences.setBoolean(Preferences.isLogin, true);
+                                              Get.offAll(() => NavigationPage(),
                                                   duration: const Duration(milliseconds: 400),
-                                                  //duration of transitions, default 1 sec
                                                   transition: Transition.rightToLeft);
                                           } else {
                                             ShowDialog.showToast(value.error);
@@ -126,11 +141,6 @@ class LoginScreen extends StatelessWidget {
                                         }
                                       });
                                     }
-
-                                     */
-                                    Get.off(()=> NavigationPage(),
-                                        duration: const Duration(milliseconds: 400), //duration of transitions, default 1 sec
-                                    transition: Transition.rightToLeft);
                                   },
                                 )),
                             Padding(
@@ -194,8 +204,8 @@ class LoginScreen extends StatelessWidget {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           Get.to(() => (MobileNumberScreen(isLogin: false)),
-                              duration: const Duration(milliseconds: 400), //duration of transitions, default 1 sec
-                              transition: Transition.rightToLeft); //transition effect);
+                              duration: const Duration(milliseconds: 400),
+                              transition: Transition.rightToLeft);
                         },
                     ),
                     TextSpan(
@@ -207,9 +217,8 @@ class LoginScreen extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.bold, color: ConstantColors.primary),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          Get.to(() => (
-                              SignUpScreen(phoneNumber: '000',
-                              )),
+                          Get.to(
+                              SignUpScreen(),
                               duration: const Duration(milliseconds: 400), //duration of transitions, default 1 sec
                               transition: Transition.rightToLeft); //transition effect);
                         },

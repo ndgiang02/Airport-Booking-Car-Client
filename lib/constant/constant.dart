@@ -16,7 +16,7 @@ const ic_pic_drop_location = 'assets/icons/ic_pic_drop_location.png';
 const ic_swap = 'assets/icons/swap.png';
 const ic_pickup = 'assets/icons/pickup.png';
 const ic_dropoff = 'assets/icons/dropoff.png';
-const ic_stop = 'assets/icons/stop.png';
+const ic_stop = 'assets/icons/pink.png';
 
 const API_KEY_LOCATION = '46f110f0e3msh0377381c278bffep11c5c9jsn20829ea2b0e4';
 

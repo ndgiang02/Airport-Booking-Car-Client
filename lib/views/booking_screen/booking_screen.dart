@@ -25,15 +25,14 @@ class AirportScreen extends StatefulWidget {
 }
 
 class _AirportScreenState extends State<AirportScreen> {
-  final bookController = Get.find<BookingController>();
+  final bookController = Get.put(BookingController());
 
   String apiKey = Constant.VietMapApiKey;
 
   final Location currentLocation = Location();
 
   final CameraPosition _kInitialPosition =
-  const CameraPosition(target: LatLng(10.762317, 106.654551));
-
+      const CameraPosition(target: LatLng(10.762317, 106.654551));
 
   VietmapController? _mapController;
 
@@ -68,7 +67,7 @@ class _AirportScreenState extends State<AirportScreen> {
             minMaxZoomPreference: const MinMaxZoomPreference(0, 24),
             rotateGesturesEnabled: false,
             styleString:
-            '${Constant.baseUrl}/maps/light/styles.json?apikey=$apiKey',
+                '${Constant.baseUrl}/maps/light/styles.json?apikey=$apiKey',
             initialCameraPosition: _kInitialPosition,
             onMapCreated: (VietmapController controller) async {
               _mapController = controller;
@@ -92,57 +91,113 @@ class _AirportScreenState extends State<AirportScreen> {
                       buildTextField(
                         controller: bookController.pickupController,
                         textObserver: bookController.pickupText,
-                        prefixIcon:  const Icon(Icons.location_on, size: 20, color: Colors.redAccent,),
+                        prefixIcon: const Icon(
+                          Icons.location_on,
+                          size: 20,
+                          color: Colors.redAccent,
+                        ),
                         hintText: 'From',
                         onClear: () {
                           bookController.pickupController.clear();
                           bookController.pickupLatLong.value = null;
-                          bookController.points.removeAt(0);
+                          if (bookController.points.isNotEmpty) {
+                            bookController.points.removeAt(0);
+                          }
                           bookController.clearData();
                           _mapController?.clearLines();
                           _mapController?.clearSymbols();
-                          debugPrint("Cancle ${bookController.pickupLatLong.value}");
+                          if (bookController.points.isNotEmpty) {
+                            bookController.fetchRouteData();
+                            bookController.addPolyline(_mapController);
+                          }
+                          debugPrint(
+                              "Cancel ${bookController.pickupLatLong.value}");
                         },
                         onGetCurrentLocation: () => _getCurrentLocation(true),
                       ),
                       const Divider(),
                       Obx(() => Column(
-                        children: List.generate(bookController.stopoverControllers.length, (index) {
-                          return Column(
-                            children: [
-                              buildTextField(
-                                controller: bookController.stopoverControllers[index],
-                                prefixIcon: const Icon(Icons.pin_drop, size: 20, color: Colors.amber,),
-                                hintText: 'Stopover ${index + 1}',
-                                onClear: () {
-                                  bookController.stopoverControllers[index].clear();
-                                  bookController.points.removeAt(index);
-                                  bookController.clearData();
-                                  _mapController?.clearLines();
-                                  _mapController?.clearSymbols();
-                                },
-                                onDeleteStop: () {
-                                  bookController.removeStopover(index);
-                                },
-                                textObserver: bookController.stopoverTexts[index],
-                              ),
-                              const Divider(),
-                            ],
-                          );
-                        }),
-                      )),
+                            children: List.generate(
+                                bookController.stopoverControllers.length,
+                                (index) {
+                              return Column(
+                                children: [
+                                  buildTextField(
+                                    controller: bookController
+                                        .stopoverControllers[index],
+                                    prefixIcon: const Icon(
+                                      Icons.pin_drop,
+                                      size: 20,
+                                      color: Colors.amber,
+                                    ),
+                                    hintText: 'Stopover ${index + 1}',
+                                    onClear: () {
+                                      bookController.stopoverControllers[index]
+                                          .clear();
+                                      if (bookController.points.length >
+                                          index + 1) {
+                                        bookController.points
+                                            .removeAt(index + 1);
+                                      }
+                                      bookController.clearData();
+                                      _mapController?.clearLines();
+                                      _mapController?.clearSymbols();
+                                      if (bookController.points.isNotEmpty) {
+                                        bookController.fetchRouteData();
+                                        bookController
+                                            .addPolyline(_mapController);
+                                      }
+                                    },
+                                    onDeleteStop: () {
+                                      bookController.removeStopover(index);
+
+                                      if (bookController.points.length >
+                                          index + 1) {
+                                        bookController.points
+                                            .removeAt(index + 1);
+                                      }
+
+                                      bookController.clearData();
+                                      _mapController?.clearLines();
+                                      _mapController?.clearSymbols();
+
+                                      if (bookController.points.isNotEmpty) {
+                                        bookController.fetchRouteData();
+                                        bookController
+                                            .addPolyline(_mapController);
+                                      }
+                                    },
+                                    textObserver:
+                                        bookController.stopoverTexts[index],
+                                  ),
+                                  const Divider(),
+                                ],
+                              );
+                            }),
+                          )),
                       buildTextField(
                         controller: bookController.destinationController,
                         textObserver: bookController.destinationText,
-                        prefixIcon: const Icon(Icons.flag_circle, size: 20, color: Colors.cyan,),
+                        prefixIcon: const Icon(
+                          Icons.flag_circle,
+                          size: 20,
+                          color: Colors.cyan,
+                        ),
                         hintText: 'To',
                         onClear: () {
                           bookController.destinationController.clear();
                           bookController.destinationLatLong.value = null;
-                          bookController.points.removeLast();
+
+                          if (bookController.points.isNotEmpty) {
+                            bookController.points.removeLast();
+                          }
                           bookController.clearData();
                           _mapController?.clearLines();
                           _mapController?.clearSymbols();
+                          if (bookController.points.isNotEmpty) {
+                            bookController.fetchRouteData();
+                            bookController.addPolyline(_mapController);
+                          }
                         },
                       ),
                       TextButton(
@@ -183,11 +238,11 @@ class _AirportScreenState extends State<AirportScreen> {
           Obx(() {
             return bookController.isMapDrawn.value
                 ? Positioned(
-              bottom: 10,
-              left: 10,
-              right: 10,
-              child: confirmWidget(),
-            )
+                    bottom: 10,
+                    left: 10,
+                    right: 10,
+                    child: confirmWidget(),
+                  )
                 : const SizedBox.shrink();
           }),
         ],
@@ -219,24 +274,27 @@ class _AirportScreenState extends State<AirportScreen> {
               prefixIcon: prefixIcon,
               suffixIcon: textObserver?.value.isNotEmpty ?? false
                   ? IconButton(
-                icon: const Icon(Icons.cancel, color: Colors.grey, size: 20),
-                onPressed: onClear,
-              )
+                      icon: const Icon(Icons.cancel,
+                          color: Colors.grey, size: 20),
+                      onPressed: onClear,
+                    )
                   : onDeleteStop != null
-                  ? IconButton(
-                icon: const Icon(Icons.clear, color: Colors.grey, size: 20),
-                onPressed: onDeleteStop,
-              )
-                  : onGetCurrentLocation != null
-                  ? IconButton(
-                icon: const Icon(Icons.my_location, color: Colors.grey, size: 20),
-                onPressed: onGetCurrentLocation,
-              )
-                  : null,
+                      ? IconButton(
+                          icon: const Icon(Icons.clear,
+                              color: Colors.grey, size: 20),
+                          onPressed: onDeleteStop,
+                        )
+                      : onGetCurrentLocation != null
+                          ? IconButton(
+                              icon: const Icon(Icons.my_location,
+                                  color: Colors.grey, size: 20),
+                              onPressed: onGetCurrentLocation,
+                            )
+                          : null,
               hintText: hintText,
               border: InputBorder.none,
               contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             ),
           ),
           suggestionsCallback: (pattern) async {
@@ -259,15 +317,15 @@ class _AirportScreenState extends State<AirportScreen> {
           onSuggestionSelected: (suggestion) async {
             controller.text = suggestion['display']!;
             LatLng? latLong =
-            await bookController.reverseGeocode(suggestion['ref_id']!);
+                await bookController.reverseGeocode(suggestion['ref_id']!);
             controller.selection =
                 TextSelection.fromPosition(const TextPosition(offset: 0));
             FocusScope.of(context).unfocus();
             bookController.suggestions.clear();
             if (controller == bookController.pickupController) {
               bookController.setPickUpMarker(latLong!, _mapController);
-            }
-            else if (bookController.stopoverControllers.contains(controller)) {
+            } else if (bookController.stopoverControllers
+                .contains(controller)) {
               bookController.setStopoverMarker([latLong!], _mapController);
             } else {
               bookController.setDestinationMarker(latLong!, _mapController);
@@ -303,10 +361,10 @@ class _AirportScreenState extends State<AirportScreen> {
                 title: "Back".tr,
                 btnColor: ConstantColors.cyan,
                 txtColor: Colors.black, onPress: () {
-                  bookController.isMapDrawn.value = false;
-                  _mapController?.clearLines();
-                  _mapController?.clearSymbols();
-                }),
+              bookController.isMapDrawn.value = false;
+              _mapController?.clearLines();
+              _mapController?.clearSymbols();
+            }),
           ),
           Expanded(
             child: ButtonThem.buildButton(context,
@@ -314,8 +372,8 @@ class _AirportScreenState extends State<AirportScreen> {
                 title: "Continue".tr,
                 btnColor: ConstantColors.primary,
                 txtColor: Colors.white, onPress: () async {
-                  tripOptionBottomSheet(context);
-                  /* await controller.getDurationDistance(departureLatLong!, destinationLatLong!).then((durationValue) async {
+              tripOptionBottomSheet(context);
+              /* await controller.getDurationDistance(departureLatLong!, destinationLatLong!).then((durationValue) async {
                 if (durationValue != null) {
                   await controller.getUserPendingPayment().then((value) async {
                     if (value != null) {
@@ -349,7 +407,7 @@ class _AirportScreenState extends State<AirportScreen> {
                   });
                 }
               });*/
-                }),
+            }),
           ),
         ],
       ),
@@ -384,48 +442,55 @@ class _AirportScreenState extends State<AirportScreen> {
                 const Divider(),
                 Obx(() {
                   return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Space between the title and switch
-                      children: [
-                        Text(
-                          "Round Trip".tr,
-                          style: CustomTextStyles.normal,
-                        ),
-                        Switch(
-                          activeColor: Colors.cyan,
-                          inactiveTrackColor: Colors.grey.shade50,
-                          value: bookController.isRoundTrip.value,
-                          onChanged: (bool value) {
-                            bookController.setRoundTrip(value);
-                          },
-                        ),
-                      ],
+                    mainAxisAlignment: MainAxisAlignment
+                        .spaceBetween, // Space between the title and switch
+                    children: [
+                      Text(
+                        "Round Trip".tr,
+                        style: CustomTextStyles.normal,
+                      ),
+                      Switch(
+                        activeColor: Colors.cyan,
+                        inactiveTrackColor: Colors.grey.shade50,
+                        value: bookController.isRoundTrip.value,
+                        onChanged: (bool value) {
+                          bookController.setRoundTrip(value);
+                        },
+                      ),
+                    ],
                   );
                 }),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Passenger ", style: CustomTextStyles.normal,),
-                     SizedBox(width: 10),
+                    Text(
+                      "Passenger ",
+                      style: CustomTextStyles.normal,
+                    ),
+                    SizedBox(width: 10),
                     Obx(() => DropdownButton<int>(
-                      value: bookController.selectedPassengerCount.value,
-                      iconEnabledColor: Colors.green,
-                      iconDisabledColor: Colors.grey,
-                      items: List.generate(10, (index) {
-                        return DropdownMenuItem<int>(
-                          value: index + 1,
-                          child: Text('${index + 1}'),
-                        );
-                      }),
-                      icon: Icon(Icons.person, color: ConstantColors.primary,),
-                      onChanged: (value) {
-                        if (value != null) {
-                          bookController.selectedPassengerCount.value = value;
-                        }
-                      },
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)), //,
-                    )),
-
+                          value: bookController.selectedPassengerCount.value,
+                          iconEnabledColor: Colors.green,
+                          iconDisabledColor: Colors.grey,
+                          items: List.generate(10, (index) {
+                            return DropdownMenuItem<int>(
+                              value: index + 1,
+                              child: Text('${index + 1}'),
+                            );
+                          }),
+                          icon: Icon(
+                            Icons.person,
+                            color: ConstantColors.primary,
+                          ),
+                          onChanged: (value) {
+                            if (value != null) {
+                              bookController.selectedPassengerCount.value =
+                                  value;
+                            }
+                          },
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(8.0)), //,
+                        )),
                   ],
                 ),
                 Row(
@@ -436,8 +501,9 @@ class _AirportScreenState extends State<AirportScreen> {
                         children: [
                           GestureDetector(
                             onTap: () async {
-                              DateTime initialDateTime = bookController.startDateTime.value ??
-                                  DateTime.now().add(Duration(minutes: 30));
+                              DateTime initialDateTime =
+                                  bookController.startDateTime.value ??
+                                      DateTime.now().add(Duration(minutes: 30));
                               DatePicker.showDateTimePicker(
                                 context,
                                 showTitleActions: true,
@@ -451,17 +517,24 @@ class _AirportScreenState extends State<AirportScreen> {
                               );
                             },
                             child: Obx(() {
-                              final dateTime = bookController.startDateTime.value;
+                              final dateTime =
+                                  bookController.startDateTime.value;
                               final formattedDateTime = dateTime == null
-                                  ? DateFormat('HH:mm dd-MM').format(DateTime.now())
+                                  ? DateFormat('HH:mm dd-MM')
+                                      .format(DateTime.now())
                                   : DateFormat('HH:mm dd-MM').format(dateTime);
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Start',style: CustomTextStyles.tiltle, textAlign: TextAlign.left),
-                                  const SizedBox(height: 5,),
+                                  Text('Start',
+                                      style: CustomTextStyles.title,
+                                      textAlign: TextAlign.left),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
                                   Container(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 12.0),
                                     decoration: BoxDecoration(
                                       border: Border.all(
                                         color: ConstantColors.primary,
@@ -471,7 +544,9 @@ class _AirportScreenState extends State<AirportScreen> {
                                     ),
                                     child: Row(
                                       children: [
-                                        Icon(Icons.access_time, size: 20.0, color: ConstantColors.primary),
+                                        Icon(Icons.access_time,
+                                            size: 20.0,
+                                            color: ConstantColors.primary),
                                         SizedBox(width: 8.0),
                                         Expanded(
                                           child: Text(
@@ -497,8 +572,9 @@ class _AirportScreenState extends State<AirportScreen> {
                         if (bookController.isRoundTrip.value) {
                           return GestureDetector(
                             onTap: () async {
-                              DateTime initialDateTime = bookController.returnDateTime.value ??
-                                  DateTime.now().add(Duration(minutes: 30));
+                              DateTime initialDateTime =
+                                  bookController.returnDateTime.value ??
+                                      DateTime.now().add(Duration(minutes: 30));
                               DatePicker.showDateTimePicker(
                                 context,
                                 showTitleActions: true,
@@ -512,17 +588,26 @@ class _AirportScreenState extends State<AirportScreen> {
                               );
                             },
                             child: Obx(() {
-                              final dateTime = bookController.returnDateTime.value;
+                              final dateTime =
+                                  bookController.returnDateTime.value;
                               final formattedDateTime = dateTime == null
-                                  ? DateFormat('HH:mm dd-MM').format(DateTime.now())
+                                  ? DateFormat('HH:mm dd-MM')
+                                      .format(DateTime.now())
                                   : DateFormat('HH:mm dd-MM').format(dateTime);
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Return',style: CustomTextStyles.tiltle, textAlign: TextAlign.left ,),
-                                  const SizedBox(height: 5,),
+                                  Text(
+                                    'Return',
+                                    style: CustomTextStyles.title,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
                                   Container(
-                                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 12.0),
                                     decoration: BoxDecoration(
                                       border: Border.all(
                                         color: Colors.redAccent,
@@ -532,7 +617,9 @@ class _AirportScreenState extends State<AirportScreen> {
                                     ),
                                     child: Row(
                                       children: [
-                                        Icon(Icons.access_time, size: 20.0, color: Colors.redAccent),
+                                        Icon(Icons.access_time,
+                                            size: 20.0,
+                                            color: Colors.redAccent),
                                         SizedBox(width: 8.0),
                                         Expanded(
                                           child: Text(
@@ -584,19 +671,24 @@ class _AirportScreenState extends State<AirportScreen> {
                             title: "Book Now".tr,
                             btnColor: ConstantColors.primary,
                             txtColor: Colors.white, onPress: () async {
-                                if (bookController.startDateTime.value == null || bookController.startDateTime.value == null) {
-                                  ShowDialog.showToast("Please Select Start Date Time".tr);
-                                } else if (bookController.isRoundTrip.value &&
-                                    (bookController.returnDateTime.value == null || bookController.returnDateTime.value == null)) {
-                                  ShowDialog.showToast("Please Select Return Date & Time".tr);
-                                } else {
-                                await bookController
-                                    .getVehicleCategoryModel()
-                                    .then((value) {
-                                  chooseVehicleBottomSheet(context, value);
-                                });
-                              }
-                            }),
+                          if (bookController.startDateTime.value == null ||
+                              bookController.startDateTime.value == null) {
+                            ShowDialog.showToast(
+                                "Please Select Start Date Time".tr);
+                          } else if (bookController.isRoundTrip.value &&
+                              (bookController.returnDateTime.value == null ||
+                                  bookController.returnDateTime.value ==
+                                      null)) {
+                            ShowDialog.showToast(
+                                "Please Select Return Date & Time".tr);
+                          } else {
+                            await bookController
+                                .getVehicleCategoryModel()
+                                .then((value) {
+                              chooseVehicleBottomSheet(context, value);
+                            });
+                          }
+                        }),
                       ),
                     ],
                   ),
@@ -644,7 +736,10 @@ class _AirportScreenState extends State<AirportScreen> {
                       Expanded(
                         child: Row(
                           children: [
-                            const Icon(color: Colors.black12 ,Icons.social_distance_outlined, size: 20 ),
+                            const Icon(
+                                color: Colors.black12,
+                                Icons.social_distance_outlined,
+                                size: 20),
                             Padding(
                               padding: const EdgeInsets.only(left: 10),
                               child: Text("Distance".tr,
@@ -654,18 +749,22 @@ class _AirportScreenState extends State<AirportScreen> {
                         ),
                       ),
                       Obx(() => Text(
-                        "${bookController.distance.value.toStringAsFixed(2)} ${Constant.distanceUnit}",
-                        style: CustomTextStyles.normal_2,
-                      )),
+                            "${bookController.distance.value.toStringAsFixed(2)} ${Constant.distanceUnit}",
+                            style: CustomTextStyles.body,
+                          )),
                     ],
                   ),
-                  Divider(indent: 10, endIndent: 10,),
+                  Divider(
+                    indent: 10,
+                    endIndent: 10,
+                  ),
                   Row(
                     children: [
                       Expanded(
                         child: Row(
                           children: [
-                            const Icon(color: Colors.red ,Icons.timer_sharp, size: 20 ),
+                            const Icon(
+                                color: Colors.red, Icons.timer_sharp, size: 20),
                             Padding(
                               padding: const EdgeInsets.only(left: 10),
                               child: Text("Duration".tr,
@@ -676,7 +775,7 @@ class _AirportScreenState extends State<AirportScreen> {
                       ),
                       Obx(() => Text(
                           "${bookController.duration.value.toStringAsFixed(2)} ${Constant.durationUnit}",
-                          style: CustomTextStyles.normal_2)),
+                          style: CustomTextStyles.normal)),
                     ],
                   ),
                   Divider(
@@ -689,10 +788,10 @@ class _AirportScreenState extends State<AirportScreen> {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         return Obx(
-                              () => InkWell(
+                          () => InkWell(
                             onTap: () {
                               bookController.vehicleData =
-                              vehicleCategoryModel.data![index];
+                                  vehicleCategoryModel.data![index];
                               bookController.selectedVehicle.value =
                                   vehicleCategoryModel.data![index].id
                                       .toString();
@@ -703,8 +802,8 @@ class _AirportScreenState extends State<AirportScreen> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: bookController.selectedVehicle.value ==
-                                      vehicleCategoryModel.data![index].id
-                                          .toString()
+                                          vehicleCategoryModel.data![index].id
+                                              .toString()
                                       ? ConstantColors.primary
                                       : Colors.black.withOpacity(0.10),
                                   borderRadius: BorderRadius.circular(8),
@@ -723,17 +822,17 @@ class _AirportScreenState extends State<AirportScreen> {
                                                     left: 10),
                                                 child: Text(
                                                   vehicleCategoryModel
-                                                      .data![index].libelle
+                                                      .data![index].name
                                                       .toString(),
                                                   textAlign: TextAlign.start,
                                                   style: TextStyle(
                                                     fontSize: 18,
                                                     color: bookController
-                                                        .selectedVehicle
-                                                        .value ==
-                                                        vehicleCategoryModel
-                                                            .data![index].id
-                                                            .toString()
+                                                                .selectedVehicle
+                                                                .value ==
+                                                            vehicleCategoryModel
+                                                                .data![index].id
+                                                                .toString()
                                                         ? Colors.white
                                                         : Colors.black,
                                                     fontWeight: FontWeight.w500,
@@ -743,53 +842,54 @@ class _AirportScreenState extends State<AirportScreen> {
                                             ),
                                             Padding(
                                               padding:
-                                              const EdgeInsets.only(top: 5),
+                                                  const EdgeInsets.only(top: 5),
                                               child: Column(
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                    CrossAxisAlignment.start,
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                                    MainAxisAlignment.start,
                                                 children: [
                                                   Obx(() => Text(
-                                                    Constant().amountShow(
-                                                        amount:
-                                                        "${bookController.calculateTripPrice(
+                                                    'Hello',
+                                                        /*Constant().amountShow(
+                                                            amount:
+                                                                "${bookController.calculateTripPrice(
                                                           distance:
-                                                          bookController
-                                                              .distance
-                                                              .value,
+                                                              bookController
+                                                                  .distance
+                                                                  .value,
                                                           deliveryCharges: double.parse(
                                                               vehicleCategoryModel
                                                                   .data![index]
                                                                   .deliveryCharges!),
                                                           minimumDeliveryCharges:
-                                                          double.parse(
-                                                              vehicleCategoryModel
-                                                                  .data![
-                                                              index]
-                                                                  .minimumDeliveryCharges!),
+                                                              double.parse(
+                                                                  vehicleCategoryModel
+                                                                      .data![
+                                                                          index]
+                                                                      .minimumDeliveryCharges!),
                                                           minimumDeliveryChargesWithin:
-                                                          double.parse(
-                                                              vehicleCategoryModel
-                                                                  .data![
-                                                              index]
-                                                                  .minimumDeliveryChargesWithin!),
-                                                        )}"),
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                    style: TextStyle(
-                                                      color: bookController
-                                                          .selectedVehicle
-                                                          .value ==
-                                                          vehicleCategoryModel
-                                                              .data![
-                                                          index]
-                                                              .id
-                                                              .toString()
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                    ),
-                                                  )),
+                                                              double.parse(
+                                                                  vehicleCategoryModel
+                                                                      .data![
+                                                                          index]
+                                                                      .minimumDeliveryChargesWithin!),
+                                                        )}"),*/
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          color: bookController
+                                                                      .selectedVehicle
+                                                                      .value ==
+                                                                  vehicleCategoryModel
+                                                                      .data![
+                                                                          index]
+                                                                      .id
+                                                                      .toString()
+                                                              ? Colors.white
+                                                              : Colors.black,
+                                                        ),
+                                                      )),
                                                 ],
                                               ),
                                             ),
@@ -836,22 +936,25 @@ class _AirportScreenState extends State<AirportScreen> {
                             btnColor: ConstantColors.primary,
                             txtColor: Colors.white,
                             onPress: () async {
-                              bookController.isMapDrawn.value =false;
-                              Navigator.of(context).popUntil((route) => route.isFirst);
+                              bookController.isMapDrawn.value = false;
+                              Navigator.of(context)
+                                  .popUntil((route) => route.isFirst);
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return CustomDialogBox(
                                       title: "",
-                                      descriptions: "Your booking has been sent successfully",
+                                      descriptions:
+                                          "Your booking has been sent successfully",
                                       onPress: () {
                                         Get.back();
                                       },
-                                      img: Image.asset('assets/images/green_checked.png'),
+                                      img: Image.asset(
+                                          'assets/images/green_checked.png'),
                                     );
                                   });
                               List stopsList = [];
-                             /* for (var i = 0; i < controller.multiStopListNew.length; i++) {
+                              /* for (var i = 0; i < controller.multiStopListNew.length; i++) {
                                 stopsList.add({
                                   "latitude": controller.multiStopListNew[i].latitude.toString(),
                                   "longitude": controller.multiStopListNew[i].longitude.toString(),
@@ -860,27 +963,42 @@ class _AirportScreenState extends State<AirportScreen> {
                               }*/
 
                               Map<String, dynamic> bodyParams = {
-                                'user_id': Preferences.getInt(Preferences.userId).toString(),
-                                'lat1': bookController.pickupLatLong.value!.latitude.toString(),
-                                'lng1': bookController.destinationLatLong.value!.longitude.toString(),
-                                'lat2': bookController.pickupLatLong.value!.latitude.toString(),
-                                'lng2': bookController.destinationLatLong.value!.longitude.toString(),
+                                'user_id':
+                                    Preferences.getInt(Preferences.userId)
+                                        .toString(),
+                                'lat1': bookController
+                                    .pickupLatLong.value!.latitude
+                                    .toString(),
+                                'lng1': bookController
+                                    .destinationLatLong.value!.longitude
+                                    .toString(),
+                                'lat2': bookController
+                                    .pickupLatLong.value!.latitude
+                                    .toString(),
+                                'lng2': bookController
+                                    .destinationLatLong.value!.longitude
+                                    .toString(),
                                 //'cout': tripPrice.toString(),
                                 'distance': bookController.distance.toString(),
-                                'distance_unit': Constant.distanceUnit.toString(),
+                                'distance_unit':
+                                    Constant.distanceUnit.toString(),
                                 'duree': bookController.duration.toString(),
-                                'depart_name': bookController.pickupController.text,
-                                'destination_name': bookController.destinationController.text,
+                                'depart_name':
+                                    bookController.pickupController.text,
+                                'destination_name':
+                                    bookController.destinationController.text,
                                 'stops': stopsList,
                                 'place': '',
-                                'number_poeple': bookController.selectedPassengerCount.toString(),
+                                'number_poeple': bookController
+                                    .selectedPassengerCount
+                                    .toString(),
                                 'image': '',
                                 'image_name': "",
                                 'statut_round': 'no',
-                               // 'trip_objective': bookController.tripOptionCategory.value,
+                                // 'trip_objective': bookController.tripOptionCategory.value,
                               };
 
-                            /*  bookController.bookRide(bodyParams).then((value) {
+                              /*  bookController.bookRide(bodyParams).then((value) {
                                 if (value != null) {
                                   if (value['success'] == "success") {
                                     Get.back();
