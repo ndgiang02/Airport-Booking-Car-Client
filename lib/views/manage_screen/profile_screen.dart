@@ -138,7 +138,7 @@ class MyProfileScreen extends StatelessWidget {
                                         if (value["success"] == "success") {
                                           UserModel userModel =
                                               Constant.getUserData();
-                                          userModel.data!.name =
+                                          userModel.data!.user!.name =
                                               value['data']['name'];
                                           Preferences.setString(
                                               Preferences.user,

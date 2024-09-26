@@ -43,7 +43,6 @@ dependencies:
   location:  ^6.0.2 # Truy cập dịch vụ định vị
   vietmap_flutter_gl: ^2.2.1
   vietmap_flutter_plugin: ^0.3.0
-  flutter_typeahead: ^4.8.0
 
   # Khởi động URL và liên kết
   url_launcher: ^6.3.0 # Khởi động URL

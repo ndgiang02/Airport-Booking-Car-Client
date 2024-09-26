@@ -202,7 +202,7 @@ class SignUpScreen extends StatelessWidget {
                                           _phoneController.clear();
                                           Get.to(() => LoginScreen());
                                         } else {
-                                          ShowDialog.showToast(value.error);
+                                          ShowDialog.showToast(value.message);
                                         }
                                       }
                                     });

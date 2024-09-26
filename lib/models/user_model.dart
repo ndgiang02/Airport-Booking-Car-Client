@@ -1,30 +1,50 @@
+// user_model.dart
+
 class UserModel {
   UserModel({
     this.status,
-    this.error,
     this.message,
     this.data,
   });
 
   bool? status;
-  String? error;
   String? message;
-  User? data;
+  UserData? data;
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       status: json['status'] as bool?,
-      error: json['error']?.toString(),
       message: json['message']?.toString(),
-      data: json['data'] != null ? User.fromJson(json['data']) : null,
+      data: json['data'] != null ? UserData.fromJson(json['data']) : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
     'status': status,
-    'error': error,
     'message': message,
     'data': data?.toJson(),
+  };
+}
+
+class UserData {
+  UserData({
+    this.user,
+    this.token,
+  });
+
+  User? user;
+  String? token;
+
+  factory UserData.fromJson(Map<String, dynamic> json) {
+    return UserData(
+      user: json['user'] != null ? User.fromJson(json['user']) : null,
+      token: json['token']?.toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'user': user?.toJson(),
+    'token': token,
   };
 }
 

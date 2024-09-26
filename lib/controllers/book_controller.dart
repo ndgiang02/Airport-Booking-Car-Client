@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
-import 'package:customerapp/service/fakeapi.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -24,10 +22,12 @@ class BookController extends GetxController {
   RxInt totalAmount = 0.obs;
   RxInt selectedPassengerCount = 1.obs;
 
+  var currentSheetIndex = 0.obs;
+  var vehicleCategoryModel = VehicleCategoryModel().obs;
+
   var step = 'pickup'.obs;
 
   var isPickupConfirmed = false.obs;
-  var isDestinationConfirmed = false.obs;
   var isRouteDrawn = false.obs;
 
   var pickupLatLong = Rxn<LatLng>();
@@ -94,7 +94,6 @@ class BookController extends GetxController {
     selectedPassengerCount.value = 1;
     step.value = 'pickup';
     isPickupConfirmed.value = false;
-    isDestinationConfirmed.value = false;
     isRouteDrawn.value = false;
     polylinePoints.clear();
     suggestions.clear();
@@ -189,7 +188,7 @@ class BookController extends GetxController {
     );
   }
 
-  Future<VehicleCategoryModel?> fetchVehicleTypes() async {
+  Future<void> fetchVehicleTypes() async {
     try {
       final response = await http.get(
         Uri.parse(API.fetchVehicle),
@@ -201,22 +200,14 @@ class BookController extends GetxController {
 
       if (response.statusCode == 200) {
         final jsonData = responseBody;
-        return VehicleCategoryModel.fromJson(jsonData);
+        vehicleCategoryModel.value = VehicleCategoryModel.fromJson(jsonData);
+        //return VehicleCategoryModel.fromJson(jsonData);
       } else {
         log('Failed to load vehicle types');
-        return null;
       }
     } catch (e) {
       log('Error: $e');
-      return null;
     }
-  }
-
-  // getVehicle
-  Future<VehicleCategoryModel> getVehicleCategoryModel() async {
-    final jsonString = await FakeAPI.fetchVehicleCategoryData();
-    final jsonMap = json.decode(jsonString);
-    return VehicleCategoryModel.fromJson(jsonMap);
   }
 
   int calculateTripPrice({
@@ -411,8 +402,9 @@ class BookController extends GetxController {
           padding: 100);
 
       await mapController.animateCamera(
-        CameraUpdate.newLatLngBounds(bounds),
+        CameraUpdate.newLatLngBounds(bounds, bottom: 1000),
       );
+
     }
   }
 }

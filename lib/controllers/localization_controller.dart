@@ -52,9 +52,9 @@ class LocalizationController extends GetxController {
 
   void updateLocale() {
     if (selectedLanguage.value == 'vi') {
-      Get.updateLocale(Locale('vi', 'VN'));
+      Get.updateLocale(const Locale('vi', 'VN'));
     } else {
-      Get.updateLocale(Locale('en', 'US'));
+      Get.updateLocale(const Locale('en', 'US'));
     }
   }
 

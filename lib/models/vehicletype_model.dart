@@ -1,27 +1,24 @@
-class VehicleCategoryModel1 {
-  bool? success;
-  String? error;
+class VehicleCategoryModel {
+  bool? status;
   String? message;
-  List<VehicleData1>? data;
+  List<VehicleData>? data;
 
-  VehicleCategoryModel1({this.success, this.error, this.message, this.data});
+  VehicleCategoryModel({this.status, this.message, this.data});
 
-  VehicleCategoryModel1.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    error = json['error'];
+  VehicleCategoryModel.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
     message = json['message'];
     if (json['data'] != null) {
-      data = <VehicleData1>[];
+      data = <VehicleData>[];
       json['data'].forEach((v) {
-        data!.add(VehicleData1.fromJson(v));
+        data!.add(VehicleData.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['success'] = success;
-    data['error'] = error;
+    data['status'] = status;
     data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
@@ -30,7 +27,7 @@ class VehicleCategoryModel1 {
   }
 }
 
-class VehicleData1 {
+class VehicleData {
   int? id;
   String? name;
   String? startingPrice;
@@ -38,7 +35,7 @@ class VehicleData1 {
   int? seatingCapacity;
   String? imageUrl;
 
-  VehicleData1({
+  VehicleData({
     this.id,
     this.name,
     this.startingPrice,
@@ -47,7 +44,7 @@ class VehicleData1 {
     this.imageUrl,
   });
 
-  VehicleData1.fromJson(Map<String, dynamic> json) {
+  VehicleData.fromJson(Map<String, dynamic> json) {
     id = int.parse(json['id'].toString());
     name = json['name'].toString();
     startingPrice = json['starting_price'].toString();

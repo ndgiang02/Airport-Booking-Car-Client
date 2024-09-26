@@ -27,11 +27,11 @@ class MyProfileController extends GetxController {
 
   getUsrData() async {
     UserModel userModel = Constant.getUserData();
-    name.value = userModel.data!.name!;
-    email.value = userModel.data!.email!;
-    mobile.value = userModel.data!.mobile!;
-    userType.value = userModel.data!.userType!;
-    userId.value = userModel.data!.id!;
+    name.value = userModel.data!.user!.name!;
+    email.value = userModel.data!.user!.email!;
+    mobile.value = userModel.data!.user!.mobile!;
+    userType.value =userModel.data!.user!.userType!;
+    userId.value = userModel.data!.user!.id!;
   }
 
   Future<dynamic> updateName(Map<String, String> bodyParams) async {

@@ -125,10 +125,10 @@ class LoginScreen extends StatelessWidget {
                                       await controller.loginAPI(bodyParams).then((value) {
                                         if (value != null) {
                                           if (value.status == true) {
-                                            Preferences.setInt(Preferences.userId, value.data!.id!);
+                                            Preferences.setInt(Preferences.userId, value.data!.user!.id!);
                                             Preferences.setString(Preferences.user, jsonEncode(value));
-                                            Preferences.setString(Preferences.userName, value.data!.name!);
-                                            Preferences.setString(Preferences.userEmail, value.data!.email!);
+                                            Preferences.setString(Preferences.userName, value.data!.user!.name!);
+                                            Preferences.setString(Preferences.userEmail, value.data!.user!.email!);
                                             _phoneController.clear();
                                             _passwordController.clear();
                                             Preferences.setBoolean(Preferences.isLogin, true);
@@ -136,7 +136,7 @@ class LoginScreen extends StatelessWidget {
                                                   duration: const Duration(milliseconds: 400),
                                                   transition: Transition.rightToLeft);
                                           } else {
-                                            ShowDialog.showToast(value.error);
+                                            ShowDialog.showToast(value.message);
                                           }
                                         }
                                       });

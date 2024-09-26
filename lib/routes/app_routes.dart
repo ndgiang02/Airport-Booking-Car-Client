@@ -11,7 +11,6 @@ import 'package:get/get.dart';
 
 import '../views/activities_screen/activities_screen.dart';
 import '../views/booking_screen/airport_screen.dart';
-import '../views/booking_screen/booking_screen.dart';
 
 class AppRoutes {
 
@@ -65,13 +64,6 @@ class AppRoutes {
       page: () => NotificationScreen(),
       bindings: [
         NotificationBinding(),
-      ],
-    ),
-    GetPage(
-      name: airportScreen,
-      page: () => const AirportScreen(),
-      bindings: [
-        BookingBinding(),
       ],
     ),
     GetPage(
