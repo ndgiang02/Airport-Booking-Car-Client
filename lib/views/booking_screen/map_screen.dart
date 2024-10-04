@@ -25,13 +25,12 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+
   final bookController = Get.put(BookController());
 
   String apiKey = Constant.VietMapApiKey;
 
   VietmapController? _mapController;
-  final ValueNotifier<double> draggableSheetHeight = ValueNotifier<double>(0.3);
-
 
   final CameraPosition _kInitialPosition =
       const CameraPosition(target: LatLng(10.762317, 106.654551), zoom: 10);
@@ -41,30 +40,25 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          ValueListenableBuilder<double>(
-            valueListenable: draggableSheetHeight,
-            builder: (context, height, child) {
-              return SizedBox(
-                height: MediaQuery.of(context).size.height * (1 - height),
-                child: VietmapGL(
-                  dragEnabled: true,
-                  compassEnabled: false,
-                  trackCameraPosition: true,
-                  myLocationRenderMode: MyLocationRenderMode.COMPASS,
-                  myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
-                  minMaxZoomPreference: const MinMaxZoomPreference(0, 24),
-                  rotateGesturesEnabled: false,
-                  styleString: '${Constant.baseUrl}/maps/light/styles.json?apikey=$apiKey',
-                  initialCameraPosition: _kInitialPosition,
-                  onMapCreated: (VietmapController controller) async {
-                    _mapController = controller;
-                  },
-                  onMapIdle: _setPickupMaker,
-                ),
-              );
-            },
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.65,
+            child: VietmapGL(
+              dragEnabled: true,
+              compassEnabled: false,
+              trackCameraPosition: true,
+              myLocationRenderMode: MyLocationRenderMode.COMPASS,
+              myLocationTrackingMode: MyLocationTrackingMode.TrackingGPS,
+              minMaxZoomPreference: const MinMaxZoomPreference(0, 24),
+              rotateGesturesEnabled: false,
+              styleString:
+                  '${Constant.baseUrl}/maps/light/styles.json?apikey=$apiKey',
+              initialCameraPosition: _kInitialPosition,
+              onMapCreated: (VietmapController controller) async {
+                _mapController = controller;
+              },
+              onMapIdle: setPickupMaker,
+            ),
           ),
-
           Obx(() {
             switch (bookController.currentSheetIndex.value) {
               case 0:
@@ -72,7 +66,8 @@ class _MapScreenState extends State<MapScreen> {
               case 1:
                 return buildTripOption();
               case 2:
-                return buildChooseVehicle(bookController.vehicleCategoryModel.value);
+                return buildChooseVehicle(
+                    bookController.vehicleCategoryModel.value);
               case 3:
                 return buildPaymentOption();
               default:
@@ -84,7 +79,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Future<void> _setPickupMaker() async {
+  Future<void> setPickupMaker() async {
     final LatLng? pickup = bookController.pickupLatLong.value;
 
     if (pickup == null ||
@@ -108,7 +103,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Future<void> _drawRoute() async {
+  /*Future<void> drawRoute() async {
     if (_mapController == null) return;
     final LatLng? pickup = bookController.pickupLatLong.value;
     final LatLng? destination = bookController.destinationLatLong.value;
@@ -125,20 +120,55 @@ class _MapScreenState extends State<MapScreen> {
     routePoints.add(destination);
     await bookController.fetchRouteData(routePoints);
     bookController.addPolyline(_mapController);
-    double bottomSheetHeight = MediaQuery.of(context).size.height * 0.4;
+    bookController.isRouteDrawn.value = true;
+  }*/
+
+ /* Future<void> drawRoute2({bool isRoundTrip = false}) async {
+    if (_mapController == null) return;
+
+    final LatLng? pickup = bookController.pickupLatLong.value;
+    final LatLng? destination = bookController.destinationLatLong.value;
+
+    if (pickup == null || destination == null) {
+      log('Insufficient data to draw the route.');
+      return;
+    }
+
+    List<LatLng> routePoints = [pickup];
+
+    if (bookController.stopoverLatLng.isNotEmpty) {
+      routePoints.addAll(bookController.stopoverLatLng);
+    }
+
+    routePoints.add(destination);
+
+    if (isRoundTrip) {
+      routePoints.addAll(bookController.stopoverLatLng.reversed);
+      routePoints.add(pickup);
+    }
+    await bookController.fetchRouteData(routePoints);
+    bookController.addPolyline(_mapController);
     bookController.isRouteDrawn.value = true;
   }
 
+  Future<void> updateRoute() async {
+    bool isRoundTrip = bookController.isRoundTrip.value;
+    await drawRoute(isRoundTrip: isRoundTrip);
+  }
+
+  void onRoundTripChanged(bool isRoundTrip) {
+    bookController.roundTrip.value = isRoundTrip;
+    updateRoute();
+  }*/
+
+
   Widget buildConfirm() {
     return DraggableScrollableSheet(
-      initialChildSize: 0.3,
+      minChildSize: 0.35,
+      initialChildSize: 0.35,
+      maxChildSize: 0.35,
       builder: (context, scrollController) {
-        return NotificationListener<DraggableScrollableNotification>(
-          onNotification: (notification) {
-            draggableSheetHeight.value = notification.extent;
-            return true;
-          },
-          child: Container(
+        return Container(
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(
@@ -164,14 +194,14 @@ class _MapScreenState extends State<MapScreen> {
                           const SizedBox(height: 5),
                           Text(
                             'confirm or change'.tr,
-                            style: CustomTextStyles.normal,
+                            style: CustomTextStyles.body,
                           ),
                         ],
                       ),
                       IconButton(
                         icon: const Icon(Icons.edit),
                         onPressed: () {
-                          Navigator.of(context).pop(); // Đóng DraggableScrollableSheet nếu cần
+
                         },
                       ),
                     ],
@@ -193,11 +223,12 @@ class _MapScreenState extends State<MapScreen> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            bookController.pickupController.value.text.length > 35
-                                ? bookController.pickupController.value.text
-                                .substring(0, 35) +
-                                '...'
-                                : bookController.destinationController.value.text,
+                            bookController.pickupController.value.text.length >
+                                    40
+                                ? '${bookController.pickupController.value.text
+                                        .substring(0, 40)}...'
+                                : bookController
+                                    .destinationController.value.text,
                             style: CustomTextStyles.regular,
                           ),
                         ),
@@ -208,15 +239,14 @@ class _MapScreenState extends State<MapScreen> {
                   ButtonThem.buildCustomButton(
                     label: 'confirmed_pickup'.tr,
                     onPressed: () async {
-                      await _drawRoute();
+                      await bookController.drawRoute(_mapController!);
                       bookController.isRouteDrawn.value = true;
-                      bookController.currentSheetIndex.value = 1 ;
+                      bookController.currentSheetIndex.value = 1;
                     },
                   ),
                 ],
               ),
             ),
-          ),
         );
       },
     );
@@ -224,15 +254,11 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget buildTripOption() {
     return DraggableScrollableSheet(
+      minChildSize: 0.45,
       initialChildSize: 0.45,
       maxChildSize: 0.5,
       builder: (context, scrollController) {
-        return NotificationListener<DraggableScrollableNotification>(
-          onNotification: (notification) {
-            draggableSheetHeight.value = notification.extent;
-            return true;
-          },
-          child: Container(
+        return Container(
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(
@@ -240,249 +266,249 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: SingleChildScrollView(
-              controller: scrollController,
-              child: Obx( ()=>
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Lựa chọn chuyến đi',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () {
-                            Get.back();
-                          },
-                        ),
-                      ],
-                    ),
-                    const Divider(
-                      color: Colors.blue,
-                      thickness: 1,
-                      indent: 16,
-                      endIndent: 16,
-                      height: 10,
-                    ),
-                    // Round Trip Option
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Round Trip",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Switch(
-                          activeColor: Colors.cyan,
-                          inactiveTrackColor: Colors.grey.shade50,
-                          value: bookController.isRoundTrip.value,
-                          onChanged: (bool value) {
-                            bookController.setRoundTrip(value);
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    // Passenger Option
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Passenger",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        DropdownButton<int>(
-                          value: bookController.selectedPassengerCount.value,
-                          iconEnabledColor: Colors.green,
-                          iconDisabledColor: Colors.grey,
-                          items: List.generate(10, (index) {
-                            return DropdownMenuItem<int>(
-                              value: index + 1,
-                              child: Text('${index + 1}'),
-                            );
-                          }),
-                          icon: const Icon(
-                            Icons.person,
-                            color: Colors.cyan,
-                          ),
-                          onChanged: (value) {
-                            if (value != null) {
-                              bookController.selectedPassengerCount.value = value;
-                            }
-                          },
-                          borderRadius:
-                          const BorderRadius.all(Radius.circular(8.0)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () async {
-                              DateTime initialDateTime = bookController
-                                  .scheduledTime.value ??
-                                  DateTime.now().add(const Duration(minutes: 30));
-                              DatePicker.showDateTimePicker(
-                                context,
-                                showTitleActions: true,
-                                minTime: DateTime.now(),
-                                maxTime: DateTime(2101),
-                                onConfirm: (dateTime) {
-                                  bookController.setScheduledTime(dateTime);
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Obx(
+                      () => Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                               Text(
+                                'trip_option'.tr,
+                                style: CustomTextStyles.header
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () {
+                                  Get.back();
                                 },
-                                currentTime: initialDateTime,
-                                locale: LocaleType.vi,
-                              );
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Ngày giờ bắt đầu',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              ),
+                            ],
+                          ),
+                          const Divider(
+                            color: Colors.blue,
+                            thickness: 1,
+                            indent: 16,
+                            endIndent: 16,
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'round_trip'.tr,
+                                style: CustomTextStyles.normal
                                 ),
-                                const SizedBox(height: 5),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8.0, horizontal: 12.0),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.cyan,
-                                      width: 1.0,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: Row(
+                              Switch(
+                                activeColor: Colors.cyan,
+                                inactiveTrackColor: Colors.grey.shade50,
+                                value: bookController.isRoundTrip.value,
+                                onChanged: (bool value) {
+                                  bookController.setRoundTrip(value);
+                                  bookController.drawRoute(_mapController!);
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Passenger Option
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Passenger",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              DropdownButton<int>(
+                                value: bookController.selectedPassengerCount.value,
+                                iconEnabledColor: Colors.green,
+                                iconDisabledColor: Colors.grey,
+                                items: List.generate(10, (index) {
+                                  return DropdownMenuItem<int>(
+                                    value: index + 1,
+                                    child: Text('${index + 1}'),
+                                  );
+                                }),
+                                icon: const Icon(
+                                  Icons.person,
+                                  color: Colors.cyan,
+                                ),
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    bookController.selectedPassengerCount.value =
+                                        value;
+                                  }
+                                },
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8.0)),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    DateTime now = DateTime.now();
+                                    DateTime initialDateTime = bookController.scheduledTime.value ?? now;
+                                    DatePicker.showDateTimePicker(
+                                      context,
+                                      showTitleActions: true,
+                                      minTime: DateTime.now(),
+                                      maxTime: DateTime(2101),
+                                      onConfirm: (dateTime) {
+                                        bookController.setScheduledTime(dateTime);
+                                      },
+                                      currentTime: initialDateTime,
+                                      locale: LocaleType.vi,
+                                    );
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Icon(Icons.access_time,
-                                          size: 20.0, color: Colors.cyan),
-                                      const SizedBox(width: 8.0),
-                                      Expanded(
-                                        child: Text(
-                                          bookController.scheduledTime.value == null
-                                              ? DateFormat('HH:mm dd-MM')
-                                              .format(DateTime.now())
-                                              : DateFormat('HH:mm dd-MM').format(
-                                              bookController
-                                                  .scheduledTime.value!),
-                                          style: const TextStyle(fontSize: 16.0),
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.center,
+                                       Text(
+                                        'scheduled_time'.tr,
+                                        style: CustomTextStyles.regular,
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0, horizontal: 12.0),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.cyan,
+                                            width: 1.0,
+                                          ),
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const Icon(Icons.access_time,
+                                                size: 20.0, color: Colors.cyan),
+                                            const SizedBox(width: 8.0),
+                                            Expanded(
+                                              child: Text(
+                                                bookController.scheduledTime.value ==
+                                                        null
+                                                    ? DateFormat('HH:mm dd-MM')
+                                                        .format(DateTime.now())
+                                                    : DateFormat('HH:mm dd-MM')
+                                                        .format(bookController
+                                                            .scheduledTime.value!),
+                                                style:
+                                                    const TextStyle(fontSize: 16.0),
+                                                overflow: TextOverflow.ellipsis,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        if (bookController.isRoundTrip.value)
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () async {
-                                DateTime initialDateTime = bookController
-                                    .returnTime.value ??
-                                    DateTime.now().add(const Duration(minutes: 30));
-                                DatePicker.showDateTimePicker(
-                                  context,
-                                  showTitleActions: true,
-                                  minTime: DateTime.now(),
-                                  maxTime: DateTime(2101),
-                                  onConfirm: (dateTime) {
-                                    bookController.setReturnTime(dateTime);
-                                  },
-                                  currentTime: initialDateTime,
-                                  locale: LocaleType.vi,
-                                );
-                              },
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Ngày giờ về',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0, horizontal: 12.0),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Colors.cyan,
-                                        width: 1.0,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: Row(
+                              ),
+                              const SizedBox(width: 10),
+                              if (bookController.isRoundTrip.value)
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      DateTime now = DateTime.now();
+                                      DateTime initialDateTime =
+                                          bookController.returnTime.value ??
+                                              DateTime.now()
+                                                  .add(const Duration(minutes: 30));
+                                      DateTime endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59);
+                                      DatePicker.showDateTimePicker(
+                                        context,
+                                        showTitleActions: true,
+                                        minTime: DateTime.now(),
+                                        maxTime: endOfDay,
+                                        onConfirm: (dateTime) {
+                                          bookController.setReturnTime(dateTime);
+                                        },
+                                        currentTime: initialDateTime,
+                                        locale: LocaleType.vi,
+                                      );
+                                    },
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        const Icon(Icons.access_time,
-                                            size: 20.0, color: Colors.cyan),
-                                        const SizedBox(width: 8.0),
-                                        Expanded(
-                                          child: Text(
-                                            bookController.returnTime.value == null
-                                                ? DateFormat('HH:mm dd-MM')
-                                                .format(DateTime.now())
-                                                : DateFormat('HH:mm dd-MM').format(
-                                                bookController
-                                                    .returnTime.value!),
-                                            style: const TextStyle(fontSize: 16.0),
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.center,
+                                         Text(
+                                          'return_time'.tr,
+                                          style: CustomTextStyles.regular,
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0, horizontal: 12.0),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.cyan,
+                                              width: 1.0,
+                                            ),
+                                            borderRadius: BorderRadius.circular(8.0),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              const Icon(Icons.access_time,
+                                                  size: 20.0, color: Colors.cyan),
+                                              const SizedBox(width: 8.0),
+                                              Expanded(
+                                                child: Text(
+                                                  bookController.returnTime.value ==
+                                                          null
+                                                      ? DateFormat('HH:mm dd-MM')
+                                                          .format(DateTime.now())
+                                                      : DateFormat('HH:mm dd-MM')
+                                                          .format(bookController
+                                                              .returnTime.value!),
+                                                  style:
+                                                      const TextStyle(fontSize: 16.0),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
+                                ),
+                            ],
                           ),
-                      ],
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    ButtonThem.buildCustomButton(
-                      label: 'Xác nhận chuyen di',
-                      onPressed: () async {
-                        if (bookController.scheduledTime.value == null) {
-                          ShowDialog.showToast("Vui lòng chọn ngày giờ bắt đầu");
-                        } else if (bookController.isRoundTrip.value &&
-                            bookController.returnTime.value == null) {
-                          ShowDialog.showToast("Vui lòng chọn ngày giờ về");
-                        } else {
-                          bookController.fetchVehicleTypes();
-                          bookController.currentSheetIndex.value = 2;
-                        }
-                      },
-                    )
-                  ],
+                  ),
                 ),
-              ),
+                ButtonThem.buildCustomButton(
+                  label: 'confirm_trip'.tr,
+                  onPressed: () async {
+                    if (bookController.scheduledTime.value == null) {
+                      ShowDialog.showToast(
+                          "select_time".tr);
+                    } else if (bookController.isRoundTrip.value &&
+                        bookController.returnTime.value == null) {
+                      ShowDialog.showToast('return_time'.tr);
+                    } else {
+                      bookController.fetchVehicleTypes();
+                      bookController.currentSheetIndex.value = 2;
+                    }
+                  },
+                )
+              ],
             ),
-          ),
         );
       },
     );
@@ -490,15 +516,11 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget buildChooseVehicle(VehicleCategoryModel vehicleCategoryModel) {
     return DraggableScrollableSheet(
+      minChildSize: 0.4,
       initialChildSize: 0.4,
-      maxChildSize: 0.5,
+      maxChildSize: 0.6,
       builder: (context, scrollController) {
-        return NotificationListener<DraggableScrollableNotification>(
-          onNotification: (notification) {
-            draggableSheetHeight.value = notification.extent;
-            return true;
-          },
-          child: Container(
+        return Container(
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(
@@ -513,252 +535,15 @@ class _MapScreenState extends State<MapScreen> {
                   child: SingleChildScrollView(
                     controller: scrollController,
                     child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'choose vehicle'.tr,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () {
-                                  Get.back();
-                                },
-                              ),
-                            ],
-                          ),
-                          const Divider(
-                            color: Colors.blue,
-                            thickness: 1,
-                            height: 20,
-                          ),
-                          // Distance Row
-                          Container(
-                            padding:
-                            const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // Distance
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.social_distance_outlined,
-                                      size: 24,
-                                      color: Colors.blueAccent,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'distance'.tr,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                        Obx(() => Text(
-                                          "${bookController.distance.value.toStringAsFixed(2)} ${Constant.distanceUnit}",
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black54,
-                                          ),
-                                        )),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-
-                                // Duration
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.timer_sharp,
-                                      size: 24,
-                                      color: Colors.redAccent,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'duration'.tr,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                        Obx(() => Text(
-                                          "${bookController.duration.value.toStringAsFixed(2)} ${Constant.durationUnit}",
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black54,
-                                          ),
-                                        )),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Divider(
-                            color: Colors.blue,
-                            thickness: 1,
-                            height: 20,
-                          ),
-                          SizedBox(
-                            height: 200,
-                            child: ListView.builder(
-                              itemCount: vehicleCategoryModel.data!.length,
-                              itemBuilder: (context, index) {
-                                int tripPrice = bookController.calculateTripPrice(
-                                  distance: bookController.distance.value,
-                                  startingPrice: double.parse(vehicleCategoryModel.data![index].startingPrice!),
-                                  ratePerKm: double.parse(vehicleCategoryModel.data![index].ratePerKm!),
-                                );
-                                return Obx(
-                                      () => InkWell(
-                                    onTap: () {
-                                      bookController.vehicleData =
-                                      vehicleCategoryModel.data![index];
-                                      bookController.selectedVehicle.value =
-                                          vehicleCategoryModel.data![index].id.toString();
-                                      bookController.totalAmount.value = tripPrice;
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: bookController.selectedVehicle.value ==
-                                              vehicleCategoryModel.data![index].id
-                                                  .toString()
-                                              ? Colors.cyan.withOpacity(0.2)
-                                              : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(8),
-                                          border: Border.all(
-                                            color: bookController.selectedVehicle.value ==
-                                                vehicleCategoryModel.data![index].id
-                                                    .toString()
-                                                ? Colors.cyan
-                                                : Colors.transparent,
-                                            width: 2,
-                                          ),
-                                        ),
-                                        child: ListTile(
-                                          leading: AspectRatio(
-                                            aspectRatio: 1,
-                                            child: ClipOval(
-                                              child: Image.network(
-                                                vehicleCategoryModel.data![index].imageUrl ??
-                                                    'assets/images/meme.jpg',
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                          /*Image.network(
-                                          vehicleCategoryModel.data![index].imageUrl ??
-                                              'assets/images/meme.jpg', width: 60,
-                                        height: 60,
-                                        fit: BoxFit.cover,),*/
-                                          title: Text(
-                                            vehicleCategoryModel.data![index].name
-                                                .toString(),
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          trailing:  Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                NumberFormat('#,###').format(tripPrice),
-                                                style: CustomTextStyles.normal,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Image.asset(
-                                                'assets/icons/dong.png',
-                                                width: 12,
-                                                height: 12,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ),
-                ButtonThem.buildCustomButton(
-                  label: 'confirmed'.tr,
-                  onPressed: () async {
-                    if (bookController.selectedVehicle.value == '') {
-                      ShowDialog.showToast('select a vehicle'.tr);
-                      return;
-                    }
-                    bookController.currentSheetIndex.value = 3;
-                  },
-                ),
-              ],
-            ),
-            ),
-        );
-      },
-    );
-  }
-
-  Widget buildPaymentOption() {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.3,
-      maxChildSize: 0.6,
-      builder: (context, scrollController) {
-        return NotificationListener<DraggableScrollableNotification>(
-          onNotification: (notification) {
-            draggableSheetHeight.value = notification.extent;
-            return true;
-          },
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(20),
-              ),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    child: Column(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'payment info'.tr,
-                              style: TextStyle(
+                              'choose vehicle'.tr,
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -776,157 +561,405 @@ class _MapScreenState extends State<MapScreen> {
                           thickness: 1,
                           height: 20,
                         ),
-                        Text(
-                          'payment method'.tr,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                        // Distance Row
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Distance
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.social_distance_outlined,
+                                    size: 24,
+                                    color: Colors.blueAccent,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'distance'.tr,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      Obx(() => Text(
+                                            "${bookController.distance.value.toStringAsFixed(2)} ${Constant.distanceUnit}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black54,
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                ],
+                              ),
+
+                              // Duration
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.timer_sharp,
+                                    size: 24,
+                                    color: Colors.redAccent,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'duration'.tr,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      Obx(() => Text(
+                                            "${bookController.duration.value.toStringAsFixed(2)} ${Constant.durationUnit}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black54,
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  bookController.paymentMethod.value = 'cash';
-                                },
-                                child: Obx(
-                                      () => Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: bookController.paymentMethod.value == 'cash'
-                                          ? Colors.green.withOpacity(0.5)
-                                          : Colors.grey.shade300,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Icon(Icons.money, color: Colors.green),
-                                        SizedBox(height: 8),
-                                        Text('cash'.tr),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  bookController.paymentMethod.value = 'wallet';
-                                },
-                                child: Obx(
-                                      () => Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: bookController.paymentMethod.value == 'wallet'
-                                          ? Colors.green.withOpacity(0.5)
-                                          : Colors.grey.shade300,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Icon(Icons.account_balance_wallet, color: Colors.green),
-                                        SizedBox(height: 8),
-                                        Text('wallet'.tr),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                        const Divider(
+                          color: Colors.blue,
+                          thickness: 1,
+                          height: 20,
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(
+                          height: 200,
+                          child: ListView.builder(
+                            itemCount: vehicleCategoryModel.data!.length,
+                            itemBuilder: (context, index) {
+                              int tripPrice = bookController.calculateTripPrice(
+                                distance: bookController.distance.value,
+                                startingPrice: double.parse(vehicleCategoryModel
+                                    .data![index].startingPrice!),
+                                ratePerKm: double.parse(vehicleCategoryModel
+                                    .data![index].ratePerKm!),
+                              );
+                              return Obx(
+                                () => InkWell(
+                                  onTap: () {
+                                    bookController.vehicleData =
+                                        vehicleCategoryModel.data![index];
+                                    bookController.selectedVehicle.value =
+                                        vehicleCategoryModel.data![index].id
+                                            .toString();
+                                    bookController.totalAmount.value =
+                                        tripPrice;
+                                  },
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: bookController
+                                                    .selectedVehicle.value ==
+                                                vehicleCategoryModel
+                                                    .data![index].id
+                                                    .toString()
+                                            ? Colors.cyan.withOpacity(0.2)
+                                            : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                          color: bookController
+                                                      .selectedVehicle.value ==
+                                                  vehicleCategoryModel
+                                                      .data![index].id
+                                                      .toString()
+                                              ? Colors.cyan
+                                              : Colors.transparent,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      child: ListTile(
+                                        leading: AspectRatio(
+                                          aspectRatio: 1,
+                                          child: ClipOval(
+                                            child: Image.network(
+                                              vehicleCategoryModel
+                                                      .data![index].imageUrl ??
+                                                  'assets/images/meme.jpg',
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        /*Image.network(
+                                          vehicleCategoryModel.data![index].imageUrl ??
+                                              'assets/images/meme.jpg', width: 60,
+                                        height: 60,
+                                        fit: BoxFit.cover,),*/
+                                        title: Text(
+                                          vehicleCategoryModel.data![index].name
+                                              .toString(),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              NumberFormat('#,###')
+                                                  .format(tripPrice),
+                                              style: CustomTextStyles.normal,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Image.asset(
+                                              'assets/icons/dong.png',
+                                              width: 12,
+                                              height: 12,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
                 ButtonThem.buildCustomButton(
-                  label: 'book_now'.tr,
+                  label: 'confirmed'.tr,
                   onPressed: () async {
-                    if (bookController.paymentMethod.value == '') {
-                      ShowDialog.showToast('Please select a Payment method'.tr);
+                    if (bookController.selectedVehicle.value == '') {
+                      log('Vehicle: ${bookController.selectedVehicle.value}');
+                      ShowDialog.showToast('select a vehicle'.tr);
                       return;
                     }
-                    bookController.isMapDrawn.value = false;
-                    List<Map<String, dynamic>> stops = [];
-
-                    for (int i = 0;
-                    i < bookController.stopoverControllers.length;
-                    i++) {
-                      stops.add({
-                        'stop_address':
-                        bookController.stopoverControllers[i].text,
-                        'stop_lat': bookController.stopoverLatLng[i].latitude,
-                        'stop_lng': bookController.stopoverLatLng[i].longitude,
-                        'stop_order': i + 1,
-                      });
-                    }
-
-                    Map<String, dynamic> bodyParams = {
-                      'customer_id':
-                      Preferences.getInt(Preferences.userId).toString(),
-                      'from_address': bookController.pickupController.text,
-                      'from_lat': bookController.pickupLatLong.value!.latitude,
-                      'from_lng': bookController.pickupLatLong.value!.longitude,
-                      'to_address': bookController.destinationController.text,
-                      'to_lat': bookController.destinationLatLong.value!.latitude,
-                      'to_lng':
-                      bookController.destinationLatLong.value!.longitude,
-                      'scheduled_time':
-                      bookController.scheduledTime.value?.toIso8601String(),
-                      'return_time':
-                      bookController.returnTime.value?.toIso8601String(),
-                      'round_trip': bookController.isRoundTrip.value ? 1 : 0,
-                      'km': bookController.distance.toString(),
-                      'total_amount': bookController.totalAmount.value.toString(),
-                      'payment': bookController.paymentMethod.value,
-                      'trip_type': "airport",
-                      'stops': stops,
-                    };
-
-                    bookController.bookRide(bodyParams).then((value) {
-                      if (value != null) {
-                        log('$value');
-                        if (value['status'] == true) {
-                          Get.back();
-                          bookController.clearData();
-                          BottomNavigationController
-                          bottomNavigationController = Get.find();
-                          bottomNavigationController.changeIndex(2);
-                          Get.offAll(() => NavigationPage());
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CustomDialogBox(
-                                title: "",
-                                descriptions: 'successfully'.tr,
-                                onPress: () {
-                                  bookController.clearData();
-                                  Get.back();
-                                },
-                                img: Image.asset(
-                                    'assets/images/green_checked.png'),
-                              );
-                            },
-                          );
-                        }
-                      } else {
-                        log('Error: Received null response');
-                      }
-                    });
+                    bookController.currentSheetIndex.value = 3;
                   },
                 ),
               ],
             ),
-          ),
         );
       },
     );
   }
 
+  Widget buildPaymentOption() {
+    return DraggableScrollableSheet(
+      minChildSize: 0.35,
+      initialChildSize: 0.35,
+      maxChildSize: 0.5,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(20),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'payment info'.tr,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () {
+                              Get.back();
+                            },
+                          ),
+                        ],
+                      ),
+                      const Divider(
+                        color: Colors.blue,
+                        thickness: 1,
+                        height: 20,
+                      ),
+                      Text(
+                        'payment method'.tr,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                bookController.paymentMethod.value = 'cash';
+                              },
+                              child: Obx(
+                                () => Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: bookController.paymentMethod.value ==
+                                            'cash'
+                                        ? Colors.green.withOpacity(0.5)
+                                        : Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Icon(Icons.money, color: Colors.green),
+                                      SizedBox(height: 8),
+                                      Text('cash'.tr),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                bookController.paymentMethod.value = 'wallet';
+                              },
+                              child: Obx(
+                                () => Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: bookController.paymentMethod.value ==
+                                            'wallet'
+                                        ? Colors.green.withOpacity(0.5)
+                                        : Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Icon(Icons.account_balance_wallet,
+                                          color: Colors.green),
+                                      SizedBox(height: 8),
+                                      Text('wallet'.tr),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+              ButtonThem.buildCustomButton(
+                label: 'book_now'.tr,
+                onPressed: () async {
+                  if (bookController.paymentMethod.value == '') {
+                    ShowDialog.showToast('Please select a Payment method'.tr);
+                    return;
+                  }
+                  bookController.isMapDrawn.value = false;
+                  List<Map<String, dynamic>> stops = [];
+
+                  for (int i = 0;
+                      i < bookController.stopoverControllers.length;
+                      i++) {
+                    stops.add({
+                      'stop_address':
+                          bookController.stopoverControllers[i].text,
+                      'stop_lat': bookController.stopoverLatLng[i].latitude,
+                      'stop_lng': bookController.stopoverLatLng[i].longitude,
+                      'stop_order': i + 1,
+                    });
+                  }
+
+                  Map<String, dynamic> bodyParams = {
+                    'customer_id':
+                        Preferences.getInt(Preferences.userId).toString(),
+                    'from_address': bookController.pickupController.text,
+                    'from_lat': bookController.pickupLatLong.value!.latitude,
+                    'from_lng': bookController.pickupLatLong.value!.longitude,
+                    'to_address': bookController.destinationController.text,
+                    'to_lat': bookController.destinationLatLong.value!.latitude,
+                    'to_lng':
+                        bookController.destinationLatLong.value!.longitude,
+                    'scheduled_time':
+                        bookController.scheduledTime.value?.toIso8601String(),
+                    'return_time':
+                        bookController.returnTime.value?.toIso8601String(),
+                    'vehicle_type': bookController.selectedVehicle.value,
+                    'round_trip': bookController.isRoundTrip.value ? 1 : 0,
+                    'km': bookController.distance.toString(),
+                    'total_amount': bookController.totalAmount.value.toString(),
+                    'payment': bookController.paymentMethod.value,
+                    'trip_type': "airport",
+                    'stops': stops,
+                  };
+
+                  bookController.bookRide(bodyParams).then((value) {
+                    if (value != null) {
+                      log('$value');
+                      if (value['status'] == true) {
+                        Get.back();
+                        bookController.clearData();
+                        BottomNavigationController bottomNavigationController =
+                            Get.find();
+                        bottomNavigationController.changeIndex(2);
+                        Get.offAll(() => NavigationPage());
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CustomDialogBox(
+                              title: "",
+                              descriptions: 'successfully'.tr,
+                              onPress: () {
+                                bookController.clearData();
+                                Get.back();
+                              },
+                              img: Image.asset(
+                                  'assets/images/green_checked.png'),
+                            );
+                          },
+                        );
+                      }
+                    } else {
+                      log('Error: Received null response');
+                    }
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }

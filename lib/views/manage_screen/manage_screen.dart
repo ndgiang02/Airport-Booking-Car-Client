@@ -1,3 +1,4 @@
+import 'package:customerapp/constant/show_dialog.dart';
 import 'package:customerapp/utils/themes/text_style.dart';
 import 'package:customerapp/views/introduction/introduction.dart';
 import 'package:customerapp/views/manage_screen/profile_screen.dart';
@@ -32,46 +33,49 @@ class ManageScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             'account'.tr,
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+            style: CustomTextStyles.app,
           ),
           centerTitle: true,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blueAccent, Colors.lightBlueAccent],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
         ),
         body: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Stack(
                   children: [
-                    Container(
-                      child: Center(
-                        child: SizedBox(
-                          height: 100,
-                          width: 100,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: Image(image: AssetImage(meme)),
-                          ),
+                    Center(
+                      child: SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: const Image(image: AssetImage(meme)),
                         ),
                       ),
                     ),
-                    Container(
-                      child: Align(
-                        alignment: Alignment.topRight,
-                        child: InkWell(
-                          onTap: () => Get.to(() => MyProfileScreen()),
-                          child: ClipOval(
-                            child: Container(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.asset(
-                                  ic_edit,
-                                  color: ConstantColors.primary,
-                                  width: 20,
-                                  height: 20,
-                                ),
-                              ),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: InkWell(
+                        onTap: () => Get.to(() => MyProfileScreen()),
+                        child: ClipOval(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              ic_edit,
+                              color: ConstantColors.primary,
+                              width: 20,
+                              height: 20,
                             ),
                           ),
                         ),
@@ -79,7 +83,7 @@ class ManageScreen extends StatelessWidget {
                     )
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Text(
@@ -90,14 +94,14 @@ class ManageScreen extends StatelessWidget {
                   email!,
                   style: CustomTextStyles.body,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 TextFieldTheme.buildListTile(
                   title: 'intro'.tr,
                   icon: LineAwesomeIcons.info_circle_solid,
                   onPress: () {
-                    Get.to(() => IntroductionScreen());
+                    Get.to(() => const IntroductionScreen());
                   },
                   endIcon: true,
                 ),
@@ -105,7 +109,7 @@ class ManageScreen extends StatelessWidget {
                   title: 'term_policy'.tr,
                   icon: LineAwesomeIcons.terminal_solid,
                   onPress: () {
-                    Get.to(() => TermsOfServiceScreen());
+                    Get.to(() => const TermsOfServiceScreen());
                   },
                   endIcon: true,
                 ),
@@ -113,7 +117,7 @@ class ManageScreen extends StatelessWidget {
                   title: 'support'.tr,
                   icon: LineAwesomeIcons.hands_helping_solid,
                   onPress: () {
-                    Get.to(() => SupportScreen());
+                    Get.to(() => const SupportScreen());
                   },
                   endIcon: true,
                 ),
@@ -122,7 +126,7 @@ class ManageScreen extends StatelessWidget {
                   icon: LineAwesomeIcons.language_solid,
                   onPress: () async {
                     bool? languageChanged = await Get.to(
-                      () => LocalizationScreen(),
+                      () => const LocalizationScreen(),
                     );
                     if (languageChanged == true) {
                       controller.update();
@@ -137,9 +141,7 @@ class ManageScreen extends StatelessWidget {
                     Clipboard.setData(
                             ClipboardData(text: "https://yourapp.link"))
                         .then((_) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('copy'.tr)),
-                      );
+                          ShowDialog.showToast('copy'.tr);
                     });
                   },
                   endIcon: true,

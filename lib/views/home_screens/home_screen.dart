@@ -32,19 +32,20 @@ class _HomeState extends State<HomeScreen> {
           children: [
             Row(
               children: [
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
-                  'hello'.tr +' ' + name!,
+                  '${'hello'.tr}, ${name!}',
                   style: CustomTextStyles.app,
                 ),
               ],
             ),
           ],
         ),
+        centerTitle: true,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: const [Colors.blueAccent, Colors.lightBlueAccent],
+              colors: [Colors.blueAccent, Colors.lightBlueAccent],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -58,7 +59,7 @@ class _HomeState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Select service'.tr,
+                'select_service'.tr,
                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -78,10 +79,10 @@ class _HomeState extends State<HomeScreen> {
                 height: 8,
               ),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Expanded(
-                  child: const Text(
-                    'Show Info Fly',
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                 Expanded(
+                  child:  Text(
+                    'show_info_fly'.tr,
+                    style: CustomTextStyles.header,
                   ),
                 ),
                 Expanded(
@@ -90,8 +91,8 @@ class _HomeState extends State<HomeScreen> {
                     mode: CupertinoDatePickerMode.date,
                     initTime: homeController.date.value,
                     maxTime: DateTime.now().add(const Duration(days: 30)),
-                    cancelText: 'Cancel',
-                    confirmText: 'OK',
+                    cancelText: 'cancel'.tr,
+                    confirmText: 'yes'.tr,
                     pressType: PressType.singlePress,
                     timeFormat: 'dd-MM-yyyy',
                     onChange: (dateTime) {
@@ -108,7 +109,7 @@ class _HomeState extends State<HomeScreen> {
                 children: [
                   Expanded(
                     child: TextFieldTheme.boxBuildTextField(
-                      hintText: 'Flight Code',
+                      hintText: 'flight_code'.tr,
                       controller: codeController,
                       onChanged: homeController.updateFlightCode,
                     ),
@@ -122,27 +123,23 @@ class _HomeState extends State<HomeScreen> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.blue, // Cải tiến: Thêm màu nền cho nút
+                      backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
                       padding:
-                          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 2,
                     ),
-                    child: Text(
-                      'Fetch',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child:  Text(
+                      'fetch'.tr,
+                      style: CustomTextStyles.normal
                     ),
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               _buildFlightInfo(),
@@ -165,7 +162,7 @@ class _HomeState extends State<HomeScreen> {
         );
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(
@@ -176,10 +173,9 @@ class _HomeState extends State<HomeScreen> {
                   children: [
                     Text(
                       title,
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: CustomTextStyles.header
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),
@@ -200,12 +196,12 @@ class _HomeState extends State<HomeScreen> {
 
   Widget _buildInfoBox({required Widget child}) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-              padding: EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               height: 200,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -235,7 +231,7 @@ class _HomeState extends State<HomeScreen> {
 
       if (flightInfo.isEmpty) {
         return _buildInfoBox(
-          child: Center(child: Text('No flight information available')),
+          child:  Center(child: Text('no_flight_information_available'.tr)),
         );
       }
 
@@ -249,11 +245,7 @@ class _HomeState extends State<HomeScreen> {
         children: [
           Text(
             flightInfo['departure_iata'] ?? 'Unknown',
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.indigo),
-          ),
+            style: CustomTextStyles.header.copyWith(color: Colors.indigo)),
           SizedBox(width: 6),
           Container(
             padding: EdgeInsets.all(6),
@@ -274,13 +266,16 @@ class _HomeState extends State<HomeScreen> {
           ),
           Expanded(
               child: Padding(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   child: Stack(children: [
                     SizedBox(
                       height: 24,
                       child: LayoutBuilder(
                         builder: (context, constraints) {
                           return Flex(
+                            direction: Axis.horizontal,
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: List.generate(
                                 (constraints.constrainWidth() / 6).floor(),
                                 (index) => SizedBox(
@@ -291,9 +286,6 @@ class _HomeState extends State<HomeScreen> {
                                             color: Colors.grey.shade300),
                                       ),
                                     )),
-                            direction: Axis.horizontal,
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           );
                         },
                       ),
@@ -308,7 +300,7 @@ class _HomeState extends State<HomeScreen> {
                             )))
                   ]))),
           Container(
-            padding: EdgeInsets.all(6),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               color: Colors.indigo.shade50,
               borderRadius: BorderRadius.circular(20),
@@ -324,14 +316,12 @@ class _HomeState extends State<HomeScreen> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 6,
           ),
           Text(
             flightInfo['arrival_iata'] ?? 'Unknown',
-            style: TextStyle(
-                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.pink),
-          ),
+            style: CustomTextStyles.header.copyWith(color: Colors.pink))
         ],
       ),
       Row(
@@ -344,7 +334,7 @@ class _HomeState extends State<HomeScreen> {
           ),
           Text(
             flightInfo['flnr'] ?? "",
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
           ),
           SizedBox(
             width: 100,
@@ -360,14 +350,14 @@ class _HomeState extends State<HomeScreen> {
               homeController.convertTo12HourFormat(
                   flightInfo['scheduled_departure_local'] ?? 'Unknown'),
               style: CustomTextStyles.normal),
-          Text("Dự kiến", style: CustomTextStyles.body),
+          Text('scheduled'.tr, style: CustomTextStyles.body),
           Text(
               homeController.convertTo12HourFormat(
                   flightInfo['scheduled_arrival_local'] ?? 'Unknown'),
               style: CustomTextStyles.normal),
         ],
       ),
-      SizedBox(
+      const SizedBox(
         height: 6,
       ),
       /*
@@ -379,7 +369,7 @@ class _HomeState extends State<HomeScreen> {
               ),
 
                */
-      SizedBox(
+      const SizedBox(
         height: 6,
       ),
       Row(
@@ -389,25 +379,28 @@ class _HomeState extends State<HomeScreen> {
               homeController.convertTo12HourFormat(
                   flightInfo['actual_departure_local'] ?? 'Unknown'),
               style: CustomTextStyles.normal),
-          Text("Thực tế", style: CustomTextStyles.normal),
+          const Text("Thực tế", style: CustomTextStyles.normal),
           Text(
               homeController.convertTo12HourFormat(
                   flightInfo['actual_arrival_local'] ?? 'Unknown'),
               style: CustomTextStyles.normal),
         ],
       ),
-      SizedBox(
+      const SizedBox(
         height: 2,
       ),
       Expanded(
           child: Padding(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               child: Stack(children: [
                 SizedBox(
                   height: 24,
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       return Flex(
+                        direction: Axis.horizontal,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: List.generate(
                             (constraints.constrainWidth() / 6).floor(),
                             (index) => SizedBox(
@@ -418,9 +411,6 @@ class _HomeState extends State<HomeScreen> {
                                         color: Colors.grey.shade500),
                                   ),
                                 )),
-                        direction: Axis.horizontal,
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       );
                     },
                   ),
@@ -432,16 +422,16 @@ class _HomeState extends State<HomeScreen> {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                     color: Colors.amber.shade50,
                     borderRadius: BorderRadius.circular(20)),
-                child: Icon(
+                child: const Icon(
                   Icons.flight_land,
                   color: Colors.amber,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               Text(flightInfo['airline_name'] ?? "Unknown",

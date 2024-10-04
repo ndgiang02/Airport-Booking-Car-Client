@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
@@ -124,15 +126,15 @@ class _AirportScreen1State extends State<AirportScreen1> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.add_circle,
                     color: Colors.blue,
                     size: 16,
                   ),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Text(
                     'add stopover'.tr,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.blue,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -147,6 +149,78 @@ class _AirportScreen1State extends State<AirportScreen1> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Expanded(
+              child: Obx(() {
+                final isStaticList = (bookController.focusedField.value == 'pickup' &&
+                    bookController.pickupController.text.isEmpty) ||
+                    (bookController.focusedField.value == 'destination' &&
+                        bookController.destinationController.text.isEmpty) ||
+                    (bookController.focusedField.value.startsWith('stopover_') &&
+                        bookController.stopoverControllers.isNotEmpty &&
+                        bookController
+                            .stopoverControllers[int.parse(bookController.focusedField.value
+                            .split('_')[1])]
+                            .text
+                            .isEmpty);
+
+                final suggestions = isStaticList
+                    ? bookController.staticSuggestions
+                    : bookController.suggestions;
+
+                final displaySuggestions = suggestions.isEmpty
+                    ? bookController.staticSuggestions
+                    : suggestions;
+
+                return ListView.builder(
+                  itemCount: displaySuggestions.length,
+                  itemBuilder: (context, index) {
+                    final suggestion = displaySuggestions[index];
+                    return ListTile(
+                      leading: const Icon(Icons.pin_drop_outlined, color: Colors.blue),
+                      title: Text(suggestion['display']!),
+                      onTap: () async {
+                        final selectedText = suggestion['display']!;
+                        LatLng? latLong;
+                        if (isStaticList) {
+                          latLong = LatLng(suggestion['lat'], suggestion['lng']);
+                        } else {
+                          latLong = await bookController.reverseGeocode(suggestion['ref_id']!);
+                        }
+                        log('AUTO COMPLETE: $latLong');
+                        if (bookController.focusedField.value == 'pickup') {
+                          bookController.pickupController.text = selectedText;
+                          bookController.pickupLatLong.value = latLong;
+                        } else if (bookController.focusedField.value == 'destination') {
+                          bookController.destinationController.text = selectedText;
+                          bookController.destinationLatLong.value = latLong;
+                          bookController.isMapDrawn.value = true;
+                          Get.to(() => const MapScreen(),
+                              duration: const Duration(milliseconds: 400),
+                              transition: Transition.rightToLeft);
+                        } else if (bookController.focusedField.value.startsWith('stopover_')) {
+                          try {
+                            final index = int.parse(bookController.focusedField.value.split('_')[1]);
+                            while (bookController.stopoverControllers.length <= index) {
+                              bookController.stopoverControllers.add(TextEditingController());
+                            }
+                            while (bookController.stopoverLatLng.length <= index) {
+                              bookController.stopoverLatLng.add(LatLng(0, 0));
+                            }
+                            bookController.stopoverControllers[index].text = selectedText;
+                            bookController.stopoverLatLng[index] = latLong!;
+                          } catch (e) {
+                            debugPrint('$e');
+                          }
+                        }
+                        bookController.suggestions.clear();
+                        FocusScope.of(context).unfocus();
+                      },
+                    );
+                  },
+                );
+              }),
+            ),
+
+            /*Expanded(
               child: Obx(() {
                 return ListView.builder(
                   itemCount: bookController.suggestions.length,
@@ -201,7 +275,7 @@ class _AirportScreen1State extends State<AirportScreen1> {
                   },
                 );
               }),
-            ),
+            ),*/
           ],
         ),
       ),

@@ -16,20 +16,11 @@ class NotificationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                SizedBox(width: 8),
-                Text(
-                  'Notification',
-                  style: CustomTextStyles.header,
-                ),
-              ],
-            ),
-          ],
-        ),
+        title:Text(
+        'notification'.tr,
+        style: CustomTextStyles.app,
+      ),
+      centerTitle: true,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

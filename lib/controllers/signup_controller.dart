@@ -26,6 +26,8 @@ class SignUpController extends GetxController {
 
       Map<String, dynamic> responseBody = json.decode(response.body);
 
+      log("Response status: ${response.statusCode}");
+      log("Response body: ${response.body}");
       log("Response body: ${response.body}");
 
       if (response.statusCode == 201) {

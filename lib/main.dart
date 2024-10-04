@@ -1,3 +1,4 @@
+import 'package:customerapp/service/firebase.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -47,10 +48,13 @@ void main() async {
   }
 
   final Locale locale =
-      languageCode == 'vi' ? Locale('vi', 'VN') : Locale('en', 'US');
+      languageCode == 'vi' ? const Locale('vi', 'VN') : const Locale('en', 'US');
   runApp(MyApp(
     locale: locale,
   ));
+
+  final FirebaseService firebaseService = FirebaseService();
+  firebaseService.initialize();
 }
 
 class MyApp extends StatelessWidget {

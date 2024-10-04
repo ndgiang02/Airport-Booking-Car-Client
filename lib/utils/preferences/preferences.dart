@@ -49,4 +49,13 @@ class Preferences {
   static Future<void> clearKeyData(String key) async {
     await pref.remove(key);
   }
+  
+  static Future<void> setStringList(String key, List<String> value) async {
+    await pref.setStringList(key, value);
+  }
+
+  static Future<List<String>?> getStringList(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(key);
+  }
 }

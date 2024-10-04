@@ -36,7 +36,6 @@ class LoginController extends GetxController {
       log("Response body: ${response.body}");
 
       ShowDialog.closeLoader();
-
       if (response.statusCode == 200) {
         if (responseBody['status'] == true) {
           String accessToken = responseBody['data']['token'].toString();

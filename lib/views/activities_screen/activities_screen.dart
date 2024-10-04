@@ -20,24 +20,15 @@ class ActivitiesScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  SizedBox(width: 8),
-                  Text(
-                    'Activities',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ],
-              ),
-            ],
+          title: Text(
+            'activities'.tr,
+            style: CustomTextStyles.app,
           ),
+          centerTitle: true,
           flexibleSpace: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: const [Colors.blueAccent, Colors.lightBlueAccent],
+                colors: [Colors.blueAccent, Colors.lightBlueAccent],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -51,19 +42,16 @@ class ActivitiesScreen extends StatelessWidget {
               child: TabBar(
                 indicatorWeight: 1,
                 indicatorSize: TabBarIndicatorSize.tab,
-                tabs: const [
+                tabs: [
                   Tab(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.schedule),
-                        SizedBox(width: 5),
+                        const Icon(Icons.schedule),
+                        const SizedBox(width: 5),
                         Text(
-                          'Sắp tới',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          'coming'.tr,
+                          style: CustomTextStyles.normal
                         ),
                       ],
                     ),
@@ -72,14 +60,11 @@ class ActivitiesScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.history),
-                        SizedBox(width: 5),
+                        const Icon(Icons.history),
+                        const SizedBox(width: 5),
                         Text(
-                          'Lịch sử',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          'history'.tr,
+                          style: CustomTextStyles.normal
                         ),
                       ],
                     ),
@@ -88,7 +73,7 @@ class ActivitiesScreen extends StatelessWidget {
                 labelColor: ConstantColors.primary,
                 unselectedLabelColor: Colors.grey,
                 indicatorColor: ConstantColors.primary,
-                labelPadding: EdgeInsets.symmetric(horizontal: 5.0),
+                labelPadding: const EdgeInsets.symmetric(horizontal: 5.0),
                 onTap: (index) {
                   controller.updateIndex(index);
                 },
@@ -99,13 +84,17 @@ class ActivitiesScreen extends StatelessWidget {
                 if (controller.isLoading.value) {
                   return Center(child: Loading());
                 }
-
-                return TabBarView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    buildTripList(controller.upcomingTrips),
-                    buildTripList(controller.historyTrips),
-                  ],
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    await controller.refreshData();
+                  },
+                  child: TabBarView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      buildTripList(controller.upcomingTrips),
+                      buildTripList(controller.historyTrips),
+                    ],
+                  ),
                 );
               }),
             ),
@@ -117,7 +106,7 @@ class ActivitiesScreen extends StatelessWidget {
 
   Widget buildTripList(List<Trip> trips) {
     if (trips.isEmpty) {
-      return Center(child: Text("Không có chuyen di nao"));
+      return Center(child: Text('no_data_trip'.tr));
     }
     return ListView.builder(
       itemCount: trips.length,
@@ -267,10 +256,10 @@ class ActivitiesScreen extends StatelessWidget {
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 14),
                             ),
-                            child: const Row(
+                            child:  Row(
                               children: [
-                                Text('Chi tiết', style: TextStyle(color: Colors.black)),
-                                Icon(Icons.chevron_right_rounded, color: Colors.black),
+                                Text('detail'.tr, style: const TextStyle(color: Colors.black)),
+                                const Icon(Icons.chevron_right_rounded, color: Colors.black),
                               ],
                             ),
                           ),
@@ -291,7 +280,7 @@ class ActivitiesScreen extends StatelessWidget {
     if (text == null || text.length <= maxLength) {
       return text ?? '';
     }
-    return text.substring(0, maxLength) + '...';
+    return '${text.substring(0, maxLength)}...';
   }
 
   Map<String, dynamic> _getStatusInfo(String? status) {

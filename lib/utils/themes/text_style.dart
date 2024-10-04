@@ -8,7 +8,7 @@ class CustomTextStyles {
   );
 
   static const TextStyle app = TextStyle(
-    fontSize: 20.0,
+    fontSize: 22.0,
     fontWeight: FontWeight.bold,
     color: Colors.white,
   );

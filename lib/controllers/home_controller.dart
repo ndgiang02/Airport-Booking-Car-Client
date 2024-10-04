@@ -2,12 +2,10 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
-
 
 class HomeController extends GetxController {
 
-  final String apiKey = '800b6d416dmshdac099f12cfae94p1edc37jsnb7d60789a7ba';
+  final String apiKey = '46f110f0e3msh0377381c278bffep11c5c9jsn20829ea2b0e4';
   final String host = 'flightera-flight-data.p.rapidapi.com';
 
 

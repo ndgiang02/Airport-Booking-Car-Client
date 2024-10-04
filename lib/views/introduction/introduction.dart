@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../constant/constant.dart';
 import '../../controllers/intro_controller.dart';
-import 'package:flutter_html/flutter_html.dart';
 
 import '../../utils/themes/text_style.dart';
 
@@ -14,10 +13,9 @@ class IntroductionScreen extends StatelessWidget {
     return GetBuilder<IntroController>(
         init: IntroController(),
         builder: (controller) {
-          print(controller.data);
           return Scaffold(
             appBar: AppBar(
-              title: Text('Intro'),
+              title: Text('intro'.tr),
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
                 onPressed: () {
@@ -25,15 +23,18 @@ class IntroductionScreen extends StatelessWidget {
                 },
               ),
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(1.0),
-              child: controller.data != null
-                  ? Html(
-                data: controller.data,
-
-              )
-                  : const Offstage(),
-            ),
+            body: Obx(() {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Text(
+                    controller.introContent.value,
+                    style: const TextStyle(fontSize: 16, height: 1.5, color: Colors.black),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+              );
+            }),
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Text(

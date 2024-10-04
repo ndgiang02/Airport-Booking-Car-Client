@@ -54,6 +54,39 @@ class BookController extends GetxController {
   RxString focusedField = "".obs;
   var paymentMethod = ''.obs;
 
+  var staticSuggestions = [
+    {
+      'display': 'Cảng Hàng Không Quốc Tế Nội Bài',
+      'lat': 21.214138,
+      'lng': 105.80334199999999
+    },
+    {
+      'display': 'Cảng Hàng Không Quốc Tế Cát Bi',
+      'lat': 20.8224975,
+      'lng': 106.72470190000001
+    },
+    {
+      'display': 'Cảng Hàng Không Quốc Tế Đà Nẵng',
+      'lat': 16.053276,
+      'lng': 108.20319
+    },
+    {
+      'display': 'Cảng Hàng Không Quốc Tế Cam Ranh',
+      'lat': 12.243852,
+      'lng': 109.19269300000002
+    },
+    {
+      'display': 'Cảng Hàng Không Quốc Tế Tân Sơn Nhất',
+      'lat': 10.813373,
+      'lng': 106.662531,
+    },
+    {
+      'display': 'Cảng Hàng Không Quốc Tế Cần Thơ',
+      'lat': 10.080556,
+      'lng': 105.71202199999999,
+    },
+  ].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -133,6 +166,59 @@ class BookController extends GetxController {
     returnTime.value = dateTime;
   }
 
+  Future<void> drawRoute(VietmapController mapController) async {
+    final LatLng? pickup = pickupLatLong.value;
+    final LatLng? destination = destinationLatLong.value;
+
+    if (pickup == null || destination == null) {
+      log('Insufficient data to draw the route.');
+      return;
+    }
+
+    List<LatLng> routePoints = [pickup];
+
+    if (stopoverLatLng.isNotEmpty) {
+      routePoints.addAll(stopoverLatLng);
+    }
+
+    routePoints.add(destination);
+
+    if(isRoundTrip.value == true) {
+      routePoints.add(pickup);
+    }
+
+    await fetchRouteData(routePoints);
+    addPolyline(mapController);
+    isRouteDrawn.value = true;
+  }
+
+  /*Future<void> drawRoute(VietmapController _mapController) async {
+    final LatLng? pickup = pickupLatLong.value;
+    final LatLng? destination = destinationLatLong.value;
+
+    if (pickup == null || destination == null) {
+      log('Insufficient data to draw the route.');
+      return;
+    }
+
+    List<LatLng> routePoints = [pickup];
+
+    if (stopoverLatLng.isNotEmpty) {
+      routePoints.addAll(stopoverLatLng);
+    }
+
+    routePoints.add(destination);
+
+    if (isRoundTrip.value) {
+      routePoints
+          .addAll(stopoverLatLng.reversed);
+      routePoints.add(pickup);
+    }
+    await fetchRouteData(routePoints);
+    addPolyline(_mapController);
+    isRouteDrawn.value = true;
+  }*/
+
   /*
   ** Use API
   */
@@ -166,11 +252,11 @@ class BookController extends GetxController {
         textSearch: value,
         focusLocation: LatLng(position.latitude!, position.longitude!)));
     return result.fold(
-          (failure) {
+      (failure) {
         debugPrint('Error: $failure');
         return [];
       },
-          (autocompleteList) {
+      (autocompleteList) {
         var resultList = <Map<String, String>>[];
         for (var item in autocompleteList) {
           final refId = item.refId ?? '';
@@ -195,8 +281,6 @@ class BookController extends GetxController {
         headers: API.header,
       );
       Map<String, dynamic> responseBody = json.decode(response.body);
-
-      log("Response body: ${response.body}");
 
       if (response.statusCode == 200) {
         final jsonData = responseBody;
@@ -224,7 +308,8 @@ class BookController extends GetxController {
       totalCost = startingPrice;
     } else {
       totalCost = startingPrice + (distance * ratePerKm);
-      if (distance > firstDiscountThreshold && distance <= secondDiscountThreshold) {
+      if (distance > firstDiscountThreshold &&
+          distance <= secondDiscountThreshold) {
         totalCost = totalCost * (1 - firstDiscountPercentage / 100);
       } else if (distance > secondDiscountThreshold) {
         totalCost = totalCost * (1 - secondDiscountPercentage / 100);
@@ -234,7 +319,6 @@ class BookController extends GetxController {
 
     return roundedCost;
   }
-
 
   Future<dynamic> bookRide(Map<String, dynamic> bodyParams) async {
     try {
@@ -277,11 +361,11 @@ class BookController extends GetxController {
       final result = await Vietmap.reverse(
           LatLng(position.latitude!, position.longitude!));
       return result.fold(
-            (failure) {
+        (failure) {
           debugPrint('Error: $failure');
           return null;
         },
-            (VietmapReverseModel) {
+        (VietmapReverseModel) {
           return {
             'lat': VietmapReverseModel.lat.toString(),
             'lng': VietmapReverseModel.lng.toString(),
@@ -308,7 +392,8 @@ class BookController extends GetxController {
 
         if (paths.isNotEmpty) {
           final firstPath = paths[0];
-          final coordinates = firstPath['points']['coordinates'] as List<dynamic>;
+          final coordinates =
+              firstPath['points']['coordinates'] as List<dynamic>;
 
           polylinePoints.value = coordinates.map((coordinate) {
             return LatLng(coordinate[1], coordinate[0]);
@@ -320,16 +405,17 @@ class BookController extends GetxController {
           distance.value = distanceInMeters / 1000.0;
           duration.value = timeInMillis / 60000.0;
 
-          debugPrint("Distance: ${distance.value} km");
-          debugPrint("Duration: ${duration.value} minutes");
+          log("Distance: ${distance.value} km");
+          log("Duration: ${duration.value} minutes");
         } else {
           throw Exception('No paths found in the response');
         }
       } else {
-        throw Exception('Failed to load route data: Status code ${response.statusCode}');
+        throw Exception(
+            'Failed to load route data: Status code ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('Error fetching route data: $e');
+      log('Error fetching route data: $e');
     } finally {
       isLoading.value = false;
     }
@@ -404,7 +490,6 @@ class BookController extends GetxController {
       await mapController.animateCamera(
         CameraUpdate.newLatLngBounds(bounds, bottom: 1000),
       );
-
     }
   }
 }

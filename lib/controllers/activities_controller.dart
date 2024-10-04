@@ -12,7 +12,7 @@ class ActivitiesController extends GetxController {
 
   var upcomingTrips = <Trip>[].obs;
   var historyTrips = <Trip>[].obs;
-  int? customerId = Preferences.getInt(Preferences.userId);
+  int? userId = Preferences.getInt(Preferences.userId);
 
   var isLoading = true.obs;
 
@@ -20,6 +20,10 @@ class ActivitiesController extends GetxController {
   void onInit() {
     super.onInit();
     fetchTripsData();
+  }
+
+  Future<void> refreshData() async {
+    await fetchTripsData();
   }
 
   Future<void> fetchTripsData() async {
@@ -33,18 +37,16 @@ class ActivitiesController extends GetxController {
   }
 
   Future<void> fetchTrips(String status) async {
-
     final response = await http.get(
-      Uri.parse('${API.fetchTrips}?customer_id=$customerId&status=$status'),
+      Uri.parse('${API.fetchTrips}?user_id=$userId&status=$status'),
       headers: API.header,
     );
 
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      log("Response body: ${response.body}");
+    var data = json.decode(response.body);
 
-      if (data['data'] != null && data['data'] is Map && data['data']['data'] is List) {
-        var tripList = (data['data']['data'] as List)
+    if (response.statusCode == 200) {
+      if (data['data'] != null && data['data'] is List) {
+        var tripList = (data['data'] as List)
             .map((trip) => Trip.fromJson(trip as Map<String, dynamic>))
             .toList();
         if (status == 'upcoming') {

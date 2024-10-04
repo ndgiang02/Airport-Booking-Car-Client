@@ -2,20 +2,22 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../../constant/show_dialog.dart';
 import '../../service/api.dart';
 
 class IntroController extends GetxController {
+
+  var introContent = ''.obs;
+  var isLoading = true.obs;
+
   @override
   void onInit() {
-    getIntroduction();
     super.onInit();
+    getIntroduction();
   }
-
-  dynamic data;
 
   Future<dynamic> getIntroduction() async {
     try {
@@ -25,9 +27,8 @@ class IntroController extends GetxController {
         headers: API.header,
       );
       Map<String, dynamic> responseBody = json.decode(response.body);
-
       if (response.statusCode == 200) {
-        data = responseBody['data']['terms'];
+        introContent.value = responseBody['data']['intro'];
         ShowDialog.closeLoader();
         return responseBody;
       } else {
@@ -49,7 +50,6 @@ class IntroController extends GetxController {
       ShowDialog.closeLoader();
       ShowDialog.showToast(e.toString());
     }
-    update();
     return null;
   }
 }

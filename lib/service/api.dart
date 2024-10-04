@@ -2,7 +2,7 @@ import 'dart:io';
 import '../utils/preferences/preferences.dart';
 
 class API {
-  static const baseUrl = "http://192.168.11.20:8000/api/";
+  static const baseUrl = "http://192.168.11.32:8000/api/";
   static const apiKey = "";
 
   static Map<String, String> authheader = {
@@ -30,6 +30,9 @@ class API {
   static const deleteUser = "${baseUrl}delete-user-account";
   static const logOut = "${baseUrl}logout";
 
+  static const introduction = "${baseUrl}intro";
+  static const terms = "${baseUrl}terms";
+
 
   static const updateName = "${baseUrl}user-name";
   static const contactUs = "${baseUrl}contact-us";
@@ -40,7 +43,6 @@ class API {
   static const deleteFavouriteRide = "${baseUrl}delete-favorite-ride";
   static const rejectRide = "${baseUrl}set-rejected-requete";
 
-  static const introduction = "${baseUrl}introduction";
 }
 
 
