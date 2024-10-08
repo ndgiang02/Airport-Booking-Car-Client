@@ -1,31 +1,35 @@
 class TripStop {
-  final String tripId;
-  final double latitude;
-  final double longitude;
-  final String location;
+  String? tripBookingId;
+  String? address;
+  double? latitude;
+  double? longitude;
+  int? stopOrder;
 
   TripStop({
-    required this.tripId,
-    required this.latitude,
-    required this.longitude,
-    required this.location,
+    this.tripBookingId,
+    this.address,
+    this.latitude,
+    this.longitude,
+    this.stopOrder,
   });
 
   factory TripStop.fromJson(Map<String, dynamic> json) {
     return TripStop(
-      tripId: json['trip_id'] as String,
-      latitude: (json['latitude'] as num).toDouble(),
-      longitude: (json['longitude'] as num).toDouble(),
-      location: json['location'] as String,
+      tripBookingId: json['trip_booking_id']?.toString(),
+      address: json['address']?.toString(),
+      latitude: json['latitude'] != null ? double.tryParse(json['latitude'].toString()) : null,
+      longitude: json['longitude'] != null ? double.tryParse(json['longitude'].toString()) : null,
+      stopOrder: json['stop_order'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'trip_id': tripId,
+      'trip_booking_id': tripBookingId,
+      'address': address,
       'latitude': latitude,
       'longitude': longitude,
-      'location': location,
+      'stop_order': stopOrder,
     };
   }
 }

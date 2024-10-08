@@ -12,7 +12,7 @@ import '../service/api.dart';
 class ForgotPasswordController extends GetxController {
   Future<bool?> sendEmail(Map<String, String> bodyParams) async {
     try {
-      ShowDialog.showLoader("Please wait");
+      ShowDialog.showLoader('please_wait'.tr);
       final response = await http.post(Uri.parse(API.sendResetPasswordOtp),
           headers: {
             'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ class ForgotPasswordController extends GetxController {
 
   Future<bool?> resetPassword(Map<String, String> bodyParams) async {
     try {
-      ShowDialog.showLoader("Please wait");
+      ShowDialog.showLoader('please_wait'.tr);
       final response = await http.post(Uri.parse(API.resetPasswordOtp), headers: API.header, body: jsonEncode(bodyParams));
 
       Map<String, dynamic> responseBody = json.decode(response.body);

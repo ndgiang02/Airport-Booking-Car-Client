@@ -67,7 +67,7 @@ class LoginScreen extends StatelessWidget {
                               hintText: 'Email'.tr,
                               controller: _phoneController,
                               textInputType: TextInputType.emailAddress,
-                              prefixIcon: Icon(Icons.email),
+                              prefixIcon: const Icon(Icons.email),
                               validators: (String? value) {
                                 if (value!.isNotEmpty) {
                                   return null;
@@ -82,7 +82,7 @@ class LoginScreen extends StatelessWidget {
                                   hintText: 'password'.tr,
                                   controller: _passwordController,
                                   textInputType: TextInputType.text,
-                                  prefixIcon: Icon(Icons.lock_outline),
+                                  prefixIcon: const Icon(Icons.lock_outline),
                                   obscureText: controller.isObscure.value,
                                   validators: (String? value) {
                                     if (value!.isNotEmpty) {

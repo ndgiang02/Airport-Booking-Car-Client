@@ -21,7 +21,7 @@ class IntroController extends GetxController {
 
   Future<dynamic> getIntroduction() async {
     try {
-      ShowDialog.showLoader("Please wait");
+      ShowDialog.showLoader('please_wait'.tr);
       final response = await http.get(
         Uri.parse(API.introduction),
         headers: API.header,

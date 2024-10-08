@@ -7,9 +7,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
 
+import '../../bindings/navigation_bindings/navigation_binding.dart';
 import '../../constant/constant.dart';
 import '../../constant/show_dialog.dart';
-import '../../controllers/bottomnavigation_controller.dart';
+import '../../controllers/navigation_controller.dart';
 import '../../models/vehicle_model.dart';
 import '../../utils/preferences/preferences.dart';
 import '../../utils/themes/button.dart';
@@ -918,6 +919,7 @@ class _MapScreenState extends State<MapScreen> {
                     'vehicle_type': bookController.selectedVehicle.value,
                     'round_trip': bookController.isRoundTrip.value ? 1 : 0,
                     'km': bookController.distance.toString(),
+                    'passenger_count': bookController.selectedPassengerCount.value,
                     'total_amount': bookController.totalAmount.value.toString(),
                     'payment': bookController.paymentMethod.value,
                     'trip_type': "airport",
@@ -930,10 +932,8 @@ class _MapScreenState extends State<MapScreen> {
                       if (value['status'] == true) {
                         Get.back();
                         bookController.clearData();
-                        BottomNavigationController bottomNavigationController =
-                            Get.find();
-                        bottomNavigationController.changeIndex(2);
-                        Get.offAll(() => NavigationPage());
+                       // Get.offAll(() => NavigationPage(), arguments: 1);
+                        Get.offAll(() => NavigationPage(), binding: NavigationBinding(), arguments: 2);
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {

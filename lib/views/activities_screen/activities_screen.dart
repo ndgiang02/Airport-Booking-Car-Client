@@ -1,5 +1,6 @@
 import 'package:customerapp/utils/themes/contant_colors.dart';
 import 'package:customerapp/utils/themes/text_style.dart';
+import 'package:customerapp/views/activities_screen/trip_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -247,7 +248,8 @@ class ActivitiesScreen extends StatelessWidget {
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              // Handle "Chi tiết"
+                              navigateToTripDetail(trip);
+                              //Get.to(() => const TripDetail(), arguments: trip);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue,
@@ -274,6 +276,14 @@ class ActivitiesScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> navigateToTripDetail(Trip trip) async {
+    final result = await Get.to(() => const TripDetail(), arguments: trip);
+
+    if (result == 'canceled') {
+      await controller.refreshData();
+    }
   }
 
   String _getLimitedText(String? text, int maxLength) {

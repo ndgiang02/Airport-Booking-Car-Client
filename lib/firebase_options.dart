@@ -49,19 +49,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCol-KxHJFF9Th2s1pOytpVEFC7zjr7x5E',
-    appId: '1:740547042994:android:937d9d1af0586f85cdb3ab',
-    messagingSenderId: '740547042994',
-    projectId: 'push-notification-259d6',
-    storageBucket: 'push-notification-259d6.appspot.com',
+    apiKey: 'AIzaSyDIzlEniWikZ_Iez-JAVVj8KT_44fErAuE',
+    appId: '1:99131808994:android:728c92f0b1f4c9034992bb',
+    messagingSenderId: '99131808994',
+    projectId: 'booking-app-backend-b0410',
+    storageBucket: 'booking-app-backend-b0410.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBbdVt-_eHro1RlH6_8Ti5vAy9UBJBnC5E',
-    appId: '1:740547042994:ios:8a07c6c899efbd74cdb3ab',
-    messagingSenderId: '740547042994',
-    projectId: 'push-notification-259d6',
-    storageBucket: 'push-notification-259d6.appspot.com',
+    apiKey: 'AIzaSyDIzlEniWikZ_Iez-JAVVj8KT_44fErAuE',
+    appId: '1:99131808994:android:728c92f0b1f4c9034992bb',
+    messagingSenderId: '99131808994',
+    projectId: 'booking-app-backend-b0410',
+    storageBucket: 'booking-app-backend-b0410.appspot.com',
     androidClientId: '527452785533-2edrgcd3depj6nc35git9jtoue6eohvc.apps.googleusercontent.com',
     iosClientId: '527452785533-j2rnl02dp8ckvm9mab345b17cu6bq3ug.apps.googleusercontent.com',
     iosBundleId: 'com.cabme.ios',

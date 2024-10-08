@@ -2,6 +2,7 @@ import 'package:customerapp/constant/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import '../../constant/show_dialog.dart';
 import '../../controllers/phonenumber_controller.dart';
 import '../../utils/themes/button.dart';
 import '../../utils/themes/contant_colors.dart';
@@ -10,7 +11,7 @@ import '../../utils/themes/contant_colors.dart';
 class MobileNumberScreen extends StatelessWidget {
   bool? isLogin;
 
-  MobileNumberScreen({Key? key, required this.isLogin}) : super(key: key);
+  MobileNumberScreen({super.key, required this.isLogin});
 
   final controller = Get.put(PhoneNumberController());
 
@@ -60,7 +61,7 @@ class MobileNumberScreen extends StatelessWidget {
                                   color: ConstantColors.textFieldBoarderColor,
                                 ),
                                 borderRadius:
-                                const BorderRadius.all(Radius.circular(6))),
+                                const BorderRadius.all(Radius.circular(12))),
                             padding: const EdgeInsets.only(left: 10),
                             child: InternationalPhoneNumberInput(
                               onInputChanged: (PhoneNumber number) {
@@ -72,8 +73,9 @@ class MobileNumberScreen extends StatelessWidget {
                               ignoreBlank: true,
                               autoValidateMode:
                               AutovalidateMode.onUserInteraction,
+                              initialValue: PhoneNumber(isoCode: 'VN'),
                               inputDecoration: InputDecoration(
-                                hintText: 'Phone Number'.tr,
+                                hintText: 'phone number'.tr,
                                 border: InputBorder.none,
                                 isDense: true,
                               ),
@@ -91,15 +93,12 @@ class MobileNumberScreen extends StatelessWidget {
                               btnColor: ConstantColors.primary,
                               txtColor: Colors.white,
                               onPress: () async {
-                                /*
                                 FocusScope.of(context).unfocus();
                                 if (controller.isPhoneValid.value) {
-                                  ShowDialog.showLoader("Code sending");
+                                  ShowDialog.showLoader('code sending'.tr);
                                   controller
                                       .sendCode(controller.phoneNumber.value);
                                 }
-
-                                 */
                               },
                             )),
                         Padding(

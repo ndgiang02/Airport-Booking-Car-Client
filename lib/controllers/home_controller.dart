@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 
 class HomeController extends GetxController {
 
+  var currentPage = 0.obs;
+
   final String apiKey = '46f110f0e3msh0377381c278bffep11c5c9jsn20829ea2b0e4';
   final String host = 'flightera-flight-data.p.rapidapi.com';
 
@@ -31,6 +33,10 @@ class HomeController extends GetxController {
 
   void updateDate(DateTime value) {
     date.value = value;
+  }
+
+  void changePage(int page) {
+    currentPage.value = page;
   }
 
   Future<void> fetchFlightInfo(String flightNumber, String date) async {

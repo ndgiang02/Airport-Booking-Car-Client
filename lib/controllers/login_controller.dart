@@ -18,7 +18,7 @@ class LoginController extends GetxController {
 
   Future<UserModel?> loginAPI(Map<String, String> bodyParams) async {
     try {
-      ShowDialog.showLoader("Please wait");
+      ShowDialog.showLoader('please_wait'.tr);
 
       String? deviceToken = await FirebaseMessaging.instance.getToken();
       if (deviceToken != null) {
@@ -33,7 +33,7 @@ class LoginController extends GetxController {
 
       Map<String, dynamic> responseBody = json.decode(response.body);
 
-      log("Response body: ${response.body}");
+      log("Response body: $responseBody");
 
       ShowDialog.closeLoader();
       if (response.statusCode == 200) {
@@ -43,22 +43,18 @@ class LoginController extends GetxController {
           API.header['Authorization'] = 'Bearer $accessToken';
           ShowDialog.showToast('Login successful!');
           return UserModel.fromJson(responseBody);
-        } else {
-          String errorMessage =
-              responseBody['message'] ?? 'Login failed. Please try again.';
-          ShowDialog.showToast(errorMessage);
         }
       } else {
-        ShowDialog.showToast(
-            '${response.statusCode}. Please try again later.');
+        String errorMessage = 'email or password is incorrect'.tr;
+        ShowDialog.showToast(errorMessage);
       }
     } on TimeoutException {
       ShowDialog.closeLoader();
-      ShowDialog.showToast('Request timed out. Please try again.');
+      ShowDialog.showToast('Request timed out. Please try again.'.tr);
     } on SocketException {
       ShowDialog.closeLoader();
       ShowDialog.showToast(
-          'No internet connection. Please check your network.');
+          'No internet connection. Please check your network.'.tr);
     } catch (e) {
       ShowDialog.closeLoader();
       ShowDialog.showToast('An unexpected error occurred: $e');

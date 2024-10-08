@@ -72,7 +72,7 @@ class MyApp extends StatelessWidget {
         ),
         debugShowCheckedModeBanner: false,
         locale: locale,
-        fallbackLocale: Locale('vi', 'VN'),
+        fallbackLocale: const Locale('vi', 'VN'),
         translations: AppTranslations(),
         builder: EasyLoading.init(),
         initialRoute: AppRoutes.initialRoute,

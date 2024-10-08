@@ -36,7 +36,7 @@ class MyProfileController extends GetxController {
 
   Future<dynamic> updateName(Map<String, String> bodyParams) async {
     try {
-      ShowDialog.showLoader("Please wait");
+      ShowDialog.showLoader('please_wait'.tr);
       final response = await http.post(Uri.parse(API.updateName),
           headers: API.header, body: jsonEncode(bodyParams));
       Map<String, dynamic> responseBody = json.decode(response.body);
@@ -69,7 +69,7 @@ class MyProfileController extends GetxController {
 
   Future<dynamic> updatePassword(Map<String, String> bodyParams) async {
     try {
-      ShowDialog.showLoader("Please wait");
+      ShowDialog.showLoader('please_wait'.tr);
       bodyParams['new_password_confirmation'] = bodyParams['new_password']!;
 
       final response = await http.post(
@@ -113,7 +113,7 @@ class MyProfileController extends GetxController {
 
   Future<dynamic> deleteAccount() async {
     try {
-      ShowDialog.showLoader("Please wait");
+      ShowDialog.showLoader('please_wait'.tr);
       final response = await http.delete(
         Uri.parse(API.deleteUser),
         headers: API.header,

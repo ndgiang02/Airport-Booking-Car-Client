@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:get/get.dart';
 import '../../../models/trip_model.dart';
 import 'package:http/http.dart' as http;
 
+import '../constant/show_dialog.dart';
 import '../service/api.dart';
 import '../utils/preferences/preferences.dart';
 
@@ -15,6 +18,7 @@ class ActivitiesController extends GetxController {
   int? userId = Preferences.getInt(Preferences.userId);
 
   var isLoading = true.obs;
+  var shouldRefresh = false.obs;
 
   @override
   void onInit() {
@@ -33,6 +37,7 @@ class ActivitiesController extends GetxController {
       await fetchTrips('history');
     } finally {
       isLoading(false);
+      shouldRefresh(false);
     }
   }
 
@@ -41,6 +46,10 @@ class ActivitiesController extends GetxController {
       Uri.parse('${API.fetchTrips}?user_id=$userId&status=$status'),
       headers: API.header,
     );
+
+    Map<String, dynamic> responseBody = json.decode(response.body);
+
+    log("Response body: $responseBody");
 
     var data = json.decode(response.body);
 
@@ -58,6 +67,36 @@ class ActivitiesController extends GetxController {
     } else {
       log('Failed to fetch trips');
     }
+  }
+
+  Future<dynamic> canceledTrip(Map<String, dynamic> bodyParams) async {
+    try {
+      ShowDialog.showLoader('please wait'.tr);
+      final response = await http.post(Uri.parse(API.cancelTrip),
+          headers: API.header, body: jsonEncode(bodyParams));
+
+      Map<String, dynamic> responseBody = json.decode(response.body);
+      log('activities: $responseBody');
+      if (response.statusCode == 200 && responseBody['status'] == true) {
+        ShowDialog.closeLoader();
+        return responseBody;
+      } else {
+        ShowDialog.closeLoader();
+        ShowDialog.showToast('Something want wrong. Please try again later');
+        throw Exception('Failed to load album');
+      }
+    } on TimeoutException catch (e) {
+      ShowDialog.closeLoader();
+      ShowDialog.showToast(e.message.toString());
+    } on SocketException catch (e) {
+      ShowDialog.closeLoader();
+      ShowDialog.showToast(e.message.toString());
+    } on Error catch (e) {
+      ShowDialog.closeLoader();
+      ShowDialog.showToast(e.toString());
+    }
+    ShowDialog.closeLoader();
+    return null;
   }
 
   void updateIndex(int index) {

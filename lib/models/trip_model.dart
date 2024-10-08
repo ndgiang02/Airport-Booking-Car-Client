@@ -1,3 +1,5 @@
+import 'package:customerapp/models/tripstop_model.dart';
+
 class TripModel {
   TripModel({
     this.status,
@@ -48,6 +50,7 @@ class Trip {
   String? payment;
   String? tripStatus;
   String? tripType;
+  List<TripStop>? tripStops;
 
   Trip({
     this.id,
@@ -69,6 +72,7 @@ class Trip {
     this.payment,
     this.tripStatus,
     this.tripType,
+    this.tripStops
   });
 
   factory Trip.fromJson(Map<String, dynamic> json) {
@@ -94,6 +98,11 @@ class Trip {
       payment: json['payment']?.toString(),
       tripStatus: json['trip_status']?.toString(),
       tripType: json['trip_type']?.toString(),
+      tripStops: json['trip_stops'] != null
+          ? (json['trip_stops'] as List)
+          .map((stop) => TripStop.fromJson(stop as Map<String, dynamic>))
+          .toList()
+          : null,
     );
   }
 
@@ -118,34 +127,7 @@ class Trip {
       'payment': payment,
       'trip_status': tripStatus,
       'trip_type': tripType,
-    };
-  }
-}
-
-class Stop {
-  double? latitude;
-  double? longitude;
-  String? location;
-
-  Stop({
-    this.latitude,
-    this.longitude,
-    this.location,
-  });
-
-  factory Stop.fromJson(Map<String, dynamic> json) {
-    return Stop(
-      latitude: json['latitude'] != null ? double.tryParse(json['latitude'].toString()) : null,
-      longitude: json['longitude'] != null ? double.tryParse(json['longitude'].toString()) : null,
-      location: json['location']?.toString(),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'latitude': latitude,
-      'longitude': longitude,
-      'location': location,
+      'trip_stops': tripStops?.map((stop) => stop.toJson()).toList(),
     };
   }
 }

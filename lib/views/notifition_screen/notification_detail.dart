@@ -5,7 +5,7 @@ import '../../models/notification_model.dart';
 class NotificationDetailScreen extends StatelessWidget {
   final NotificationModel notification ;
 
-  const NotificationDetailScreen({Key? key, required this.notification}) : super(key: key);
+  const NotificationDetailScreen({super.key, required this.notification});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class NotificationDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chi tiết thông báo'),
+        title: const Text('Chi tiết '),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -23,18 +23,18 @@ class NotificationDetailScreen extends StatelessWidget {
           children: [
             Text(
               notification.title,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               notification.message,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Align(
               alignment: Alignment.bottomRight,
               child: Text(
-                '${notification.formattedDate}',
+                notification.formattedDate,
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ),

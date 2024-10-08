@@ -1,14 +1,11 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:customerapp/constant/constant.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 import '../../constant/show_dialog.dart';
 import '../../controllers/signup_controller.dart';
-import '../../utils/preferences/preferences.dart';
 import '../../utils/themes/button.dart';
 import '../../utils/themes/contant_colors.dart';
 import '../../utils/themes/textfield_theme.dart';
@@ -16,16 +13,9 @@ import 'login_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
 
-  String? phoneNumber;
-
-  SignUpScreen({Key? key}) : super(key: key);
+  SignUpScreen({super.key});
 
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _conformPasswordController = TextEditingController();
 
   final controller = Get.put(SignUpController());
 
@@ -71,7 +61,7 @@ class SignUpScreen extends StatelessWidget {
                               Expanded(
                                 child: TextFieldTheme.boxBuildTextField(
                                   hintText: 'Name'.tr,
-                                  controller: _nameController,
+                                  controller: controller.nameController,
                                   textInputType: TextInputType.text,
                                   maxLength: 22,
                                   validators: (String? value) {
@@ -87,25 +77,40 @@ class SignUpScreen extends StatelessWidget {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 16),
-                            child: TextFieldTheme.boxBuildTextField(
-                              hintText: 'phone'.tr,
-                              controller: _phoneController,
-                              textInputType: TextInputType.number,
-                              maxLength: 13,
-                              validators: (String? value) {
-                                if (value!.isNotEmpty) {
-                                  return null;
-                                } else {
-                                  return 'required'.tr;
-                                }
-                              },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: ConstantColors.textFieldBoarderColor,
+                                  ),
+                                  borderRadius:
+                                  const BorderRadius.all(Radius.circular(12))),
+                              padding: const EdgeInsets.only(left: 10),
+                              child: InternationalPhoneNumberInput(
+                                onInputChanged: (PhoneNumber number) {
+                                  controller.phoneNumber.value =
+                                      number.phoneNumber.toString();
+                                },
+                                onInputValidated: (bool value) =>
+                                controller.isPhoneValid.value = value,
+                                ignoreBlank: true,
+                                autoValidateMode:
+                                AutovalidateMode.onUserInteraction,
+                                initialValue: PhoneNumber(isoCode: 'VN'),
+                                inputDecoration: InputDecoration(
+                                  hintText: 'phone number'.tr,
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                ),
+                                selectorConfig: const SelectorConfig(
+                                    selectorType: PhoneInputSelectorType.DIALOG),
+                              ),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 16),
                             child: TextFieldTheme.boxBuildTextField(
                               hintText: 'email'.tr,
-                              controller: _emailController,
+                              controller: controller.emailController,
                               textInputType: TextInputType.emailAddress,
                               validators: (String? value) {
                                 bool emailValid = RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$').hasMatch(value!);
@@ -121,7 +126,7 @@ class SignUpScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 16),
                             child: Obx(() => TextFieldTheme.boxBuildTextField(
                                 hintText: 'password'.tr,
-                                controller: _passwordController,
+                                controller: controller.passwordController,
                                 textInputType: TextInputType.text,
                                 obscureText: controller.isObscure.value,
                                 validators: (String? value) {
@@ -150,11 +155,11 @@ class SignUpScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 16),
                             child: Obx( () =>TextFieldTheme.boxBuildTextField(
                                 hintText: 'confirm_password'.tr,
-                                controller: _conformPasswordController,
+                                controller: controller.conformPasswordController,
                                 textInputType: TextInputType.text,
                                 obscureText: controller.isObscure.value,
                                 validators: (String? value) {
-                                  if (_passwordController.text != value) {
+                                  if (controller.passwordController.value.text != value) {
                                     return 'Confirm password is invalid'.tr;
                                   } else {
                                     return null;
@@ -187,19 +192,16 @@ class SignUpScreen extends StatelessWidget {
                                   FocusScope.of(context).unfocus();
                                   if (_formKey.currentState!.validate()) {
                                     Map<String, String> bodyParams = {
-                                      'name': _nameController.text.trim(),
-                                      'email': _emailController.text.trim(),
-                                      'password': _passwordController.text,
-                                      'mobile': _phoneController.text.trim(),
+                                      'name': controller.nameController.text.trim(),
+                                      'email': controller.emailController.text.trim(),
+                                      'password': controller.passwordController.text.trim(),
+                                      'mobile': controller.phoneNumber.value.trim(),
                                       'user_type': 'customer',
                                     };
                                     await controller.signUp(bodyParams).then((value) {
                                       if (value != null) {
                                         if (value.status == true) {
-                                          _nameController.clear();
-                                          _emailController.clear();
-                                          _passwordController.clear();
-                                          _phoneController.clear();
+                                          controller.clearData();
                                           Get.to(() => LoginScreen());
                                         } else {
                                           ShowDialog.showToast(value.message);
@@ -265,8 +267,8 @@ class SignUpScreen extends StatelessWidget {
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
                         Get.offAll(LoginScreen(),
-                            duration: const Duration(milliseconds: 400), //duration of transitions, default 1 sec
-                            transition: Transition.rightToLeft); //transition effect);
+                            duration: const Duration(milliseconds: 400),
+                            transition: Transition.rightToLeft);
                       },
                   ),
                   TextSpan(

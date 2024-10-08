@@ -2,7 +2,6 @@ import 'package:customerapp/utils/themes/reponsive.dart';
 import 'package:flutter/material.dart';
 
 class ButtonThem {
-
   static buildCustomButton({
     required String label,
     required VoidCallback onPressed,
@@ -24,7 +23,6 @@ class ButtonThem {
         ),
         minimumSize: const Size(double.infinity, 50),
       ),
-
       onPressed: onPressed,
       child: Text(
         label,
@@ -33,18 +31,17 @@ class ButtonThem {
     );
   }
 
-
   static buildButton(
-      BuildContext context, {
-        required String title,
-        required Color btnColor,
-        required Color txtColor,
-        double btnHeight = 40,
-        double txtSize = 14,
-        double btnWidthRatio = 0.9,
-        required Function() onPress,
-        bool isVisible = true,
-      }) {
+    BuildContext context, {
+    required String title,
+    required Color btnColor,
+    required Color txtColor,
+    double btnHeight = 40,
+    double txtSize = 14,
+    double btnWidthRatio = 0.9,
+    required Function() onPress,
+    bool isVisible = true,
+  }) {
     return Visibility(
       visible: isVisible,
       child: Center(
@@ -61,7 +58,10 @@ class ButtonThem {
             child: Text(
               title.toUpperCase(),
               textAlign: TextAlign.center,
-              style: TextStyle(color: txtColor, fontSize: txtSize, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: txtColor,
+                  fontSize: txtSize,
+                  fontWeight: FontWeight.w600),
             ),
           ),
         ),
@@ -80,6 +80,10 @@ class ButtonThem {
     double btnWidthRatio = 0.9,
     required Function() onPress,
     bool isVisible = true,
+    bool enabled = true,
+    Color disabledBtnColor = Colors.grey,
+    Color disabledTxtColor = Colors.black38,
+    Color disabledBorderColor = Colors.grey,
   }) {
     return Visibility(
       visible: isVisible,
@@ -89,23 +93,27 @@ class ButtonThem {
           height: btnHeight,
           child: ElevatedButton(
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(btnColor),
-              foregroundColor: MaterialStateProperty.all<Color>(txtColor),
+              backgroundColor: MaterialStateProperty.all<Color>(
+                enabled ? btnColor : disabledBtnColor,
+              ),
+              foregroundColor: MaterialStateProperty.all<Color>(
+                enabled ? txtColor : disabledTxtColor,
+              ),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                   side: BorderSide(
-                    color: btnBorderColor,
+                    color:  enabled ? btnBorderColor : disabledBorderColor,
                   ),
                 ),
               ),
             ),
-            onPressed: onPress,
+            onPressed: enabled ? onPress : null,
             child: Text(
               title.toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: txtColor,
+                  color: enabled ? txtColor : disabledTxtColor,
                   fontSize: txtSize,
                   fontWeight: FontWeight.w600),
             ),

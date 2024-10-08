@@ -1,4 +1,12 @@
 const Map<String, String> viVN = {
+  'amount': "Cước phí",
+  'status': "Trạng thái",
+  'return time': "Giờ về",
+  'scheduled time': "Giờ xuất phát",
+  'email or password is incorrect': 'Email hoặc mật khẩu không đúng',
+  'Invalid response format from server.':"Định dạng phản hồi không hợp lệ từ máy chủ.",
+  'email already exists': "Email đã tồn tại",
+  'highlight':"Nổi bật",
   'copy': "Đã sao chép",
   'no_data_trip': "Không có dữ liệu chuyến đi",
   'coming': "Sắp tới",

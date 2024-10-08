@@ -4,20 +4,50 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../constant/show_dialog.dart';
 import '../models/user_model.dart';
 import '../service/api.dart';
-import '../utils/preferences/preferences.dart';
 
 class SignUpController extends GetxController {
-
   var isObscure = true.obs;
+
+  RxString phoneNumber = "".obs;
+  RxBool isPhoneValid = false.obs;
+
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final conformPasswordController = TextEditingController();
+
+
+  void clearData() {
+    // Reset Rx variables
+    phoneNumber.value = '';
+    isPhoneValid.value = false;
+
+
+    nameController.clear();
+    emailController.clear();
+    passwordController.clear();
+    conformPasswordController.clear();
+  }
+
+  // Dọn dẹp khi controller bị hủy
+  @override
+  void onClose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    conformPasswordController.dispose();
+    super.onClose();
+  }
 
   Future<UserModel?> signUp(Map<String, String> bodyParams) async {
     try {
-      ShowDialog.showLoader("Please wait");
+      ShowDialog.showLoader('please_wait'.tr);
       final response = await http.post(
         Uri.parse(API.userSignUP),
         headers: API.authheader,
@@ -25,48 +55,70 @@ class SignUpController extends GetxController {
       );
 
       Map<String, dynamic> responseBody = json.decode(response.body);
-
-      log("Response status: ${response.statusCode}");
-      log("Response body: ${response.body}");
-      log("Response body: ${response.body}");
+      log("Response body: $responseBody");
 
       if (response.statusCode == 201) {
-        if (responseBody['status'] == true) {
-          ShowDialog.closeLoader();
-          Map<String, dynamic> responseBody = json.decode(response.body);
-
-          log("Response body2: ${response.body}");
-
-          if (responseBody.containsKey('data') &&
-              responseBody['data'].containsKey('token')) {
-            Preferences.setString(
-                Preferences.token, responseBody['data']['token'].toString());
-            API.header['token'] = Preferences.getString(Preferences.token);
-          }
-          return UserModel.fromJson(responseBody);
-        } else {
-          String errorMessage =
-              responseBody['message'] ?? 'Register failed. Please try again.';
-          ShowDialog.showToast(errorMessage);
-        }
-      } else {
         ShowDialog.closeLoader();
-        ShowDialog.showToast('Invalid response format from server.');
+        return UserModel.fromJson(responseBody);
+      } else if(response.statusCode == 500){
+        ShowDialog.closeLoader();
+        ShowDialog.showToast('Email already exists'.tr);
+      }
+        else {
+        ShowDialog.closeLoader();
+        ShowDialog.showToast('Invalid response format from server.'.tr);
       }
     } on TimeoutException catch (e) {
       ShowDialog.closeLoader();
-      ShowDialog.showToast('Request timed out. Please try again.');
+      ShowDialog.showToast('Request timed out. Please try again.'.tr);
     } on SocketException catch (e) {
       ShowDialog.closeLoader();
       ShowDialog.showToast(
-          'No internet connection. Please check your network.');
+          'No internet connection. Please check your network.'.tr);
     } on FormatException catch (e) {
       ShowDialog.closeLoader();
       ShowDialog.showToast('Invalid response format: ${e.message}');
     } catch (e) {
       ShowDialog.closeLoader();
-      ShowDialog.showToast('An unexpected error occurred: $e');
+      ShowDialog.showToast('$e');
     }
     return null;
   }
+
+  /*Future<UserModel?> signUp(Map<String, String> bodyParams) async {
+    try {
+      ShowDialog.showLoader('please_wait'.tr);
+      final response = await http.post(
+        Uri.parse(API.userSignUP),
+        headers: API.authheader,
+        body: jsonEncode(bodyParams),
+      );
+      Map<String, dynamic> responseBody = json.decode(response.body);
+      log("Response body2: $responseBody");
+      if (response.statusCode == 201) {
+          ShowDialog.closeLoader();
+          return UserModel.fromJson(responseBody);
+      } else if(response.statusCode == 200) {
+          String errorMessage = 'account already exists'.tr;
+          ShowDialog.showToast(errorMessage);
+      } else {
+        ShowDialog.closeLoader();
+        ShowDialog.showToast('Invalid response format from server.'.tr);
+      }
+    } on TimeoutException catch (e) {
+      ShowDialog.closeLoader();
+      ShowDialog.showToast('Request timed out. Please try again.'.tr);
+    } on SocketException catch (e) {
+      ShowDialog.closeLoader();
+      ShowDialog.showToast(
+          'No internet connection. Please check your network.'.tr);
+    } on FormatException catch (e) {
+      ShowDialog.closeLoader();
+      ShowDialog.showToast('Invalid response format: ${e.message}');
+    } catch (e) {
+      ShowDialog.closeLoader();
+      ShowDialog.showToast('$e');
+    }
+    return null;
+  }*/
 }

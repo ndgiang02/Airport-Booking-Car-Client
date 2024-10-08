@@ -24,7 +24,8 @@ class API {
   static const resetPasswordOtp = "${baseUrl}reset-password-otp";
   static const changePassword = "${baseUrl}change-password";
   static const fetchTrips = "${baseUrl}fetch-trips";
-  static const bookRides = "${baseUrl}trip-booking";
+  static const bookTrip = "${baseUrl}trip-booking";
+  static const cancelTrip = "${baseUrl}cancel-trip";
   static const fetchVehicle = "${baseUrl}vehicle-types";
 
   static const deleteUser = "${baseUrl}delete-user-account";
@@ -33,6 +34,9 @@ class API {
   static const introduction = "${baseUrl}intro";
   static const terms = "${baseUrl}terms";
 
+  static const getUserByPhone = "${baseUrl}get-user-by-phone";
+  static const checkUser = "${baseUrl}check-phone";
+
 
   static const updateName = "${baseUrl}user-name";
   static const contactUs = "${baseUrl}contact-us";
@@ -40,8 +44,6 @@ class API {
   static const rentVehicle = "${baseUrl}vehicle-get";
   static const transaction = "${baseUrl}transaction";
   static const getFcmToken = "${baseUrl}fcm-token";
-  static const deleteFavouriteRide = "${baseUrl}delete-favorite-ride";
-  static const rejectRide = "${baseUrl}set-rejected-requete";
 
 }
 

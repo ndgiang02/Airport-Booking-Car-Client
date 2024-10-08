@@ -322,8 +322,8 @@ class BookController extends GetxController {
 
   Future<dynamic> bookRide(Map<String, dynamic> bodyParams) async {
     try {
-      ShowDialog.showLoader("Please wait");
-      final response = await http.post(Uri.parse(API.bookRides),
+      ShowDialog.showLoader('please_wait'.tr);
+      final response = await http.post(Uri.parse(API.bookTrip),
           headers: API.header, body: jsonEncode(bodyParams));
       Map<String, dynamic> responseBody = json.decode(response.body);
       if (response.statusCode == 201) {
@@ -374,7 +374,7 @@ class BookController extends GetxController {
         },
       );
     } catch (e) {
-      debugPrint('Error: $e');
+      log('Error: $e');
       return null;
     }
   }

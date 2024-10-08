@@ -1,11 +1,7 @@
 import 'package:customerapp/controllers/home_controller.dart';
-import 'package:customerapp/utils/themes/textfield_theme.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:customerapp/utils/themes/contant_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:time_picker_spinner_pop_up/time_picker_spinner_pop_up.dart';
-
-import '../../utils/extensions/load.dart';
 import '../../utils/preferences/preferences.dart';
 import '../../utils/themes/text_style.dart';
 
@@ -20,6 +16,15 @@ class _HomeState extends State<HomeScreen> {
   final homeController = Get.put(HomeController());
 
   String? name =  Preferences.getString(Preferences.userName);
+
+  final PageController _pageController = PageController();
+
+  final List<String> items = [
+    "Welcome to the app!",
+    "Easy to use",
+    "Fast and Secure",
+    "Enjoy the experience",
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -67,85 +72,82 @@ class _HomeState extends State<HomeScreen> {
               const SizedBox(height: 8),
               buildServiceCard(
                 title: 'airport'.tr,
-                imagePath: 'assets/images/meme.jpg',
+                imagePath: 'assets/images/sedan.png',
                 destinationScreen: '/airport',
               ),
               buildServiceCard(
                 title: 'longtrip'.tr,
-                imagePath: 'assets/images/meme.jpg',
+                imagePath: 'assets/images/sedan.png',
                 destinationScreen: '/longtrip',
               ),
-              const SizedBox(
-                height: 8,
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                 Expanded(
-                  child:  Text(
-                    'show_info_fly'.tr,
-                    style: CustomTextStyles.header,
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: TimePickerSpinnerPopUp(
-                    mode: CupertinoDatePickerMode.date,
-                    initTime: homeController.date.value,
-                    maxTime: DateTime.now().add(const Duration(days: 30)),
-                    cancelText: 'cancel'.tr,
-                    confirmText: 'yes'.tr,
-                    pressType: PressType.singlePress,
-                    timeFormat: 'dd-MM-yyyy',
-                    onChange: (dateTime) {
-                      homeController.updateDate(dateTime);
-                    },
-                  ),
-                ),
-              ]),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TextFieldTheme.boxBuildTextField(
-                      hintText: 'flight_code'.tr,
-                      controller: codeController,
-                      onChanged: homeController.updateFlightCode,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      homeController.fetchFlightInfo(
-                        homeController.flightCode.value,
-                        homeController.formatDate(homeController.date.value),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 2,
-                    ),
-                    child:  Text(
-                      'fetch'.tr,
-                      style: CustomTextStyles.normal
-                    ),
-                  ),
-                ],
+              buildServiceCard(
+                title: 'show_info_fly'.tr,
+                imagePath: 'assets/images/flight.jpg',
+                destinationScreen: '/flight',
               ),
               const SizedBox(
                 height: 10,
               ),
-              _buildFlightInfo(),
+              Text('highlight'.tr, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                height: 180,
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (int page) {
+                   homeController.changePage(page);
+                  },
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return Container(
+                        width: MediaQuery.of(context).size.width*0.8,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            width: 2,
+                            color: ConstantColors.primary,
+                          )
+                        ),
+                        child: Center(
+                          child: Text(
+                            'introduction ${index + 1}',
+                            style: const TextStyle(color: Colors.black, fontSize: 18),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 8),
+              Obx(() => Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(3, (index) => buildDot(index, homeController.currentPage.value)),
+              )),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget buildDot(int index, int currentPage) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 100),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      height: 10,
+      width: 10,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: currentPage == index ? Colors.blueAccent : Colors.grey,
+          width: 0.5,
+        ),
+        color: currentPage == index ? Colors.blueAccent : Colors.transparent,
       ),
     );
   }
@@ -172,8 +174,8 @@ class _HomeState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
-                      style: CustomTextStyles.header
+                        title,
+                        style: CustomTextStyles.header
                     ),
                     const SizedBox(height: 8),
                   ],
@@ -184,7 +186,7 @@ class _HomeState extends State<HomeScreen> {
                   imagePath,
                   width: 50,
                   height: 50,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
               ),
             ],
@@ -192,259 +194,5 @@ class _HomeState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildInfoBox({required Widget child}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-              padding: const EdgeInsets.all(5),
-              height: 200,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: child),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFlightInfo() {
-    return Obx(() {
-      if (homeController.isLoading.value) {
-        return _buildInfoBox(
-          child: Center(child: Loading()),
-        );
-      }
-
-      if (homeController.errorMessage.value.isNotEmpty) {
-        return _buildInfoBox(
-          child: Text(homeController.errorMessage.value)
-        );
-      }
-
-      final flightInfo = homeController.flightInfo.value;
-
-      if (flightInfo.isEmpty) {
-        return _buildInfoBox(
-          child:  Center(child: Text('no_flight_information_available'.tr)),
-        );
-      }
-
-      return _buildInfoBox(child: _buildFlight(flightInfo));
-    });
-  }
-
-  Widget _buildFlight(Map<String, dynamic> flightInfo) {
-    return Column(children: [
-      Row(
-        children: [
-          Text(
-            flightInfo['departure_iata'] ?? 'Unknown',
-            style: CustomTextStyles.header.copyWith(color: Colors.indigo)),
-          SizedBox(width: 6),
-          Container(
-            padding: EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Colors.indigo.shade50,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: SizedBox(
-              height: 8,
-              width: 8,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.indigo.shade400,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-              child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Stack(children: [
-                    SizedBox(
-                      height: 24,
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          return Flex(
-                            direction: Axis.horizontal,
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: List.generate(
-                                (constraints.constrainWidth() / 6).floor(),
-                                (index) => SizedBox(
-                                      height: 1,
-                                      width: 3,
-                                      child: DecoratedBox(
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey.shade300),
-                                      ),
-                                    )),
-                          );
-                        },
-                      ),
-                    ),
-                    Center(
-                        child: Transform.rotate(
-                            angle: 1.5,
-                            child: Icon(
-                              Icons.local_airport,
-                              size: 24,
-                              color: Colors.indigo.shade300,
-                            )))
-                  ]))),
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Colors.indigo.shade50,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: SizedBox(
-              height: 8,
-              width: 8,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.pink.shade400,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            width: 6,
-          ),
-          Text(
-            flightInfo['arrival_iata'] ?? 'Unknown',
-            style: CustomTextStyles.header.copyWith(color: Colors.pink))
-        ],
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(flightInfo['departure_city'] ?? 'Unknown',
-                style: CustomTextStyles.body),
-          ),
-          Text(
-            flightInfo['flnr'] ?? "",
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(
-            width: 100,
-            child: Text(flightInfo['arrival_city'] ?? 'Unknown',
-                textAlign: TextAlign.end, style: CustomTextStyles.body),
-          ),
-        ],
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-              homeController.convertTo12HourFormat(
-                  flightInfo['scheduled_departure_local'] ?? 'Unknown'),
-              style: CustomTextStyles.normal),
-          Text('scheduled'.tr, style: CustomTextStyles.body),
-          Text(
-              homeController.convertTo12HourFormat(
-                  flightInfo['scheduled_arrival_local'] ?? 'Unknown'),
-              style: CustomTextStyles.normal),
-        ],
-      ),
-      const SizedBox(
-        height: 6,
-      ),
-      /*
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Delay: ${flightInfo['delay'] ?? '0m'}", style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.bold ), textAlign: TextAlign.end),
-                ],
-              ),
-
-               */
-      const SizedBox(
-        height: 6,
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-              homeController.convertTo12HourFormat(
-                  flightInfo['actual_departure_local'] ?? 'Unknown'),
-              style: CustomTextStyles.normal),
-          const Text("Thực tế", style: CustomTextStyles.normal),
-          Text(
-              homeController.convertTo12HourFormat(
-                  flightInfo['actual_arrival_local'] ?? 'Unknown'),
-              style: CustomTextStyles.normal),
-        ],
-      ),
-      const SizedBox(
-        height: 2,
-      ),
-      Expanded(
-          child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Stack(children: [
-                SizedBox(
-                  height: 24,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return Flex(
-                        direction: Axis.horizontal,
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(
-                            (constraints.constrainWidth() / 6).floor(),
-                            (index) => SizedBox(
-                                  height: 1,
-                                  width: 3,
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey.shade500),
-                                  ),
-                                )),
-                      );
-                    },
-                  ),
-                ),
-              ]))),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                    color: Colors.amber.shade50,
-                    borderRadius: BorderRadius.circular(20)),
-                child: const Icon(
-                  Icons.flight_land,
-                  color: Colors.amber,
-                ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(flightInfo['airline_name'] ?? "Unknown",
-                  style: CustomTextStyles.title),
-            ],
-          ),
-          Text(
-            homeController.formatDate(flightInfo['actual_arrival_local']),
-            style: CustomTextStyles.body,
-            textAlign: TextAlign.end,
-          ),
-        ],
-      )
-    ]);
   }
 }

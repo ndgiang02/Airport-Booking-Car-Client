@@ -1,4 +1,4 @@
-import 'package:customerapp/controllers/bottomnavigation_controller.dart';
+import 'package:customerapp/controllers/navigation_controller.dart';
 import 'package:customerapp/utils/themes/contant_colors.dart';
 import 'package:customerapp/views/home_screens/home_screen.dart';
 import 'package:customerapp/views/notifition_screen/notifition_screen.dart';
@@ -11,7 +11,7 @@ import '../manage_screen/manage_screen.dart';
 class NavigationPage extends StatelessWidget {
   NavigationPage({super.key});
 
-  BottomNavigationController bottomNavigationController = Get.put(BottomNavigationController());
+  NavigationController navigationController = Get.put(NavigationController());
 
   final screens = [
     HomeScreen(),
@@ -22,10 +22,11 @@ class NavigationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Obx(
             () => IndexedStack(
-          index: bottomNavigationController.selectedIndex.value,
+          index: navigationController.selectedIndex.value,
           children: screens,
         ),
       ),
@@ -39,7 +40,7 @@ class NavigationPage extends StatelessWidget {
                           color: Colors.black.withOpacity(0.2),
                           spreadRadius: 5,
                           blurRadius: 10,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ]
                   ),
@@ -48,28 +49,28 @@ class NavigationPage extends StatelessWidget {
                     unselectedItemColor: Colors.grey,
                     type: BottomNavigationBarType.fixed,
                     onTap: (index) {
-                      bottomNavigationController.changeIndex(index);
+                      navigationController.changeIndex(index);
                     },
-                    currentIndex: bottomNavigationController.selectedIndex.value,
+                    currentIndex: navigationController.selectedIndex.value,
                     items: [
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.home_outlined),
-                        activeIcon: Icon(Icons.home),
+                        icon: const Icon(Icons.home_outlined),
+                        activeIcon: const Icon(Icons.home),
                         label: 'home'.tr,
                       ),
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.access_time_outlined),
-                        activeIcon: Icon(Icons.access_time_filled_sharp),
+                        icon: const Icon(Icons.access_time_outlined),
+                        activeIcon: const Icon(Icons.access_time_filled_sharp),
                         label: 'activities'.tr,
                       ),
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.notifications_none),
-                        activeIcon: Icon(Icons.notifications),
+                        icon: const Icon(Icons.notifications_none),
+                        activeIcon: const Icon(Icons.notifications),
                         label: 'notification'.tr,
                       ),
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.account_circle_outlined),
-                        activeIcon: Icon(Icons.account_circle),
+                        icon: const Icon(Icons.account_circle_outlined),
+                        activeIcon: const Icon(Icons.account_circle),
                         label: 'account'.tr,
                       ),
                     ],
@@ -77,7 +78,7 @@ class NavigationPage extends StatelessWidget {
                 ),
                 Positioned(
                   top: 0,
-                  left: bottomNavigationController.selectedIndex.value * (MediaQuery.of(context).size.width / 4),
+                  left: navigationController.selectedIndex.value * (MediaQuery.of(context).size.width / 4),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     height: 2,

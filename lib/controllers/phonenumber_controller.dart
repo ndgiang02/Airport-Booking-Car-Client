@@ -1,11 +1,22 @@
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+
+import '../constant/show_dialog.dart';
+import '../models/user_model.dart';
+import '../service/api.dart';
+import '../utils/preferences/preferences.dart';
+import '../views/auth_screens/otp_screen.dart';
+
 class PhoneNumberController extends GetxController {
   RxString phoneNumber = "".obs;
   RxBool isPhoneValid = false.obs;
 
-  /*
   sendCode(String phoneNumber) async {
     await FirebaseAuth.instance
         .verifyPhoneNumber(
@@ -27,29 +38,29 @@ class PhoneNumberController extends GetxController {
     )
         .catchError((error) {
       ShowDialog.closeLoader();
-      ShowDialog.showToast("You have try many time please send otp after some time");
+      ShowDialog.showToast(
+          "You have try many time please send otp after some time");
     });
   }
 
-  Future<bool?> phoneNumberIsExit(Map<String, String> bodyParams) async {
+  Future<bool?> checkUser(Map<String, String> bodyParams) async {
     try {
-      ShowDialog.showLoader("Please wait");
-      final response = await http.post(Uri.parse(API.getExistingUserOrNot), headers: API.authheader, body: jsonEncode(bodyParams));
+      ShowDialog.showLoader('please_wait'.tr);
+      final response = await http.post(Uri.parse(API.checkUser),
+          headers: API.authheader, body: jsonEncode(bodyParams));
 
       log("---->");
       log(bodyParams.toString());
       log(response.body);
       Map<String, dynamic> responseBody = json.decode(response.body);
-      if (response.statusCode == 200 && responseBody['success'] == "success") {
+
+      if (response.statusCode == 200) {
         ShowDialog.closeLoader();
-        if (responseBody['data'] == true) {
+        if (responseBody['status'] == true) {
           return true;
         } else {
           return false;
         }
-      } else if (response.statusCode == 200 && responseBody['success'] == "Failed") {
-        ShowDialog.closeLoader();
-        ShowDialog.showToast(responseBody['error']);
       } else {
         ShowDialog.closeLoader();
         ShowDialog.showToast('Something want wrong. Please try again later');
@@ -71,18 +82,20 @@ class PhoneNumberController extends GetxController {
     return null;
   }
 
-  Future<UserModel?> getDataByPhoneNumber(Map<String, String> bodyParams) async {
+  Future<UserModel?> loginByPhone(Map<String, String> bodyParams) async {
     try {
-      ShowDialog.showLoader("Please wait");
-      final response = await http.post(Uri.parse(API.getProfileByPhone), headers: API.header, body: jsonEncode(bodyParams));
-
+      ShowDialog.showLoader('please wait'.tr);
+      final response = await http.post(Uri.parse(API.getUserByPhone),
+          headers: API.authheader, body: jsonEncode(bodyParams));
       Map<String, dynamic> responseBody = json.decode(response.body);
-      if (response.statusCode == 200 && responseBody['success'] == "success") {
+      log('$responseBody');
+      if (response.statusCode == 200) {
         ShowDialog.closeLoader();
+        String accessToken = responseBody['data']['token'].toString();
+        Preferences.setString(Preferences.token, accessToken);
+        API.header['Authorization'] = 'Bearer $accessToken';
+        ShowDialog.showToast('login successful'.tr);
         return UserModel.fromJson(responseBody);
-      } else if (response.statusCode == 200 && responseBody['success'] == "Failed") {
-        ShowDialog.closeLoader();
-        ShowDialog.showToast(responseBody['error']);
       } else {
         ShowDialog.closeLoader();
         ShowDialog.showToast('Something want wrong. Please try again later');
@@ -103,6 +116,4 @@ class PhoneNumberController extends GetxController {
     }
     return null;
   }
-
-   */
 }

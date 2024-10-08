@@ -20,7 +20,7 @@ class TermsOfServiceController extends GetxController {
 
   Future<void> getTermsOfService() async {
     try {
-      ShowDialog.showLoader("Please wait");
+      ShowDialog.showLoader('please_wait'.tr);
       final response = await http.get(
         Uri.parse(API.terms),
         headers: API.header,
