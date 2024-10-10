@@ -1,7 +1,10 @@
 import 'package:customerapp/bindings/activities_binding/activities_binding.dart';
 import 'package:customerapp/bindings/booking_binding/booking_binding.dart';
+import 'package:customerapp/bindings/cluster_binding/cluster_binding.dart';
 import 'package:customerapp/bindings/home_binding/home_binding.dart';
 import 'package:customerapp/bindings/notification_binding/notification_binding.dart';
+import 'package:customerapp/views/booking_screen/longtrip_screen.dart';
+import 'package:customerapp/views/cluster_screen/cluster_screen.dart';
 import 'package:customerapp/views/home_screens/flight_screen.dart';
 import 'package:customerapp/views/home_screens/home_screen.dart';
 import 'package:customerapp/views/notifition_screen/notification_detail.dart';
@@ -11,7 +14,7 @@ import 'package:get/get.dart';
 
 
 import '../views/activities_screen/activities_screen.dart';
-import '../views/booking_screen/airport_screen.dart';
+import '../views/airport_screen/airport_screen.dart';
 
 class AppRoutes {
 
@@ -34,6 +37,8 @@ class AppRoutes {
   static const String localizationScreen = '/localization';
 
   static const String airportScreen = '/airport';
+
+  static const String clusterScreen = '/cluster';
 
   static const String flightScreen = '/flight';
 
@@ -70,15 +75,22 @@ class AppRoutes {
       ],
     ),
     GetPage(
+      name: clusterScreen,
+      page: () => const ClusterScreen(),
+      bindings: [
+        ClusterBinding(),
+      ],
+    ),
+    GetPage(
       name: airportScreen,
-      page: () => const AirportScreen1(),
+      page: () => const AirportScreen(),
       bindings: [
         BookingBinding(),
       ],
     ),
     GetPage(
       name: longtripScreen,
-      page: () => const AirportScreen1(),
+      page: () =>  const LongTripScreen(),
       bindings: [
         BookingBinding(),
       ],

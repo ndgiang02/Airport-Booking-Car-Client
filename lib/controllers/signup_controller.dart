@@ -53,10 +53,7 @@ class SignUpController extends GetxController {
         headers: API.authheader,
         body: jsonEncode(bodyParams),
       );
-
       Map<String, dynamic> responseBody = json.decode(response.body);
-      log("Response body: $responseBody");
-
       if (response.statusCode == 201) {
         ShowDialog.closeLoader();
         return UserModel.fromJson(responseBody);
@@ -68,13 +65,6 @@ class SignUpController extends GetxController {
         ShowDialog.closeLoader();
         ShowDialog.showToast('Invalid response format from server.'.tr);
       }
-    } on TimeoutException catch (e) {
-      ShowDialog.closeLoader();
-      ShowDialog.showToast('Request timed out. Please try again.'.tr);
-    } on SocketException catch (e) {
-      ShowDialog.closeLoader();
-      ShowDialog.showToast(
-          'No internet connection. Please check your network.'.tr);
     } on FormatException catch (e) {
       ShowDialog.closeLoader();
       ShowDialog.showToast('Invalid response format: ${e.message}');
@@ -85,40 +75,4 @@ class SignUpController extends GetxController {
     return null;
   }
 
-  /*Future<UserModel?> signUp(Map<String, String> bodyParams) async {
-    try {
-      ShowDialog.showLoader('please_wait'.tr);
-      final response = await http.post(
-        Uri.parse(API.userSignUP),
-        headers: API.authheader,
-        body: jsonEncode(bodyParams),
-      );
-      Map<String, dynamic> responseBody = json.decode(response.body);
-      log("Response body2: $responseBody");
-      if (response.statusCode == 201) {
-          ShowDialog.closeLoader();
-          return UserModel.fromJson(responseBody);
-      } else if(response.statusCode == 200) {
-          String errorMessage = 'account already exists'.tr;
-          ShowDialog.showToast(errorMessage);
-      } else {
-        ShowDialog.closeLoader();
-        ShowDialog.showToast('Invalid response format from server.'.tr);
-      }
-    } on TimeoutException catch (e) {
-      ShowDialog.closeLoader();
-      ShowDialog.showToast('Request timed out. Please try again.'.tr);
-    } on SocketException catch (e) {
-      ShowDialog.closeLoader();
-      ShowDialog.showToast(
-          'No internet connection. Please check your network.'.tr);
-    } on FormatException catch (e) {
-      ShowDialog.closeLoader();
-      ShowDialog.showToast('Invalid response format: ${e.message}');
-    } catch (e) {
-      ShowDialog.closeLoader();
-      ShowDialog.showToast('$e');
-    }
-    return null;
-  }*/
 }

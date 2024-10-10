@@ -23,7 +23,6 @@ class _HomeState extends State<HomeScreen> {
     "Welcome to the app!",
     "Easy to use",
     "Fast and Secure",
-    "Enjoy the experience",
   ];
 
   @override
@@ -71,6 +70,11 @@ class _HomeState extends State<HomeScreen> {
               Text('Let’s choose the transport service suitable for you'.tr),
               const SizedBox(height: 8),
               buildServiceCard(
+                title: 'airport cluster'.tr,
+                imagePath: 'assets/images/sedan.png',
+                destinationScreen: '/cluster',
+              ),
+              buildServiceCard(
                 title: 'airport'.tr,
                 imagePath: 'assets/images/sedan.png',
                 destinationScreen: '/airport',
@@ -100,7 +104,7 @@ class _HomeState extends State<HomeScreen> {
                    homeController.changePage(page);
                   },
                   scrollDirection: Axis.horizontal,
-                  itemCount: 5,
+                  itemCount: items.length,
                   itemBuilder: (context, index) {
                     return Container(
                         width: MediaQuery.of(context).size.width*0.8,
@@ -114,8 +118,8 @@ class _HomeState extends State<HomeScreen> {
                         ),
                         child: Center(
                           child: Text(
-                            'introduction ${index + 1}',
-                            style: const TextStyle(color: Colors.black, fontSize: 18),
+                            items[index],
+                            style: CustomTextStyles.header,
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -137,7 +141,7 @@ class _HomeState extends State<HomeScreen> {
 
   Widget buildDot(int index, int currentPage) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 100),
+      duration: const Duration(milliseconds: 50),
       margin: const EdgeInsets.symmetric(horizontal: 4),
       height: 10,
       width: 10,

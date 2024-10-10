@@ -5,16 +5,17 @@ import 'package:get/get.dart';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
 import '../../controllers/book_controller.dart';
 import '../../utils/themes/text_style.dart';
-import 'map_screen.dart';
+import '../booking_screen/map_screen.dart';
 
-class AirportScreen1 extends StatefulWidget {
-  const AirportScreen1({super.key});
+class LongTripScreen extends StatefulWidget {
+
+  const LongTripScreen({super.key});
 
   @override
-  State<AirportScreen1> createState() => _AirportScreen1State();
+  State<LongTripScreen> createState() => _LongTripScreenState();
 }
 
-class _AirportScreen1State extends State<AirportScreen1> {
+class _LongTripScreenState extends State<LongTripScreen> {
 
   final bookController = Get.find<BookController>();
 
@@ -63,40 +64,40 @@ class _AirportScreen1State extends State<AirportScreen1> {
             const Divider(),
             // Stopover TextFields
             Obx(() => Column(
-                  children: List.generate(
-                    bookController.stopoverControllers.length,
+              children: List.generate(
+                bookController.stopoverControllers.length,
                     (index) {
-                      return Column(
-                        children: [
-                          buildTextField(
-                            controller:
-                                bookController.stopoverControllers[index],
-                            prefixIcon: const Icon(
-                              Icons.pin_drop,
-                              size: 20,
-                              color: Colors.amber,
-                            ),
-                            hintText: 'Stopover ${index + 1}',
-                            onClear: () {
-                              bookController.stopoverControllers[index].clear();
-                            },
-                            onDeleteStop: () {
-                              bookController.removeStopover(index);
-                              if (bookController.stopoverLatLng.length >
-                                  index + 1) {
-                                bookController.stopoverLatLng
-                                    .removeAt(index + 1);
-                              }
-                            },
-                            textObserver: bookController.stopoverTexts[index],
-                            focusedFieldName: 'stopover_$index'.tr,
-                          ),
-                          const Divider(),
-                        ],
-                      );
-                    },
-                  ),
-                )),
+                  return Column(
+                    children: [
+                      buildTextField(
+                        controller:
+                        bookController.stopoverControllers[index],
+                        prefixIcon: const Icon(
+                          Icons.pin_drop,
+                          size: 20,
+                          color: Colors.amber,
+                        ),
+                        hintText: 'Stopover ${index + 1}',
+                        onClear: () {
+                          bookController.stopoverControllers[index].clear();
+                        },
+                        onDeleteStop: () {
+                          bookController.removeStopover(index);
+                          if (bookController.stopoverLatLng.length >
+                              index + 1) {
+                            bookController.stopoverLatLng
+                                .removeAt(index + 1);
+                          }
+                        },
+                        textObserver: bookController.stopoverTexts[index],
+                        focusedFieldName: 'stopover_$index'.tr,
+                      ),
+                      const Divider(),
+                    ],
+                  );
+                },
+              ),
+            )),
             // Destination TextField
             buildTextField(
               controller: bookController.destinationController,
@@ -203,7 +204,7 @@ class _AirportScreen1State extends State<AirportScreen1> {
                               bookController.stopoverControllers.add(TextEditingController());
                             }
                             while (bookController.stopoverLatLng.length <= index) {
-                              bookController.stopoverLatLng.add(LatLng(0, 0));
+                              bookController.stopoverLatLng.add(const LatLng(0, 0));
                             }
                             bookController.stopoverControllers[index].text = selectedText;
                             bookController.stopoverLatLng[index] = latLong!;
@@ -314,23 +315,23 @@ class _AirportScreen1State extends State<AirportScreen1> {
               prefixIcon: prefixIcon,
               suffixIcon: textObserver?.value.isNotEmpty ?? false
                   ? IconButton(
-                      icon: const Icon(Icons.cancel,
-                          color: Colors.grey, size: 20),
-                      onPressed: onClear,
-                    )
+                icon: const Icon(Icons.cancel,
+                    color: Colors.grey, size: 20),
+                onPressed: onClear,
+              )
                   : onDeleteStop != null
-                      ? IconButton(
-                          icon: const Icon(Icons.clear,
-                              color: Colors.grey, size: 20),
-                          onPressed: onDeleteStop,
-                        )
-                      : onGetCurrentLocation != null
-                          ? IconButton(
-                              icon: const Icon(Icons.my_location,
-                                  color: Colors.grey, size: 20),
-                              onPressed: onGetCurrentLocation,
-                            )
-                          : null,
+                  ? IconButton(
+                icon: const Icon(Icons.clear,
+                    color: Colors.grey, size: 20),
+                onPressed: onDeleteStop,
+              )
+                  : onGetCurrentLocation != null
+                  ? IconButton(
+                icon: const Icon(Icons.my_location,
+                    color: Colors.grey, size: 20),
+                onPressed: onGetCurrentLocation,
+              )
+                  : null,
               hintText: hintText,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -341,7 +342,7 @@ class _AirportScreen1State extends State<AirportScreen1> {
                 borderSide: const BorderSide(color: Colors.blue, width: 2),
               ),
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             ),
             onChanged: (pattern) async {
               if (controller == bookController.destinationController) {
@@ -349,7 +350,7 @@ class _AirportScreen1State extends State<AirportScreen1> {
                     .getAutocompleteData(pattern.isEmpty ? 'San bay' : pattern);
               } else {
                 bookController.suggestions.value =
-                    await bookController.getAutocompleteData(pattern);
+                await bookController.getAutocompleteData(pattern);
               }
             },
           ),

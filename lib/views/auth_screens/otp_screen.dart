@@ -8,11 +8,9 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../constant/constant.dart';
 import '../../constant/show_dialog.dart';
 import '../../controllers/phonenumber_controller.dart';
-import '../../service/api.dart';
 import '../../utils/preferences/preferences.dart';
 import '../../utils/themes/button.dart';
 import '../../utils/themes/contant_colors.dart';
-import '../home_screens/home_screen.dart';
 import '../navigation_screen/navigation_bar.dart';
 
 class OtpScreen extends StatelessWidget {

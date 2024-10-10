@@ -11,10 +11,10 @@ class CustomDialogBox extends StatefulWidget {
   const CustomDialogBox({super.key, required this.title, required this.descriptions, required this.img, required this.onPress});
 
   @override
-  _CustomDialogBoxState createState() => _CustomDialogBoxState();
+  CustomDialogBoxState createState() => CustomDialogBoxState();
 }
 
-class _CustomDialogBoxState extends State<CustomDialogBox> {
+class CustomDialogBoxState extends State<CustomDialogBox> {
   @override
   Widget build(BuildContext context) {
     return Dialog(

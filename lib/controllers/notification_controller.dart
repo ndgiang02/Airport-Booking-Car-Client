@@ -1,13 +1,11 @@
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../models/notification_model.dart';
 import '../utils/preferences/preferences.dart';
-import '../views/notifition_screen/notification_detail.dart';
 
 class NotificationController extends GetxController {
 

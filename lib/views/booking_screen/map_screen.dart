@@ -104,65 +104,6 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  /*Future<void> drawRoute() async {
-    if (_mapController == null) return;
-    final LatLng? pickup = bookController.pickupLatLong.value;
-    final LatLng? destination = bookController.destinationLatLong.value;
-
-    if (pickup == null || destination == null) {
-      log('Insufficient data to draw the route.');
-      return;
-    }
-    List<LatLng> routePoints = [pickup];
-
-    if (bookController.stopoverLatLng.isNotEmpty) {
-      routePoints.addAll(bookController.stopoverLatLng);
-    }
-    routePoints.add(destination);
-    await bookController.fetchRouteData(routePoints);
-    bookController.addPolyline(_mapController);
-    bookController.isRouteDrawn.value = true;
-  }*/
-
- /* Future<void> drawRoute2({bool isRoundTrip = false}) async {
-    if (_mapController == null) return;
-
-    final LatLng? pickup = bookController.pickupLatLong.value;
-    final LatLng? destination = bookController.destinationLatLong.value;
-
-    if (pickup == null || destination == null) {
-      log('Insufficient data to draw the route.');
-      return;
-    }
-
-    List<LatLng> routePoints = [pickup];
-
-    if (bookController.stopoverLatLng.isNotEmpty) {
-      routePoints.addAll(bookController.stopoverLatLng);
-    }
-
-    routePoints.add(destination);
-
-    if (isRoundTrip) {
-      routePoints.addAll(bookController.stopoverLatLng.reversed);
-      routePoints.add(pickup);
-    }
-    await bookController.fetchRouteData(routePoints);
-    bookController.addPolyline(_mapController);
-    bookController.isRouteDrawn.value = true;
-  }
-
-  Future<void> updateRoute() async {
-    bool isRoundTrip = bookController.isRoundTrip.value;
-    await drawRoute(isRoundTrip: isRoundTrip);
-  }
-
-  void onRoundTripChanged(bool isRoundTrip) {
-    bookController.roundTrip.value = isRoundTrip;
-    updateRoute();
-  }*/
-
-
   Widget buildConfirm() {
     return DraggableScrollableSheet(
       minChildSize: 0.35,
@@ -588,7 +529,7 @@ class _MapScreenState extends State<MapScreen> {
                                     children: [
                                       Text(
                                         'distance'.tr,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.black87,
@@ -705,11 +646,6 @@ class _MapScreenState extends State<MapScreen> {
                                             ),
                                           ),
                                         ),
-                                        /*Image.network(
-                                          vehicleCategoryModel.data![index].imageUrl ??
-                                              'assets/images/meme.jpg', width: 60,
-                                        height: 60,
-                                        fit: BoxFit.cover,),*/
                                         title: Text(
                                           vehicleCategoryModel.data![index].name
                                               .toString(),
@@ -790,10 +726,7 @@ class _MapScreenState extends State<MapScreen> {
                         children: [
                           Text(
                             'payment info'.tr,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: CustomTextStyles.header
                           ),
                           IconButton(
                             icon: const Icon(Icons.edit),
@@ -810,10 +743,7 @@ class _MapScreenState extends State<MapScreen> {
                       ),
                       Text(
                         'payment method'.tr,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: CustomTextStyles.normal
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -836,8 +766,8 @@ class _MapScreenState extends State<MapScreen> {
                                   ),
                                   child: Column(
                                     children: [
-                                      Icon(Icons.money, color: Colors.green),
-                                      SizedBox(height: 8),
+                                      const Icon(Icons.money, color: Colors.green),
+                                      const SizedBox(height: 8),
                                       Text('cash'.tr),
                                     ],
                                   ),
@@ -863,9 +793,9 @@ class _MapScreenState extends State<MapScreen> {
                                   ),
                                   child: Column(
                                     children: [
-                                      Icon(Icons.account_balance_wallet,
+                                      const Icon(Icons.account_balance_wallet,
                                           color: Colors.green),
-                                      SizedBox(height: 8),
+                                      const SizedBox(height: 8),
                                       Text('wallet'.tr),
                                     ],
                                   ),
@@ -916,13 +846,13 @@ class _MapScreenState extends State<MapScreen> {
                         bookController.scheduledTime.value?.toIso8601String(),
                     'return_time':
                         bookController.returnTime.value?.toIso8601String(),
-                    'vehicle_type': bookController.selectedVehicle.value,
+                    'vehicle_type': int.parse(bookController.selectedVehicle.value),
                     'round_trip': bookController.isRoundTrip.value ? 1 : 0,
                     'km': bookController.distance.toString(),
                     'passenger_count': bookController.selectedPassengerCount.value,
                     'total_amount': bookController.totalAmount.value.toString(),
                     'payment': bookController.paymentMethod.value,
-                    'trip_type': "airport",
+                    'trip_type': "long_trip",
                     'stops': stops,
                   };
 

@@ -5,7 +5,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
 import '../../constant/show_dialog.dart';
-import '../../utils/themes/reponsive.dart';
 
 class LocalizationScreen extends StatelessWidget {
   const LocalizationScreen({super.key});
@@ -18,12 +17,11 @@ class LocalizationScreen extends StatelessWidget {
           return Scaffold(
               appBar: AppBar(
                 title: Text('select_language'.tr,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black)),
+                    style:CustomTextStyles.header),
                 elevation: 4,
               ),
               body: SingleChildScrollView(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Wrap(
                   runSpacing: 12,
                   spacing: 12,
@@ -35,18 +33,18 @@ class LocalizationScreen extends StatelessWidget {
                           controller.languageList[index].languageCode!,
                         );
                         ShowDialog.showLoader('please_wait'.tr);
-                        await Future.delayed(Duration(seconds: 1));
+                        await Future.delayed(const Duration(seconds: 1));
                         EasyLoading.dismiss();
                         Get.back();
                       },
                       child: Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color:  controller.languageList[index].languageCode ==
                               controller.selectedLanguage.value
                               ? Colors.orange
                               : Colors.grey.withOpacity(0.4),
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          borderRadius: const BorderRadius.all(Radius.circular(10)),
                         ),
                         width: (MediaQuery.of(context).size.width - 44) / 2,
                         child: Row(
@@ -54,8 +52,8 @@ class LocalizationScreen extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            ClipRRect(borderRadius: BorderRadius.all(Radius.circular(8)), child: Image.asset(controller.languageList[index].flag!, width: 32, height: 32)),
-                            SizedBox(width: 12,),
+                            ClipRRect(borderRadius: const BorderRadius.all(Radius.circular(8)), child: Image.asset(controller.languageList[index].flag!, width: 32, height: 32)),
+                            const SizedBox(width: 12,),
                             Text(controller.languageList[index].language!, style: CustomTextStyles.body,)
                           ],
                         ),

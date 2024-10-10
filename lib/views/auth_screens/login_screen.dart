@@ -186,7 +186,7 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
         bottomNavigationBar: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage(login_background),
               fit: BoxFit.cover,
@@ -208,7 +208,7 @@ class LoginScreen extends StatelessWidget {
                               transition: Transition.rightToLeft);
                         },
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: ' \u200B\u200B\u200B',
                       style: TextStyle(color: Colors.blue, fontSize: 20),
                     ),

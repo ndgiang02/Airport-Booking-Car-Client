@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../constant/constant.dart';
@@ -42,7 +40,7 @@ class LocalizationController extends GetxController {
     String? storedLanguageCode =
         Preferences.getString(Preferences.languageCodeKey);
     debugPrint('Stored language code: $storedLanguageCode');
-    if (storedLanguageCode != null && storedLanguageCode.isNotEmpty) {
+    if (storedLanguageCode.isNotEmpty) {
       selectedLanguage(storedLanguageCode);
     } else {
       selectedLanguage('vi');

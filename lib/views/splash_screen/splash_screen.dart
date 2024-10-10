@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
               children: [
                 Image.asset(ic_logo_white, fit: BoxFit.contain, height: 150, width: 150, color: Colors.orangeAccent
                   ,),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Text('app_name'.tr),
                 Loading(),
               ],

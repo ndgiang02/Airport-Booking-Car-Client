@@ -1,4 +1,5 @@
 const Map<String, String> viVN = {
+  'airport cluster': "Xe ghép sân bay",
   'amount': "Cước phí",
   'status': "Trạng thái",
   'return time': "Giờ về",

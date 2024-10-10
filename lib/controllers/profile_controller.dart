@@ -97,13 +97,7 @@ class MyProfileController extends GetxController {
         ShowDialog.showToast(errorMessage);
         throw Exception('Failed to update password: $errorMessage');
       }
-    } on TimeoutException catch (e) {
-      ShowDialog.closeLoader();
-      ShowDialog.showToast('Request timed out. Please try again.');
-    } on SocketException catch (e) {
-      ShowDialog.closeLoader();
-      ShowDialog.showToast('No Internet connection. Please check your network.');
-    } catch (e) {
+    }  catch (e) {
       ShowDialog.closeLoader();
       ShowDialog.showToast('An unexpected error occurred: $e');
     }

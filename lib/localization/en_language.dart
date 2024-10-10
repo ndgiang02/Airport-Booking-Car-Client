@@ -1,4 +1,5 @@
 const Map<String, String> enUS = {
+  'airport cluster': "Airport Cluster",
   'login successful':"Login Successful!",
   'phone number':"Phone Number",
   'amount': "Amount",

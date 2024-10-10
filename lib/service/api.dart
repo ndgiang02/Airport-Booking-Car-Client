@@ -25,6 +25,7 @@ class API {
   static const changePassword = "${baseUrl}change-password";
   static const fetchTrips = "${baseUrl}fetch-trips";
   static const bookTrip = "${baseUrl}trip-booking";
+  static const bookClusterTrip = "${baseUrl}trip-cluster";
   static const cancelTrip = "${baseUrl}cancel-trip";
   static const fetchVehicle = "${baseUrl}vehicle-types";
 

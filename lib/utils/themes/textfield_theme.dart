@@ -40,7 +40,7 @@ class TextFieldTheme {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             width: 1.0,
             color: Colors.cyan,
           ),
@@ -121,7 +121,7 @@ class TextFieldTheme {
           borderRadius: BorderRadius.circular(100),
           color: Colors.grey.withOpacity(0.1),
         ),
-        child: Icon(
+        child: const Icon(
           Icons.chevron_right,
           color: Colors.grey,
         ),

@@ -14,7 +14,9 @@ import '../constant/show_dialog.dart';
 import '../models/vehicle_model.dart';
 import '../service/api.dart';
 
-class BookController extends GetxController {
+class ClusterController extends GetxController {
+
+
   var isLoading = true.obs;
   RxString selectedVehicle = "".obs;
   RxDouble distance = 0.0.obs;
@@ -225,11 +227,11 @@ class BookController extends GetxController {
         textSearch: value,
         focusLocation: LatLng(position.latitude!, position.longitude!)));
     return result.fold(
-      (failure) {
+          (failure) {
         debugPrint('Error: $failure');
         return [];
       },
-      (autocompleteList) {
+          (autocompleteList) {
         var resultList = <Map<String, String>>[];
         for (var item in autocompleteList) {
           final refId = item.refId ?? '';
@@ -296,7 +298,7 @@ class BookController extends GetxController {
   Future<dynamic> bookRide(Map<String, dynamic> bodyParams) async {
     try {
       ShowDialog.showLoader('please_wait'.tr);
-      final response = await http.post(Uri.parse(API.bookTrip),
+      final response = await http.post(Uri.parse(API.bookClusterTrip),
           headers: API.header, body: jsonEncode(bodyParams));
       Map<String, dynamic> responseBody = json.decode(response.body);
       log('$responseBody');
@@ -331,11 +333,11 @@ class BookController extends GetxController {
       final result = await Vietmap.reverse(
           LatLng(position.latitude!, position.longitude!));
       return result.fold(
-        (failure) {
+            (failure) {
           debugPrint('Error: $failure');
           return null;
         },
-        (VietmapReverseModel) {
+            (VietmapReverseModel) {
           return {
             'lat': VietmapReverseModel.lat.toString(),
             'lng': VietmapReverseModel.lng.toString(),
@@ -363,7 +365,7 @@ class BookController extends GetxController {
         if (paths.isNotEmpty) {
           final firstPath = paths[0];
           final coordinates =
-              firstPath['points']['coordinates'] as List<dynamic>;
+          firstPath['points']['coordinates'] as List<dynamic>;
 
           polylinePoints.value = coordinates.map((coordinate) {
             return LatLng(coordinate[1], coordinate[0]);

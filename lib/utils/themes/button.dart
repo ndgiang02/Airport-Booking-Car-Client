@@ -93,10 +93,10 @@ class ButtonThem {
           height: btnHeight,
           child: ElevatedButton(
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
+              backgroundColor: WidgetStateProperty.all<Color>(
                 enabled ? btnColor : disabledBtnColor,
               ),
-              foregroundColor: MaterialStateProperty.all<Color>(
+              foregroundColor: WidgetStateProperty.all<Color>(
                 enabled ? txtColor : disabledTxtColor,
               ),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(

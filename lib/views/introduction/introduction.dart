@@ -17,7 +17,7 @@ class IntroductionScreen extends StatelessWidget {
             appBar: AppBar(
               title: Text('intro'.tr),
               leading: IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   Get.back();
                 },
@@ -38,7 +38,7 @@ class IntroductionScreen extends StatelessWidget {
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Text(
-                'version'.tr + ': ${Constant.appVersion}',
+                '${'version'.tr}: ${Constant.appVersion}',
                 textAlign: TextAlign.center,
                 style: CustomTextStyles.body,
               ),
