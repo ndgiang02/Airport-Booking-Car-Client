@@ -10,7 +10,6 @@ import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
 import '../../bindings/navigation_bindings/navigation_binding.dart';
 import '../../constant/constant.dart';
 import '../../constant/show_dialog.dart';
-import '../../controllers/navigation_controller.dart';
 import '../../models/vehicle_model.dart';
 import '../../utils/preferences/preferences.dart';
 import '../../utils/themes/button.dart';
@@ -22,10 +21,10 @@ class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
   @override
-  _MapScreenState createState() => _MapScreenState();
+  MapScreenState createState() => MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class MapScreenState extends State<MapScreen> {
 
   final bookController = Get.put(BookController());
 

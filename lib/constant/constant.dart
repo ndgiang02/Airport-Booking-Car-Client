@@ -64,7 +64,7 @@ class Constant {
       if (Constant.symbolAtRight == true) {
         return "${double.parse(amount.toString()).toStringAsFixed((Constant.decimal))} ${Constant.currency.toString()}";
       } else {
-        return "${Constant.currency.toString()} ${double.parse(amount.toString()).toStringAsFixed(Constant.decimal!)}";
+        return "${Constant.currency.toString()} ${double.parse(amount.toString()).toStringAsFixed(Constant.decimal)}";
       }
     } else {
       if (Constant.symbolAtRight == true) {

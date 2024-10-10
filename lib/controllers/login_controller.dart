@@ -41,7 +41,7 @@ class LoginController extends GetxController {
           String accessToken = responseBody['data']['token'].toString();
           Preferences.setString(Preferences.token, accessToken);
           API.header['Authorization'] = 'Bearer $accessToken';
-          ShowDialog.showToast('Login successful!');
+          ShowDialog.showToast('login successful'.tr);
           return UserModel.fromJson(responseBody);
         }
       } else {

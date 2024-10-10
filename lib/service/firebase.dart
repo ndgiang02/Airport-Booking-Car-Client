@@ -18,7 +18,6 @@ class FirebaseService {
   }
 
   void _handleIncomingNotification(RemoteMessage message) {
-    log('FCM DATA : $message');
     log('Received FCM data: ${message.data}');
     if (message.data['type'] == 'welcome') {
         notificationController.showNotification(message);

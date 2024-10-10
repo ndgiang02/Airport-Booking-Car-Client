@@ -50,7 +50,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 20),
                         child: Text(
-                          "Enter the email address we will send an OTP to create new password.".tr,
+                          'Enter the email address we will send an OTP to create new password.'.tr,
                           textAlign: TextAlign.start,
                           style: TextStyle(letterSpacing: 1.0, color: ConstantColors.hintTextColor, fontWeight: FontWeight.w600),
                         ),
@@ -60,7 +60,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                         child: Form(
                           key: _formKey,
                           child: TextFieldTheme.boxBuildTextField(
-                            hintText: 'Email'.tr,
+                            hintText: 'email'.tr,
                             controller: _emailTextEditController,
                             textInputType: TextInputType.emailAddress,
                             validators: (String? value) {
@@ -95,7 +95,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                                           duration: const Duration(milliseconds: 400),
                                           transition: Transition.rightToLeft);
                                     } else {
-                                      ShowDialog.showToast("Please try again later");
+                                      ShowDialog.showToast("Please try again later".tr);
                                     }
                                   }
                                 });

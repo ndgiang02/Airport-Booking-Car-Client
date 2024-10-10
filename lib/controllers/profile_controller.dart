@@ -10,7 +10,6 @@ import '../constant/constant.dart';
 import '../constant/show_dialog.dart';
 import '../models/user_model.dart';
 import '../service/api.dart';
-import '../utils/preferences/preferences.dart';
 
 class MyProfileController extends GetxController {
   RxString name = "".obs;
@@ -88,12 +87,12 @@ class MyProfileController extends GetxController {
         if (responseBody['status'] == true) {
           return responseBody;
         } else {
-          String errorMessage = responseBody['message'] ?? 'Password update failed.';
+          String errorMessage = responseBody['message'] ?? 'Password update failed.'.tr;
           ShowDialog.showToast(errorMessage);
           return null;
         }
       } else {
-        String errorMessage = responseBody['message'] ?? 'Something went wrong. Please try again later.';
+        String errorMessage = responseBody['message'] ?? 'Something went wrong. Please try again later.'.tr;
         ShowDialog.showToast(errorMessage);
         throw Exception('Failed to update password: $errorMessage');
       }
@@ -122,8 +121,8 @@ class MyProfileController extends GetxController {
       } else {
         ShowDialog.closeLoader();
         ShowDialog.showToast(
-            'Something want wrong. Please try again later');
-        throw Exception('Failed to load data');
+            'Something want wrong. Please try again later'.tr);
+        throw Exception('Failed to load data'.tr);
       }
     } on TimeoutException catch (e) {
       ShowDialog.closeLoader();

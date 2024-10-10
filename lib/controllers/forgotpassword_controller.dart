@@ -33,8 +33,8 @@ class ForgotPasswordController extends GetxController {
         ShowDialog.showToast(responseBody['error']);
       } else {
         ShowDialog.closeLoader();
-        ShowDialog.showToast('Something want wrong. Please try again later');
-        throw Exception('Failed to load album');
+        ShowDialog.showToast('Something want wrong. Please try again later'.tr);
+        throw Exception('Failed to load album'.tr);
       }
     } on TimeoutException catch (e) {
       ShowDialog.closeLoader();
@@ -69,8 +69,8 @@ class ForgotPasswordController extends GetxController {
         ShowDialog.showToast(responseBody['error']);
       } else {
         ShowDialog.closeLoader();
-        ShowDialog.showToast('Something want wrong. Please try again later');
-        throw Exception('Failed to load album');
+        ShowDialog.showToast('Something want wrong. Please try again later'.tr);
+        throw Exception('Failed to load album'.tr);
       }
     } on TimeoutException catch (e) {
       ShowDialog.closeLoader();

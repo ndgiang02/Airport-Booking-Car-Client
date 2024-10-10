@@ -3,7 +3,6 @@ import 'package:customerapp/bindings/booking_binding/booking_binding.dart';
 import 'package:customerapp/bindings/cluster_binding/cluster_binding.dart';
 import 'package:customerapp/bindings/home_binding/home_binding.dart';
 import 'package:customerapp/bindings/notification_binding/notification_binding.dart';
-import 'package:customerapp/views/booking_screen/longtrip_screen.dart';
 import 'package:customerapp/views/cluster_screen/cluster_screen.dart';
 import 'package:customerapp/views/home_screens/flight_screen.dart';
 import 'package:customerapp/views/home_screens/home_screen.dart';
@@ -15,6 +14,7 @@ import 'package:get/get.dart';
 
 import '../views/activities_screen/activities_screen.dart';
 import '../views/airport_screen/airport_screen.dart';
+import '../views/longtrip_screen/longtrip_screen.dart';
 
 class AppRoutes {
 
@@ -55,7 +55,7 @@ class AppRoutes {
     ),
     GetPage(
       name: homeScreen,
-      page: () => HomeScreen(),
+      page: () => const HomeScreen(),
       bindings: [
         HomeBinding(),
       ],
@@ -97,7 +97,7 @@ class AppRoutes {
     ),
     GetPage(
       name: flightScreen,
-      page: () => FlightScreen(),
+      page: () => const FlightScreen(),
       bindings: [
         HomeBinding(),
       ],

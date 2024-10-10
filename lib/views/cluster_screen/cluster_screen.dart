@@ -130,63 +130,6 @@ class _ClusterScreenState extends State<ClusterScreen> {
                 );
               }),
             ),
-
-            /*Expanded(
-              child: Obx(() {
-                return ListView.builder(
-                  itemCount: clusterController.suggestions.length,
-                  itemBuilder: (context, index) {
-                    final suggestion = clusterController.suggestions[index];
-                    return ListTile(
-                      leading: const Icon(Icons.pin_drop_outlined,
-                          color: Colors.blue),
-                      title: Text(suggestion['display']!),
-                      onTap: () async {
-                        final selectedText = suggestion['display']!;
-                        LatLng? latLong = await clusterController
-                            .reverseGeocode(suggestion['ref_id']!);
-                        if (clusterController.focusedField.value == 'pickup') {
-                          clusterController.pickupController.text = selectedText;
-                          clusterController.pickupLatLong.value = latLong;
-                        } else if (clusterController.focusedField.value ==
-                            'destination') {
-                          clusterController.destinationController.text =
-                              selectedText;
-                          clusterController.destinationLatLong.value = latLong;
-                          clusterController.isMapDrawn.value = true;
-                          Get.to(() => const MapScreen(),
-                              duration: const Duration(milliseconds: 400),
-                              transition: Transition.rightToLeft);
-                        } else if (clusterController.focusedField.value
-                            .startsWith('stopover_')) {
-                          try {
-                            final index = int.parse(clusterController
-                                .focusedField.value
-                                .split('_')[1]);
-                            while (clusterController.stopoverControllers.length <=
-                                index) {
-                              clusterController.stopoverControllers
-                                  .add(TextEditingController());
-                            }
-                            while (
-                                clusterController.stopoverLatLng.length <= index) {
-                              clusterController.stopoverLatLng.add(LatLng(0, 0));
-                            }
-                            clusterController.stopoverControllers[index].text =
-                                selectedText;
-                            clusterController.stopoverLatLng[index] = latLong!;
-                          } catch (e) {
-                            debugPrint('$e');
-                          }
-                        }
-                        clusterController.suggestions.clear();
-                        FocusScope.of(context).unfocus();
-                      },
-                    );
-                  },
-                );
-              }),
-            ),*/
           ],
         ),
       ),

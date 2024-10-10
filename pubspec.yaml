@@ -27,6 +27,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
   flutter_polyline_points: ^2.1.0
   time_picker_spinner_pop_up: ^2.0.0
+  flutter_local_notifications: ^17.2.3
 
   # Xử lý văn bản và nhập liệu
   intl: ^0.19.0 # Hỗ trợ đa ngôn ngữ

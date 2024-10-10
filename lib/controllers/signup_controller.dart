@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +33,6 @@ class SignUpController extends GetxController {
     conformPasswordController.clear();
   }
 
-  // Dọn dẹp khi controller bị hủy
   @override
   void onClose() {
     nameController.dispose();

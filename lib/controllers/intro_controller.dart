@@ -34,7 +34,7 @@ class IntroController extends GetxController {
       } else {
         ShowDialog.closeLoader();
         ShowDialog.showToast(
-            'Something want wrong. Please try again later');
+            'Something want wrong. Please try again later'.tr);
         throw Exception('Failed to load album');
       }
     } on TimeoutException catch (e) {

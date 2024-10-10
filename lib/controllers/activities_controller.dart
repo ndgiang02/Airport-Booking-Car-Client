@@ -49,13 +49,9 @@ class ActivitiesController extends GetxController {
 
     Map<String, dynamic> responseBody = json.decode(response.body);
 
-    log("Response body: $responseBody");
-
-    var data = json.decode(response.body);
-
     if (response.statusCode == 200) {
-      if (data['data'] != null && data['data'] is List) {
-        var tripList = (data['data'] as List)
+      if (responseBody['data'] != null && responseBody['data'] is List) {
+        var tripList = (responseBody['data'] as List)
             .map((trip) => Trip.fromJson(trip as Map<String, dynamic>))
             .toList();
         if (status == 'upcoming') {
@@ -82,8 +78,8 @@ class ActivitiesController extends GetxController {
         return responseBody;
       } else {
         ShowDialog.closeLoader();
-        ShowDialog.showToast('Something want wrong. Please try again later');
-        throw Exception('Failed to load album');
+        ShowDialog.showToast('Something want wrong. Please try again later'.tr);
+        throw Exception('Failed to load album'.tr);
       }
     } on TimeoutException catch (e) {
       ShowDialog.closeLoader();

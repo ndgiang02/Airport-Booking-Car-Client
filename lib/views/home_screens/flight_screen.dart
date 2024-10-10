@@ -12,11 +12,13 @@ import '../../utils/themes/contant_colors.dart';
 import '../../utils/themes/text_style.dart';
 
 class FlightScreen extends StatefulWidget {
+  const FlightScreen({super.key});
+
   @override
-  _HomeState createState() => _HomeState();
+  HomeState createState() => HomeState();
 }
 
-class _HomeState extends State<FlightScreen> {
+class HomeState extends State<FlightScreen> {
   final TextEditingController codeController = TextEditingController();
 
   final homeController = Get.put(HomeController());
@@ -182,7 +184,7 @@ class _HomeState extends State<FlightScreen> {
         return _buildInfoBox(child: Text(homeController.errorMessage.value));
       }
 
-      final flightInfo = homeController.flightInfo.value;
+      final flightInfo = homeController.flightInfo;
 
       if (flightInfo.isEmpty) {
         return _buildInfoBox(
@@ -200,9 +202,9 @@ class _HomeState extends State<FlightScreen> {
         children: [
           Text(flightInfo['departure_iata'] ?? 'Unknown',
               style: CustomTextStyles.header.copyWith(color: Colors.indigo)),
-          SizedBox(width: 6),
+          const SizedBox(width: 6),
           Container(
-            padding: EdgeInsets.all(6),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               color: Colors.indigo.shade50,
               borderRadius: BorderRadius.circular(20),

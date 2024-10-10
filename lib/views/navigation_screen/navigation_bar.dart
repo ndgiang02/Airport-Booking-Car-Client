@@ -9,12 +9,13 @@ import '../activities_screen/activities_screen.dart';
 import '../manage_screen/manage_screen.dart';
 
 class NavigationPage extends StatelessWidget {
+
   NavigationPage({super.key});
 
-  NavigationController navigationController = Get.put(NavigationController());
+  final navigationController = Get.put(NavigationController());
 
   final screens = [
-    HomeScreen(),
+    const HomeScreen(),
     ActivitiesScreen(),
     NotificationScreen(),
     ManageScreen(),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../models/notification_model.dart';
+import '../service/notification.dart';
 import '../utils/preferences/preferences.dart';
 
 class NotificationController extends GetxController {
@@ -33,6 +34,12 @@ class NotificationController extends GetxController {
   Future<void> showNotification(RemoteMessage message) async {
     String title = message.notification?.title ?? 'Thông báo khuyến mãi';
     String body = message.notification?.body ?? 'Bạn có một khuyến mãi mới!';
+
+    NotificationService().showNotification(
+      message.hashCode,
+      message.notification?.title ?? 'No Title',
+      message.notification?.body ?? 'No Body',
+    );
 
     notifications.add(
       NotificationModel(

@@ -6,11 +6,13 @@ import '../../utils/preferences/preferences.dart';
 import '../../utils/themes/text_style.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
-  _HomeState createState() => _HomeState();
+  HomeState createState() => HomeState();
 }
 
-class _HomeState extends State<HomeScreen> {
+class HomeState extends State<HomeScreen> {
   final TextEditingController codeController = TextEditingController();
 
   final homeController = Get.put(HomeController());

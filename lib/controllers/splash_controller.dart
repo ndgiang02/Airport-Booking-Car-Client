@@ -11,7 +11,7 @@ class SplashController extends GetxController {
   }
 
   void _checkLoginStatus() async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
 
    bool isLoggedIn = Preferences.getBoolean(Preferences.isLogin);
     if (isLoggedIn) {

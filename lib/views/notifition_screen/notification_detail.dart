@@ -14,7 +14,7 @@ class NotificationDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chi tiết '),
+        title:  Text('detail'.tr),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

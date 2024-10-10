@@ -50,7 +50,7 @@ class VehicleData {
     startingPrice = json['starting_price'].toString();
     ratePerKm = json['rate_per_km'].toString();
     seatingCapacity = int.parse(json['seating_capacity'].toString());
-    imageUrl = json['image_url'] != null ? json['image_url'].toString() : null;
+    imageUrl = json['image_url']?.toString();
   }
 
   Map<String, dynamic> toJson() {

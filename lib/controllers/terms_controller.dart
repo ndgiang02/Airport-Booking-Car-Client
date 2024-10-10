@@ -33,7 +33,7 @@ class TermsOfServiceController extends GetxController {
         update();
       } else {
         ShowDialog.closeLoader();
-        ShowDialog.showToast('Failed to load terms of service');
+        ShowDialog.showToast('Failed to load terms of service'.tr);
       }
     } on TimeoutException catch (e) {
       ShowDialog.closeLoader();

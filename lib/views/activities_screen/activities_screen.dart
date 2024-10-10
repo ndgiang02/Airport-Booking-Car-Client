@@ -10,7 +10,7 @@ import '../../utils/extensions/load.dart';
 
 class ActivitiesScreen extends StatelessWidget {
 
-  ActivitiesScreen({Key? key}) : super(key: key);
+  ActivitiesScreen({super.key});
 
   final ActivitiesController controller = Get.put(ActivitiesController());
 
@@ -241,7 +241,7 @@ class ActivitiesScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        trip.tripType == 'airport' ? 'airport'.tr : 'longtrip'.tr,
+                        _getTripTypeDisplay(trip.tripType!),
                         style: CustomTextStyles.normal,
                       ),
                       Row(
@@ -283,6 +283,19 @@ class ActivitiesScreen extends StatelessWidget {
 
     if (result == 'canceled') {
       await controller.refreshData();
+    }
+  }
+
+  String _getTripTypeDisplay(String tripType) {
+    switch (tripType) {
+      case 'airport_private':
+        return 'airport_private'.tr;
+      case 'airport_sharing':
+        return 'airport_sharing'.tr;
+      case 'longtrip':
+        return 'longtrip'.tr;
+      default:
+        return 'Loại chuyến đi không xác định'.tr;
     }
   }
 

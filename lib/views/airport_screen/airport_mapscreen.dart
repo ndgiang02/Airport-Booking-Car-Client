@@ -21,10 +21,10 @@ class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
   @override
-  _MapScreenState createState() => _MapScreenState();
+  MapScreenState createState() => MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class MapScreenState extends State<MapScreen> {
 
   final bookController = Get.put(BookController());
 
@@ -873,7 +873,7 @@ class _MapScreenState extends State<MapScreen> {
                           builder: (BuildContext context) {
                             return CustomDialogBox(
                               title: "",
-                              descriptions: 'successfully'.tr,
+                              descriptions: 'successful'.tr,
                               onPress: () {
                                 bookController.clearData();
                                 Get.back();

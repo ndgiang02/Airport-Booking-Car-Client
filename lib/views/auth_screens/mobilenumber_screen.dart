@@ -40,7 +40,7 @@ class MobileNumberScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          isLogin == true ? "Login Phone" : "Signup Phone".tr,
+                          isLogin == true ? 'login_with_phone_number'.tr : "Signup Phone".tr,
                           style: const TextStyle(
                               letterSpacing: 0.60,
                               fontSize: 22,
@@ -95,7 +95,7 @@ class MobileNumberScreen extends StatelessWidget {
                               onPress: () async {
                                 FocusScope.of(context).unfocus();
                                 if (controller.isPhoneValid.value) {
-                                  ShowDialog.showLoader('code sending'.tr);
+                                  ShowDialog.showLoader('sending OTP'.tr);
                                   controller
                                       .sendCode(controller.phoneNumber.value);
                                 }

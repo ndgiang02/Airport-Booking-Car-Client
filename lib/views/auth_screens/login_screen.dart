@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import '../../constant/constant.dart';
 import '../../constant/show_dialog.dart';
 import '../../controllers/login_controller.dart';
+import '../../routes/app_routes.dart';
 import '../../utils/preferences/preferences.dart';
 import '../../utils/themes/button.dart';
 import '../../utils/themes/contant_colors.dart';
@@ -218,7 +219,7 @@ class LoginScreen extends StatelessWidget {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           Get.to(
-                              SignUpScreen(),
+                              AppRoutes.registerScreen,
                               duration: const Duration(milliseconds: 400), //duration of transitions, default 1 sec
                               transition: Transition.rightToLeft); //transition effect);
                         },

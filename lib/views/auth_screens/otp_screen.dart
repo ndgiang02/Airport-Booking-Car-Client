@@ -85,14 +85,14 @@ class OtpScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 40),
                             child: ButtonThem.buildButton(
                               context,
-                              title: 'Done'.tr,
+                              title: 'done'.tr,
                               btnHeight: 50,
                               btnColor: ConstantColors.primary,
                               txtColor: Colors.white,
                               onPress: () async {
                                 FocusScope.of(context).unfocus();
                                 if (textEditingController.text.length == 6) {
-                                  ShowDialog.showLoader("Verify OTP");
+                                  ShowDialog.showLoader("Verify OTP".tr);
                                   PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId.toString(), smsCode: textEditingController.text);
                                   await FirebaseAuth.instance.signInWithCredential(credential).then((value) async {
                                     Map<String, String> bodyParams = {
@@ -129,10 +129,10 @@ class OtpScreen extends StatelessWidget {
                                     });
                                   }).catchError((error) {
                                     ShowDialog.closeLoader();
-                                    ShowDialog.showToast("Code is Invalid");
+                                    ShowDialog.showToast("Code is Invalid".tr);
                                   });
                                 } else {
-                                  ShowDialog.showToast("Please Enter OTP");
+                                  ShowDialog.showToast("Please Enter OTP".tr);
                                 }
                               },
                             ))

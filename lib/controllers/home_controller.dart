@@ -46,7 +46,7 @@ class HomeController extends GetxController {
       final info = await getFlightInfo(flightNumber, date);
       flightInfo.value = info;
     } catch (e) {
-      errorMessage.value = 'Error fetching flight info: $e';
+      errorMessage.value = '$e';
     } finally {
       isLoading.value = false;
     }

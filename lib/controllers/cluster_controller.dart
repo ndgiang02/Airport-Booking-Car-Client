@@ -134,7 +134,7 @@ class ClusterController extends GetxController {
     suggestions.clear();
     isMapDrawn.value = false;
     vehicleData = null;
-    paymentMethod.value = 'cash';
+    paymentMethod.value = '';
     pickupText.value = '';
     destinationText.value = '';
     focusedField.value = '';
@@ -307,8 +307,8 @@ class ClusterController extends GetxController {
         return responseBody;
       } else {
         ShowDialog.closeLoader();
-        ShowDialog.showToast('Something want wrong. Please try again later');
-        throw Exception('Failed to load album');
+        ShowDialog.showToast('Something want wrong. Please try again later'.tr);
+        throw Exception('Failed to load album'.tr);
       }
     } on TimeoutException catch (e) {
       ShowDialog.closeLoader();

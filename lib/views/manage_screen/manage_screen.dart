@@ -24,8 +24,8 @@ class ManageScreen extends StatelessWidget {
 
   final ManageController controller = Get.put(ManageController());
 
-  String? name =  Preferences.getString(Preferences.userName);
-  String? email =  Preferences.getString(Preferences.userEmail);
+  final name = Preferences.getString(Preferences.userName);
+  final email = Preferences.getString(Preferences.userEmail);
 
   @override
   Widget build(BuildContext context) {
@@ -87,11 +87,11 @@ class ManageScreen extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  name!,
+                  name,
                   style: CustomTextStyles.header,
                 ),
                 Text(
-                  email!,
+                  email,
                   style: CustomTextStyles.body,
                 ),
                 const SizedBox(
@@ -141,7 +141,7 @@ class ManageScreen extends StatelessWidget {
                     Clipboard.setData(
                             const ClipboardData(text: "https://yourapp.link"))
                         .then((_) {
-                          ShowDialog.showToast('copy'.tr);
+                      ShowDialog.showToast('copy'.tr);
                     });
                   },
                   endIcon: true,
@@ -159,9 +159,17 @@ class ManageScreen extends StatelessWidget {
                         title: 'sign_out'.tr,
                         content: 'are_want_to_logout'.tr,
                         callButtonText: 'sign_out'.tr,
-                        onCallPressed: () {
-                          Preferences.clearSharPreference();
-                          Get.offAll(LoginScreen());
+                        onCallPressed: () async {
+                          await controller.logOut().then((value) {
+                            if (value != null) {
+                              if (value['status'] == true) {
+                                Preferences.clearSharPreference();
+                                Get.offAll(() => LoginScreen());
+                              } else {
+                                ShowDialog.showToast(value.message);
+                              }
+                            }
+                          });
                         });
                   },
                   endIcon: false,

@@ -24,7 +24,7 @@ class PhoneNumberController extends GetxController {
       verificationCompleted: (PhoneAuthCredential credential) {},
       verificationFailed: (FirebaseAuthException e) {
         if (e.code == 'invalid-phone-number') {
-          ShowDialog.showToast("The provided phone number is not valid.");
+          ShowDialog.showToast("The provided phone number is not valid.".tr);
         }
       },
       codeSent: (String verificationId, int? resendToken) {
@@ -39,7 +39,7 @@ class PhoneNumberController extends GetxController {
         .catchError((error) {
       ShowDialog.closeLoader();
       ShowDialog.showToast(
-          "You have try many time please send otp after some time");
+          "You have try many time please send otp after some time".tr);
     });
   }
 
@@ -63,8 +63,8 @@ class PhoneNumberController extends GetxController {
         }
       } else {
         ShowDialog.closeLoader();
-        ShowDialog.showToast('Something want wrong. Please try again later');
-        throw Exception('Failed to load album');
+        ShowDialog.showToast('Something want wrong. Please try again later'.tr);
+        throw Exception('Failed to load album'.tr);
       }
     } on TimeoutException catch (e) {
       ShowDialog.closeLoader();
@@ -84,7 +84,7 @@ class PhoneNumberController extends GetxController {
 
   Future<UserModel?> loginByPhone(Map<String, String> bodyParams) async {
     try {
-      ShowDialog.showLoader('please wait'.tr);
+      ShowDialog.showLoader('please_wait'.tr);
       final response = await http.post(Uri.parse(API.getUserByPhone),
           headers: API.authheader, body: jsonEncode(bodyParams));
       Map<String, dynamic> responseBody = json.decode(response.body);
@@ -98,8 +98,8 @@ class PhoneNumberController extends GetxController {
         return UserModel.fromJson(responseBody);
       } else {
         ShowDialog.closeLoader();
-        ShowDialog.showToast('Something want wrong. Please try again later');
-        throw Exception('Failed to load album');
+        ShowDialog.showToast('Something want wrong. Please try again later'.tr);
+        throw Exception('Failed to load album'.tr);
       }
     } on TimeoutException catch (e) {
       ShowDialog.closeLoader();
