@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
@@ -24,9 +22,9 @@ class _AirportScreenState extends State<AirportScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: const Text(
-          'Ban muon di dau ?',
-          style: CustomTextStyles.header,
+        title: Text(
+          'where do you want to go?'.tr,
+          style: CustomTextStyles.app,
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -77,7 +75,7 @@ class _AirportScreenState extends State<AirportScreen> {
                               size: 20,
                               color: Colors.amber,
                             ),
-                            hintText: 'Stopover ${index + 1}',
+                            hintText: '${'stopover'.tr} ${index + 1}',
                             onClear: () {
                               bookController.stopoverControllers[index].clear();
                             },
@@ -145,9 +143,9 @@ class _AirportScreenState extends State<AirportScreen> {
               ),
             ),
             const SizedBox(height: 20.0),
-            const Text(
-              'Điểm đến phổ biến',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+             Text(
+              'Popular Destinations'.tr,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Expanded(
               child: Obx(() {
@@ -186,7 +184,6 @@ class _AirportScreenState extends State<AirportScreen> {
                         } else {
                           latLong = await bookController.reverseGeocode(suggestion['ref_id']!);
                         }
-                        log('AUTO COMPLETE: $latLong');
                         if (bookController.focusedField.value == 'pickup') {
                           bookController.pickupController.text = selectedText;
                           bookController.pickupLatLong.value = latLong;

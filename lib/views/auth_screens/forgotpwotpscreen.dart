@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:customerapp/constant/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
@@ -30,7 +31,7 @@ class ForgotPasswordOtpScreen extends StatelessWidget {
         body: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage("assets/images/login_bg.png"),
+              image: AssetImage(loginBackground),
               fit: BoxFit.cover,
             ),
           ),

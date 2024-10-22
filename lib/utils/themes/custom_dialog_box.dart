@@ -40,7 +40,7 @@ class CustomAlert {
                       Text(
                         callButtonText,
                         style: TextStyle(
-                          color: callButtonColor, // Màu cho button "Call"
+                          color: callButtonColor,
                         ),
                       ),
                     ],
@@ -50,7 +50,7 @@ class CustomAlert {
                   child: Text(
                     cancelButtonText,
                     style: TextStyle(
-                      color: cancelButtonColor, // Màu cho button "Cancel"
+                      color: cancelButtonColor,
                     ),
                   ),
                   onPressed: () {

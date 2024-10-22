@@ -51,6 +51,9 @@ class Trip {
   String? tripStatus;
   String? tripType;
   List<TripStop>? tripStops;
+  String? driverName;
+  String? driverPhoneNumber;
+
 
   Trip({
     this.id,
@@ -72,7 +75,9 @@ class Trip {
     this.payment,
     this.tripStatus,
     this.tripType,
-    this.tripStops
+    this.tripStops,
+    this.driverName,
+    this.driverPhoneNumber,
   });
 
   factory Trip.fromJson(Map<String, dynamic> json) {
@@ -103,6 +108,8 @@ class Trip {
           .map((stop) => TripStop.fromJson(stop as Map<String, dynamic>))
           .toList()
           : null,
+      driverName: json['driver_name']?.toString(),
+      driverPhoneNumber: json['driver_mobile']?.toString(),
     );
   }
 
@@ -128,6 +135,8 @@ class Trip {
       'trip_status': tripStatus,
       'trip_type': tripType,
       'trip_stops': tripStops?.map((stop) => stop.toJson()).toList(),
+      'driver_name': driverName,
+      'driver_mobile': driverPhoneNumber,
     };
   }
 }

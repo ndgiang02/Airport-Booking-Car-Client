@@ -21,8 +21,8 @@ class _ClusterScreenState extends State<ClusterScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: const Text(
-          'Ban muon di dau ?',
+        title: Text(
+          'where do you want to go?'.tr,
           style: CustomTextStyles.header,
         ),
         flexibleSpace: Container(
@@ -77,9 +77,9 @@ class _ClusterScreenState extends State<ClusterScreen> {
               focusedFieldName: 'destination',
             ),
             const SizedBox(height: 20.0),
-            const Text(
-              'Điểm đến phổ biến',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Text(
+              'Popular Destinations'.tr,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Expanded(
               child: Obx(() {

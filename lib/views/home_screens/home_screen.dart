@@ -17,6 +17,7 @@ class HomeState extends State<HomeScreen> {
 
   final homeController = Get.put(HomeController());
 
+
   String? name =  Preferences.getString(Preferences.userName);
 
   final PageController _pageController = PageController();
@@ -27,6 +28,17 @@ class HomeState extends State<HomeScreen> {
     "Fast and Secure",
   ];
 
+  String getGreeting() {
+    final hour = DateTime.now().hour;
+
+    if (hour < 12) {
+      return 'morning_greeting'.tr;
+    } else if (hour < 18) {
+      return 'afternoon_greeting'.tr;
+    } else {
+      return 'evening_greeting'.tr;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,13 +50,26 @@ class HomeState extends State<HomeScreen> {
           children: [
             Row(
               children: [
-                const SizedBox(width: 8),
+                const SizedBox(width: 5),
                 Text(
-                  '${'hello'.tr}, ${name!}',
-                  style: CustomTextStyles.app,
+                  '${getGreeting()}, ${name!}',
+                  style: CustomTextStyles.app.copyWith(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    shadows: [
+                      const Shadow(
+                        offset: Offset(2.0, 2.0),
+                        blurRadius: 3.0,
+                        color: Colors.black26,
+                      ),
+                    ],
+                    letterSpacing: 1.0,
+                  ),
                 ),
               ],
-            ),
+            )
+
           ],
         ),
         centerTitle: true,
@@ -77,7 +102,7 @@ class HomeState extends State<HomeScreen> {
                 destinationScreen: '/cluster',
               ),
               buildServiceCard(
-                title: 'airport'.tr,
+                title: 'airport_private'.tr,
                 imagePath: 'assets/images/sedan.png',
                 destinationScreen: '/airport',
               ),

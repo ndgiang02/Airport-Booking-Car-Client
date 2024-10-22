@@ -4,12 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class HomeController extends GetxController {
-
   var currentPage = 0.obs;
 
-  final String apiKey = '46f110f0e3msh0377381c278bffep11c5c9jsn20829ea2b0e4';
+  final String apiKey = '069eea3cc6mshabcab91fdad07e6p119fddjsn0c5af24ae279';
   final String host = 'flightera-flight-data.p.rapidapi.com';
-
 
   var date = DateTime.now().obs;
   var flightInfo = <String, dynamic>{}.obs;
@@ -20,35 +18,24 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    ever(date, (DateTime newDate) {
-      fetchFlightInfo(flightCode.value, formatDate(newDate));
-    });
   }
-
 
   void updateFlightCode(String newCode) {
     flightCode.value = newCode;
-    fetchFlightInfo(newCode, formatDate(date.value));
-  }
-
-  void updateDate(DateTime value) {
-    date.value = value;
   }
 
   void changePage(int page) {
     currentPage.value = page;
   }
 
-  Future<void> fetchFlightInfo(String flightNumber, String date) async {
-    isLoading.value = true;
-    errorMessage.value = '';
-    try {
-      final info = await getFlightInfo(flightNumber, date);
-      flightInfo.value = info;
-    } catch (e) {
-      errorMessage.value = '$e';
-    } finally {
-      isLoading.value = false;
+  final String baseUrl =
+      'https://flightera-flight-data.p.rapidapi.com/flight/info';
+  final String apiHost = 'flightera-flight-data.p.rapidapi.com';
+
+  void fetchFlight(String flightNumber, String date) async {
+    var result = await getFlightInfo(flightNumber, date);
+    if (result != null) {
+      flightInfo.value = result;
     }
   }
 
@@ -70,7 +57,6 @@ class HomeController extends GetxController {
           'X-RapidAPI-Host': host,
         },
       );
-
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data is List) {
@@ -95,8 +81,7 @@ class HomeController extends GetxController {
   String convertTo12HourFormat(String timeStr) {
     try {
       DateTime dateTime = DateTime.parse(timeStr);
-      DateTime localDateTime = dateTime.toLocal();
-      return DateFormat('hh:mm a').format(localDateTime);
+      return DateFormat('hh:mm a').format(dateTime);
     } catch (e) {
       return 'Unknown';
     }
@@ -104,11 +89,11 @@ class HomeController extends GetxController {
 
   String formatDate(DateTime timeStr) {
     try {
-      String formattedDate = DateFormat('yyyy-MM-dd').format(timeStr);
+      DateTime utcTime = timeStr.toUtc();
+      String formattedDate = DateFormat('yyyy-MM-dd').format(utcTime);
       return formattedDate;
     } catch (e) {
       return 'Unknown';
     }
   }
-
 }

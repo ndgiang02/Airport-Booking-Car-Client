@@ -11,7 +11,6 @@ import '../../bindings/navigation_bindings/navigation_binding.dart';
 import '../../constant/constant.dart';
 import '../../constant/show_dialog.dart';
 import '../../models/vehicle_model.dart';
-import '../../utils/preferences/preferences.dart';
 import '../../utils/themes/button.dart';
 import '../../utils/themes/dialog_box.dart';
 import '../../utils/themes/text_style.dart';
@@ -90,7 +89,7 @@ class MapScreenState extends State<MapScreen> {
     await _mapController?.addSymbol(
       SymbolOptions(
         geometry: pickup,
-        iconImage: ic_pickup,
+        iconImage: icPickup,
         iconSize: 1.5,
       ),
     );
@@ -196,7 +195,7 @@ class MapScreenState extends State<MapScreen> {
   Widget buildTripOption() {
     return DraggableScrollableSheet(
       minChildSize: 0.45,
-      initialChildSize: 0.45,
+      initialChildSize:  0.45,
       maxChildSize: 0.5,
       builder: (context, scrollController) {
         return Container(
@@ -261,12 +260,9 @@ class MapScreenState extends State<MapScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                "Passenger",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                             Text(
+                                "passenger".tr,
+                                style: CustomTextStyles.normal,
                               ),
                               DropdownButton<int>(
                                 value: bookController.selectedPassengerCount.value,
@@ -434,7 +430,7 @@ class MapScreenState extends State<MapScreen> {
                   ),
                 ),
                 ButtonThem.buildCustomButton(
-                  label: 'confirm_trip'.tr,
+                  label: 'confirmed'.tr,
                   onPressed: () async {
                     if (bookController.scheduledTime.value == null) {
                       ShowDialog.showToast(
@@ -457,10 +453,7 @@ class MapScreenState extends State<MapScreen> {
 
   Widget buildChooseVehicle(VehicleCategoryModel vehicleCategoryModel) {
     return DraggableScrollableSheet(
-      minChildSize: 0.4,
-      initialChildSize: 0.4,
-      maxChildSize: 0.6,
-      builder: (context, scrollController) {
+      builder: (BuildContext context, scrollController) {
         return Container(
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -695,6 +688,9 @@ class MapScreenState extends State<MapScreen> {
             ),
         );
       },
+      minChildSize: 0.4,
+      initialChildSize: 0.4,
+      maxChildSize: 0.6,
     );
   }
 
@@ -703,7 +699,7 @@ class MapScreenState extends State<MapScreen> {
       minChildSize: 0.35,
       initialChildSize: 0.35,
       maxChildSize: 0.5,
-      builder: (context, scrollController) {
+      builder: (BuildContext context, scrollController) {
         return Container(
           decoration: const BoxDecoration(
             color: Colors.white,
@@ -832,8 +828,6 @@ class MapScreenState extends State<MapScreen> {
                   }
 
                   Map<String, dynamic> bodyParams = {
-                    'customer_id':
-                        Preferences.getInt(Preferences.userId).toString(),
                     'from_address': bookController.pickupController.text,
                     'from_lat': bookController.pickupLatLong.value!.latitude,
                     'from_lng': bookController.pickupLatLong.value!.longitude,

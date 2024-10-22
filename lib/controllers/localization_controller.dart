@@ -21,13 +21,13 @@ class LocalizationController extends GetxController {
     LanguageData(
       language: 'English',
       languageCode: 'en',
-      flag: en_flag,
+      flag: enFlag,
       subTitle: 'English',
     ),
     LanguageData(
       language: 'Tiếng Việt',
       languageCode: 'vi',
-      flag: vi_flag,
+      flag: viFlag,
       subTitle: 'Tiếng Việt',
     ),
   ];

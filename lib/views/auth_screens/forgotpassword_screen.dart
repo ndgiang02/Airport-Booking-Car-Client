@@ -25,7 +25,7 @@ class ForgotPasswordScreen extends StatelessWidget {
         body: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(login_background),
+              image: AssetImage(loginBackground),
               fit: BoxFit.cover,
             ),
           ),
@@ -86,6 +86,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                               if (_formKey.currentState!.validate()) {
                                 Map<String, String> bodyParams = {
                                   'email': _emailTextEditController.text.trim(),
+                                  'otp_type': 'reset_password',
                                 };
                                 controller.sendEmail(bodyParams).then((value) {
                                   if (value != null) {

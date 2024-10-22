@@ -1,8 +1,10 @@
 import 'package:customerapp/bindings/activities_binding/activities_binding.dart';
+import 'package:customerapp/bindings/auth_binding/signup_binding.dart';
 import 'package:customerapp/bindings/booking_binding/booking_binding.dart';
 import 'package:customerapp/bindings/cluster_binding/cluster_binding.dart';
 import 'package:customerapp/bindings/home_binding/home_binding.dart';
 import 'package:customerapp/bindings/notification_binding/notification_binding.dart';
+import 'package:customerapp/views/auth_screens/signup_screen.dart';
 import 'package:customerapp/views/cluster_screen/cluster_screen.dart';
 import 'package:customerapp/views/home_screens/flight_screen.dart';
 import 'package:customerapp/views/home_screens/home_screen.dart';
@@ -32,10 +34,6 @@ class AppRoutes {
 
   static const String manageScreen = '/manage';
 
-  static const String profileScreen = '/profile';
-
-  static const String localizationScreen = '/localization';
-
   static const String airportScreen = '/airport';
 
   static const String clusterScreen = '/cluster';
@@ -43,8 +41,6 @@ class AppRoutes {
   static const String flightScreen = '/flight';
 
   static const String longtripScreen = '/longtrip';
-
-  static const String test = '/test';
 
   static const String initialRoute = '/initialRoute';
 
@@ -58,6 +54,13 @@ class AppRoutes {
       page: () => const HomeScreen(),
       bindings: [
         HomeBinding(),
+      ],
+    ),
+    GetPage(
+      name: registerScreen,
+      page: () =>  SignUpScreen(),
+      bindings: [
+        SignupBinding(),
       ],
     ),
     GetPage(

@@ -1,4 +1,5 @@
 import 'package:customerapp/utils/themes/text_style.dart';
+import 'package:customerapp/views/activities_screen/drivermap_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -18,23 +19,9 @@ class TripDetail extends StatelessWidget {
     final Trip trip = Get.arguments;
     String scheduledTime = DateFormat('HH:mm, dd/MM').format(trip.scheduledTime!);
     //String returnTime = DateFormat('HH:mm, dd/MM').format(trip.returnTime!);
-
-    Color getStatusColor(String status) {
-      switch (status) {
-        case 'completed':
-          return Colors.green;
-        case 'accepted':
-          return Colors.orange;
-        case 'cancelled':
-          return Colors.red;
-        default:
-          return Colors.black;
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Trip Details'),
+        title: Text('details'.tr),
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
       ),
@@ -60,11 +47,11 @@ class TripDetail extends StatelessWidget {
                 //const SizedBox(height: 12),
                // _buildInfoRow(Icons.access_time, 'return'.tr, returnTime),
                 const SizedBox(height: 12),
-                _buildInfoRow(Icons.abc, 'status'.tr, trip.tripStatus ?? '', statusColor: getStatusColor(trip.tripStatus ?? '')),
+                _buildInfoRow(Icons.abc, 'status'.tr, _getStatusInfo(trip.tripStatus)['statusText'] ?? '', statusColor: _getStatusInfo(trip.tripStatus)['textColor'] ?? ''),
                 const SizedBox(height: 12),
                 _buildAmountRow(trip.totalAmount),
                 const SizedBox(height: 12),
-                _buildInfoRow(Icons.wallet, 'payment method'.tr, trip.payment ?? ''),
+                _buildInfoRow(Icons.wallet, 'payment method'.tr, _getPaymentInfo(trip.payment) ?? ''),
                 const SizedBox(height: 24),
                 ButtonThem.buildBorderButton(
                   context,
@@ -76,7 +63,7 @@ class TripDetail extends StatelessWidget {
                     CustomAlert.showCustomDialog(
                       context: context,
                       title: 'cancel_trip'.tr,
-                      content: 'are_you_sure_cancel'.tr,
+                      content: 'Do you want to cancel the trip?'.tr,
                       callButtonText: 'yes'.tr,
                       onCallPressed: () async {
                         Map<String, dynamic> bodyParams = {
@@ -93,7 +80,7 @@ class TripDetail extends StatelessWidget {
                             }
                           }
                         });
-                        Get.back();
+                        Get.back(result: 'canceled');
                       },
                     );
                   } : () {},
@@ -102,6 +89,20 @@ class TripDetail extends StatelessWidget {
                   disabledTxtColor: Colors.grey,
                   disabledBorderColor: Colors.grey,
                 ),
+                if (trip.tripStatus == 'accepted') ...[
+                  const SizedBox(height: 12),
+                  ButtonThem.buildBorderButton(
+                    context,
+                    title: 'detail'.tr,
+                    btnBorderColor: Colors.redAccent,
+                    btnColor: Colors.white,
+                    txtColor: Colors.redAccent,
+                    onPress: () async {
+                     // controller.startListeningToDriverLocation(trip.driverId!);
+                      Get.to(() => DriverMapScreen(), arguments: trip);
+                    },
+                  ),
+                ]
               ],
             ),
           ),
@@ -155,7 +156,6 @@ class TripDetail extends StatelessWidget {
     );
   }
 
-
   Widget _buildAmountRow(double? totalAmount) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -185,5 +185,58 @@ class TripDetail extends StatelessWidget {
       ],
     );
   }
+
+  _getPaymentInfo(String? payment) {
+    switch (payment) {
+      case 'cash':
+        return 'cash'.tr;
+      case 'wallet':
+        return 'wallet'.tr;
+      default:
+        return 'Không xác định';
+    }
+  }
+
+  Map<String, dynamic> _getStatusInfo(String? status) {
+    switch (status) {
+      case 'requested':
+        return {
+          'backgroundColor': Colors.blue[100]!,
+          'textColor': Colors.blue,
+          'statusText': 'requested'.tr,
+        };
+      case 'accepted':
+        return {
+          'backgroundColor': Colors.orange[100]!,
+          'textColor': Colors.orange,
+          'statusText': 'accepted'.tr,
+        };
+      case 'completed':
+        return {
+          'backgroundColor': Colors.green[100]!,
+          'textColor': Colors.green,
+          'statusText': 'completed'.tr,
+        };
+      case 'cancelled':
+        return {
+          'backgroundColor': Colors.red[100]!,
+          'textColor': Colors.red,
+          'statusText': 'cancelled'.tr,
+        };
+      case 'in_progress':
+        return {
+          'backgroundColor': Colors.white38,
+          'textColor': Colors.black,
+          'statusText': 'in_progress'.tr,
+        };
+      default:
+        return {
+          'backgroundColor': Colors.grey[100]!,
+          'textColor': Colors.grey,
+          'statusText': 'Không xác định',
+        };
+    }
+  }
+
 
 }

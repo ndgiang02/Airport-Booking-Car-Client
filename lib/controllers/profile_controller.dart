@@ -39,15 +39,14 @@ class MyProfileController extends GetxController {
       final response = await http.post(Uri.parse(API.updateName),
           headers: API.header, body: jsonEncode(bodyParams));
       Map<String, dynamic> responseBody = json.decode(response.body);
-
-
+      log('Update Name: $responseBody');
       if (response.statusCode == 200) {
         ShowDialog.closeLoader();
         return responseBody;
       } else {
         ShowDialog.closeLoader();
         ShowDialog.showToast(
-            'Something want wrong. Please try again later');
+            'Something want wrong. Please try again later'.tr);
         throw Exception('Failed to load album');
       }
     } on TimeoutException catch (e) {
@@ -112,8 +111,6 @@ class MyProfileController extends GetxController {
         headers: API.header,
       );
       Map<String, dynamic> responseBody = json.decode(response.body);
-
-      log('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         ShowDialog.closeLoader();

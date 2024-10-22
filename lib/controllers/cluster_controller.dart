@@ -406,7 +406,7 @@ class ClusterController extends GetxController {
       await mapController.addSymbol(
         SymbolOptions(
           geometry: polylinePoints.first,
-          iconImage: ic_pickup,
+          iconImage: icPickup,
           iconSize: 1.5,
         ),
       );
@@ -416,7 +416,7 @@ class ClusterController extends GetxController {
         await mapController.addSymbol(
           SymbolOptions(
             geometry: stopover,
-            iconImage: ic_stop,
+            iconImage: icStop,
             iconSize: 1.3,
           ),
         );
@@ -425,7 +425,7 @@ class ClusterController extends GetxController {
       await mapController.addSymbol(
         SymbolOptions(
           geometry: polylinePoints.last,
-          iconImage: ic_dropoff,
+          iconImage: icDropoff,
           iconSize: 1.5,
         ),
       );

@@ -62,7 +62,6 @@ class _LongTripScreenState extends State<LongTripScreen> {
               focusedFieldName: 'pickup',
             ),
             const Divider(),
-            // Stopover TextFields
             Obx(() => Column(
               children: List.generate(
                 bookController.stopoverControllers.length,
@@ -145,9 +144,9 @@ class _LongTripScreenState extends State<LongTripScreen> {
               ),
             ),
             const SizedBox(height: 20.0),
-            const Text(
-              'Điểm đến phổ biến',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Text(
+              'Popular Destinations'.tr,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Expanded(
               child: Obx(() {

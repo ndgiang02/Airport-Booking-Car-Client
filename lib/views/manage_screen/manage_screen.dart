@@ -2,6 +2,7 @@ import 'package:customerapp/constant/show_dialog.dart';
 import 'package:customerapp/utils/themes/text_style.dart';
 import 'package:customerapp/views/introduction/introduction.dart';
 import 'package:customerapp/views/manage_screen/profile_screen.dart';
+import 'package:customerapp/views/wallet_screen/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -67,12 +68,12 @@ class ManageScreen extends StatelessWidget {
                     Align(
                       alignment: Alignment.topRight,
                       child: InkWell(
-                        onTap: () => Get.to(() => MyProfileScreen()),
+                        onTap: () => Get.to(MyProfileScreen()),
                         child: ClipOval(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Image.asset(
-                              ic_edit,
+                              icEdit,
                               color: ConstantColors.primary,
                               width: 20,
                               height: 20,
@@ -106,6 +107,14 @@ class ManageScreen extends StatelessWidget {
                   endIcon: true,
                 ),
                 TextFieldTheme.buildListTile(
+                  title: 'wallet'.tr,
+                  icon: LineAwesomeIcons.wallet_solid,
+                  onPress: () {
+                    Get.to(() => const MyWalletScreen());
+                  },
+                  endIcon: true,
+                ),
+                TextFieldTheme.buildListTile(
                   title: 'term_policy'.tr,
                   icon: LineAwesomeIcons.terminal_solid,
                   onPress: () {
@@ -126,7 +135,7 @@ class ManageScreen extends StatelessWidget {
                   icon: LineAwesomeIcons.language_solid,
                   onPress: () async {
                     bool? languageChanged = await Get.to(
-                      () => const LocalizationScreen(),
+                     const LocalizationScreen()
                     );
                     if (languageChanged == true) {
                       controller.update();

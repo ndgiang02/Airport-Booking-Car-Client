@@ -27,7 +27,7 @@ class SignUpScreen extends StatelessWidget {
         child: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(login_background),
+              image: AssetImage(loginBackground),
               fit: BoxFit.cover,
             ),
           ),
@@ -251,7 +251,7 @@ class SignUpScreen extends StatelessWidget {
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(login_background),
+            image: AssetImage(loginBackground),
             fit: BoxFit.cover,
           ),
         ),

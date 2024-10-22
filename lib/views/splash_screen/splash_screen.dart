@@ -23,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(ic_logo_white, fit: BoxFit.contain, height: 150, width: 150, color: Colors.orangeAccent
+                Image.asset(icLogoWhite, fit: BoxFit.contain, height: 150, width: 150, color: Colors.orangeAccent
                   ,),
                 const SizedBox(height: 30),
                 Text('app_name'.tr),

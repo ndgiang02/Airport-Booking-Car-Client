@@ -56,34 +56,34 @@ class BookController extends GetxController {
 
   var staticSuggestions = [
     {
-      'display': 'Cảng Hàng Không Quốc Tế Nội Bài',
-      'lat': 21.214138,
-      'lng': 105.80334199999999
+      'display': 'Thành phố Bắc Ninh',
+      'lat': 21.185607,
+      'lng': 106.074448,
     },
     {
-      'display': 'Cảng Hàng Không Quốc Tế Cát Bi',
-      'lat': 20.8224975,
-      'lng': 106.72470190000001
+      'display': 'Thành phố Vĩnh Yên, Vĩnh Phúc',
+      'lat': 21.308948,
+      'lng': 105.603597,
     },
     {
-      'display': 'Cảng Hàng Không Quốc Tế Đà Nẵng',
-      'lat': 16.053276,
-      'lng': 108.20319
+      'display': 'Thành phố Hưng Yên',
+      'lat': 20.646883,
+      'lng': 106.051083,
     },
     {
-      'display': 'Cảng Hàng Không Quốc Tế Cam Ranh',
-      'lat': 12.243852,
-      'lng': 109.19269300000002
+      'display': 'Thành phố Hải Dương',
+      'lat': 20.937341,
+      'lng': 106.314435,
     },
     {
-      'display': 'Cảng Hàng Không Quốc Tế Tân Sơn Nhất',
-      'lat': 10.813373,
-      'lng': 106.662531,
+      'display': 'Thành phố Việt Trì, Phú Thọ',
+      'lat': 21.322739,
+      'lng': 105.401291,
     },
     {
-      'display': 'Cảng Hàng Không Quốc Tế Cần Thơ',
-      'lat': 10.080556,
-      'lng': 105.71202199999999,
+      'display': 'Thành phố Thái Nguyên',
+      'lat': 21.594219,
+      'lng': 105.848526,
     },
   ].obs;
 
@@ -404,7 +404,7 @@ class BookController extends GetxController {
       await mapController.addSymbol(
         SymbolOptions(
           geometry: polylinePoints.first,
-          iconImage: ic_pickup,
+          iconImage: icPickup,
           iconSize: 1.5,
         ),
       );
@@ -414,7 +414,7 @@ class BookController extends GetxController {
         await mapController.addSymbol(
           SymbolOptions(
             geometry: stopover,
-            iconImage: ic_stop,
+            iconImage: icStop,
             iconSize: 1.3,
           ),
         );
@@ -423,7 +423,7 @@ class BookController extends GetxController {
       await mapController.addSymbol(
         SymbolOptions(
           geometry: polylinePoints.last,
-          iconImage: ic_dropoff,
+          iconImage: icDropoff,
           iconSize: 1.5,
         ),
       );

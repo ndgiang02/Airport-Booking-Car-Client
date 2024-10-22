@@ -32,7 +32,7 @@ class OtpScreen extends StatelessWidget {
           height: Get.height,
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(login_background),
+              image: AssetImage(loginBackground),
               fit: BoxFit.cover,
             ),
           ),

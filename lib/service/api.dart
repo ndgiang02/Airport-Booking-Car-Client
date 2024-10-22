@@ -28,6 +28,7 @@ class API {
   static const bookClusterTrip = "${baseUrl}trip-cluster";
   static const cancelTrip = "${baseUrl}cancel-trip";
   static const fetchVehicle = "${baseUrl}vehicle-types";
+  static const broadcasting = "${baseUrl}broadcasting/auth";
 
   static const deleteUser = "${baseUrl}delete-user-account";
   static const logOut = "${baseUrl}logout";
@@ -37,9 +38,11 @@ class API {
 
   static const getUserByPhone = "${baseUrl}get-user-by-phone";
   static const checkUser = "${baseUrl}check-phone";
+  static const wallet = "${baseUrl}my-wallet";
 
 
-  static const updateName = "${baseUrl}user-name";
+  static const updateName = "${baseUrl}update-name";
+
   static const contactUs = "${baseUrl}contact-us";
   static const updateToken = "${baseUrl}update-fcm";
   static const rentVehicle = "${baseUrl}vehicle-get";

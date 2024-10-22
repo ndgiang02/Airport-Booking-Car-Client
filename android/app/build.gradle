@@ -18,7 +18,7 @@ dependencies {
 
 android {
     namespace = "com.example.customerapp"
-    compileSdk = flutter.compileSdkVersion
+    compileSdkVersion 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

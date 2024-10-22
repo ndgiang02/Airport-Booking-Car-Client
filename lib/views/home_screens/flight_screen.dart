@@ -30,6 +30,10 @@ class HomeState extends State<FlightScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
+        title: Text(
+          'show_info_fly'.tr,
+          style: CustomTextStyles.app
+        ),
         elevation: 0,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -46,18 +50,6 @@ class HomeState extends State<FlightScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Expanded(
-                child: Text(
-                  'show_info_fly'.tr,
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ]),
-            const SizedBox(
-              height: 10,
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -80,7 +72,7 @@ class HomeState extends State<FlightScreen> {
                     pressType: PressType.singlePress,
                     timeFormat: 'dd-MM-yyyy',
                     onChange: (dateTime) {
-                      homeController.updateDate(dateTime);
+                      homeController.date.value = dateTime.toUtc();
                     },
                   ),
                 ),
@@ -96,7 +88,7 @@ class HomeState extends State<FlightScreen> {
               btnColor: Colors.white,
               txtColor: ConstantColors.primary,
               onPress: () {
-                homeController.fetchFlightInfo(
+                homeController.fetchFlight(
                   homeController.flightCode.value,
                   homeController.formatDate(homeController.date.value),
                 );
@@ -112,46 +104,6 @@ class HomeState extends State<FlightScreen> {
     );
   }
 
-  Widget buildServiceCard({
-    required String title,
-    required String imagePath,
-    required String destinationScreen,
-  }) {
-    return InkWell(
-      onTap: () {
-        Get.toNamed(
-          destinationScreen,
-        );
-      },
-      child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: CustomTextStyles.header),
-                    const SizedBox(height: 8),
-                  ],
-                ),
-              ),
-              ClipOval(
-                child: Image.asset(
-                  imagePath,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildInfoBox({required Widget child}) {
     return Padding(
@@ -197,10 +149,10 @@ class HomeState extends State<FlightScreen> {
   }
 
   Widget _buildFlight(Map<String, dynamic> flightInfo) {
-    return Column(children: [
+    return Column(mainAxisSize: MainAxisSize.min, children: [
       Row(
         children: [
-          Text(flightInfo['departure_iata'] ?? 'Unknown',
+          Text(flightInfo['departure_iata'] ?? 'Unknown'.tr,
               style: CustomTextStyles.header.copyWith(color: Colors.indigo)),
           const SizedBox(width: 6),
           Container(
@@ -275,7 +227,7 @@ class HomeState extends State<FlightScreen> {
           const SizedBox(
             width: 6,
           ),
-          Text(flightInfo['arrival_iata'] ?? 'Unknown',
+          Text(flightInfo['arrival_iata'] ?? 'Unknown'.tr,
               style: CustomTextStyles.header.copyWith(color: Colors.pink))
         ],
       ),
@@ -284,7 +236,7 @@ class HomeState extends State<FlightScreen> {
         children: [
           SizedBox(
             width: 100,
-            child: Text(flightInfo['departure_city'] ?? 'Unknown',
+            child: Text(flightInfo['departure_city'] ?? 'Unknown'.tr,
                 style: CustomTextStyles.body),
           ),
           Text(
@@ -293,7 +245,7 @@ class HomeState extends State<FlightScreen> {
           ),
           SizedBox(
             width: 100,
-            child: Text(flightInfo['arrival_city'] ?? 'Unknown',
+            child: Text(flightInfo['arrival_city'] ?? 'Unknown'.tr,
                 textAlign: TextAlign.end, style: CustomTextStyles.body),
           ),
         ],
@@ -303,27 +255,15 @@ class HomeState extends State<FlightScreen> {
         children: [
           Text(
               homeController.convertTo12HourFormat(
-                  flightInfo['scheduled_departure_local'] ?? 'Unknown'),
+                  flightInfo['scheduled_departure_local'] ?? 'Unknown'.tr),
               style: CustomTextStyles.normal),
           Text('scheduled'.tr, style: CustomTextStyles.body),
           Text(
               homeController.convertTo12HourFormat(
-                  flightInfo['scheduled_arrival_local'] ?? 'Unknown'),
+                  flightInfo['scheduled_arrival_local'] ?? 'Unknown'.tr),
               style: CustomTextStyles.normal),
         ],
       ),
-      const SizedBox(
-        height: 6,
-      ),
-      /*
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Delay: ${flightInfo['delay'] ?? '0m'}", style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.bold ), textAlign: TextAlign.end),
-                ],
-              ),
-
-               */
       const SizedBox(
         height: 6,
       ),
@@ -332,12 +272,12 @@ class HomeState extends State<FlightScreen> {
         children: [
           Text(
               homeController.convertTo12HourFormat(
-                  flightInfo['actual_departure_local'] ?? 'Unknown'),
+                  flightInfo['actual_departure_local'] ?? 'Unknown'.tr),
               style: CustomTextStyles.normal),
-          const Text("Thực tế", style: CustomTextStyles.normal),
+          Text('actual'.tr, style: CustomTextStyles.normal),
           Text(
               homeController.convertTo12HourFormat(
-                  flightInfo['actual_arrival_local'] ?? 'Unknown'),
+                  flightInfo['actual_arrival_local'] ?? 'Unknown'.tr),
               style: CustomTextStyles.normal),
         ],
       ),
@@ -389,12 +329,15 @@ class HomeState extends State<FlightScreen> {
               const SizedBox(
                 width: 10,
               ),
-              Text(flightInfo['airline_name'] ?? "Unknown",
+              Text(flightInfo['airline_name'] ?? "Unknown".tr,
                   style: CustomTextStyles.title),
             ],
           ),
           Text(
-            homeController.formatDate(flightInfo['actual_arrival_local']),
+            flightInfo['actual_arrival_local'] != null
+                ? homeController.formatDate(
+                    DateTime.parse(flightInfo['actual_arrival_local']))
+                : 'Unknown'.tr,
             style: CustomTextStyles.body,
             textAlign: TextAlign.end,
           ),

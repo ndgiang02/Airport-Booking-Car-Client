@@ -64,7 +64,7 @@ class CustomDialogBoxState extends State<CustomDialogBox> {
           ),
           ButtonThem.buildButton(
             context,
-            title: 'Close'.tr,
+            title: 'back'.tr,
             btnHeight: 45,
             btnWidthRatio: 0.8,
             btnColor: ConstantColors.primary,

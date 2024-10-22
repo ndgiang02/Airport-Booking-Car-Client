@@ -77,7 +77,7 @@ class ButtonThem {
     required Color txtColor,
     double btnHeight = 50,
     double txtSize = 14,
-    double btnWidthRatio = 0.9,
+    double btnWidthRatio = 1,
     required Function() onPress,
     bool isVisible = true,
     bool enabled = true,
@@ -99,7 +99,7 @@ class ButtonThem {
               foregroundColor: WidgetStateProperty.all<Color>(
                 enabled ? txtColor : disabledTxtColor,
               ),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                   side: BorderSide(

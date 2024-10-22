@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import '../../constant/constant.dart';
 import '../../constant/show_dialog.dart';
 import '../../controllers/login_controller.dart';
-import '../../routes/app_routes.dart';
+import '../../models/user_model.dart';
 import '../../utils/preferences/preferences.dart';
 import '../../utils/themes/button.dart';
 import '../../utils/themes/contant_colors.dart';
@@ -35,7 +35,7 @@ class LoginScreen extends StatelessWidget {
         body: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(login_background),
+              image: AssetImage(loginBackground),
               fit: BoxFit.cover,
             ),
           ),
@@ -127,6 +127,7 @@ class LoginScreen extends StatelessWidget {
                                         if (value != null) {
                                           if (value.status == true) {
                                             Preferences.setInt(Preferences.userId, value.data!.user!.id!);
+                                            Preferences.setInt(Preferences.userId, value.data!.user!.id!);
                                             Preferences.setString(Preferences.user, jsonEncode(value));
                                             Preferences.setString(Preferences.userName, value.data!.user!.name!);
                                             Preferences.setString(Preferences.userEmail, value.data!.user!.email!);
@@ -189,7 +190,7 @@ class LoginScreen extends StatelessWidget {
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(login_background),
+              image: AssetImage(loginBackground),
               fit: BoxFit.cover,
             ),
           ),
@@ -204,9 +205,11 @@ class LoginScreen extends StatelessWidget {
                       style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          Get.to(() => (MobileNumberScreen(isLogin: false)),
-                              duration: const Duration(milliseconds: 400),
-                              transition: Transition.rightToLeft);
+                          Get.to(
+                              SignUpScreen(),
+                              duration: const Duration(milliseconds: 400), //duration of transitions, default 1 sec
+                              transition: Transition.rightToLeft
+                          );
                         },
                     ),
                     const TextSpan(
@@ -219,9 +222,10 @@ class LoginScreen extends StatelessWidget {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           Get.to(
-                              AppRoutes.registerScreen,
+                              SignUpScreen(),
                               duration: const Duration(milliseconds: 400), //duration of transitions, default 1 sec
-                              transition: Transition.rightToLeft); //transition effect);
+                              transition: Transition.rightToLeft
+                          ); //transition effect);
                         },
                     ),
                   ],

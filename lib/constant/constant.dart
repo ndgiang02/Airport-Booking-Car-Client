@@ -5,18 +5,19 @@ import '../models/user_model.dart';
 import '../utils/preferences/preferences.dart';
 import '../utils/themes/contant_colors.dart';
 
-const img_loader = 'assets/images/loader.gif';
-const ic_logo_white = 'assets/icons/ic_logo_white.png';
-const login_background = 'assets/images/login_bg.png';
-const en_flag = 'assets/flags/uk.png';
-const vi_flag = 'assets/flags/vietnam.png';
-const ic_edit = 'assets/icons/edit.png';
+const imgLoader = 'assets/images/loader.gif';
+const icLogoWhite = 'assets/icons/ic_logo_white.png';
+const loginBackground = 'assets/images/login_bg.png';
+const enFlag = 'assets/flags/uk.png';
+const viFlag = 'assets/flags/vietnam.png';
+const icEdit = 'assets/icons/edit.png';
 const meme = 'assets/images/meme.jpg';
-const ic_pic_drop_location = 'assets/icons/ic_pic_drop_location.png';
-const ic_swap = 'assets/icons/swap.png';
-const ic_pickup = 'assets/icons/pickup.png';
-const ic_dropoff = 'assets/icons/dropoff.png';
-const ic_stop = 'assets/icons/pink.png';
+const icPickDropLocation = 'assets/icons/icPickDropLocation.png';
+const icSwap = 'assets/icons/swap.png';
+const icPickup = 'assets/icons/pickup.png';
+const icDropoff = 'assets/icons/dropoff.png';
+const icStop = 'assets/icons/pink.png';
+const icDriver = 'assets/icons/driver.png';
 
 const API_KEY_LOCATION = '46f110f0e3msh0377381c278bffep11c5c9jsn20829ea2b0e4';
 

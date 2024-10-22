@@ -25,7 +25,7 @@ class MobileNumberScreen extends StatelessWidget {
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage(
-                login_background,
+                loginBackground,
               ),
               fit: BoxFit.cover,
             ),

@@ -280,7 +280,6 @@ class ActivitiesScreen extends StatelessWidget {
 
   Future<void> navigateToTripDetail(Trip trip) async {
     final result = await Get.to(() => const TripDetail(), arguments: trip);
-
     if (result == 'canceled') {
       await controller.refreshData();
     }
@@ -292,7 +291,7 @@ class ActivitiesScreen extends StatelessWidget {
         return 'airport_private'.tr;
       case 'airport_sharing':
         return 'airport_sharing'.tr;
-      case 'longtrip':
+      case 'long_trip':
         return 'longtrip'.tr;
       default:
         return 'Loại chuyến đi không xác định'.tr;
@@ -312,25 +311,31 @@ class ActivitiesScreen extends StatelessWidget {
         return {
           'backgroundColor': Colors.blue[100]!,
           'textColor': Colors.blue,
-          'statusText': 'Đã yêu cầu',
+          'statusText': 'requested'.tr,
         };
       case 'accepted':
         return {
           'backgroundColor': Colors.orange[100]!,
           'textColor': Colors.orange,
-          'statusText': 'Đã chấp nhận',
+          'statusText': 'accepted'.tr,
         };
       case 'completed':
         return {
           'backgroundColor': Colors.green[100]!,
           'textColor': Colors.green,
-          'statusText': 'Hoàn thành',
+          'statusText': 'completed'.tr,
         };
-      case 'cancelled':
+      case 'canceled':
         return {
           'backgroundColor': Colors.red[100]!,
           'textColor': Colors.red,
-          'statusText': 'Đã hủy',
+          'statusText': 'canceled'.tr,
+        };
+      case 'in_progress':
+        return {
+          'backgroundColor': Colors.white38,
+          'textColor': Colors.black,
+          'statusText': 'in_progress'.tr,
         };
       default:
         return {
