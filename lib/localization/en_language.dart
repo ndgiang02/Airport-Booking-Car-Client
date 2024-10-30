@@ -1,4 +1,7 @@
 const Map<String, String> enUS = {
+ 'return_time': "Return time",
+ "phone support": "Phone Support",
+ "call 113": "Do you want to call 113?",
  'Unknown': "Unknown",
  'actual': "Actual",
  'scheduled': "Scheduled",

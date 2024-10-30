@@ -30,11 +30,7 @@ class LoginController extends GetxController {
         headers: API.authheader,
         body: jsonEncode(bodyParams),
       );
-
       Map<String, dynamic> responseBody = json.decode(response.body);
-
-      log("Response body: $responseBody");
-
       ShowDialog.closeLoader();
       if (response.statusCode == 200) {
         if (responseBody['status'] == true) {

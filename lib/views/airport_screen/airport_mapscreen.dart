@@ -16,14 +16,14 @@ import '../../utils/themes/dialog_box.dart';
 import '../../utils/themes/text_style.dart';
 import '../navigation_screen/navigation_bar.dart';
 
-class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+class AirportMapScreen extends StatefulWidget {
+  const AirportMapScreen({super.key});
 
   @override
-  MapScreenState createState() => MapScreenState();
+  AirportMapScreenState createState() => AirportMapScreenState();
 }
 
-class MapScreenState extends State<MapScreen> {
+class AirportMapScreenState extends State<AirportMapScreen> {
 
   final bookController = Get.put(BookController());
 
@@ -256,7 +256,7 @@ class MapScreenState extends State<MapScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 14),
                         // Passenger Option
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -641,16 +641,11 @@ class MapScreenState extends State<MapScreen> {
                                           child: Image.network(
                                             vehicleCategoryModel
                                                 .data![index].imageUrl ??
-                                                'assets/images/meme.jpg',
+                                                'assets/images/avatar.jpg',
                                             fit: BoxFit.cover,
                                           ),
                                         ),
                                       ),
-                                      /*Image.network(
-                                          vehicleCategoryModel.data![index].imageUrl ??
-                                              'assets/images/meme.jpg', width: 60,
-                                        height: 60,
-                                        fit: BoxFit.cover,),*/
                                       title: Text(
                                         vehicleCategoryModel.data![index].name
                                             .toString(),

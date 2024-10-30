@@ -40,7 +40,7 @@ class ClusterMapScreenState extends State<ClusterMapScreen> {
       body: Stack(
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.65,
+            height: MediaQuery.of(context).size.height * 0.7,
             child: VietmapGL(
               dragEnabled: true,
               compassEnabled: false,
@@ -104,9 +104,9 @@ class ClusterMapScreenState extends State<ClusterMapScreen> {
 
   Widget buildConfirm() {
     return DraggableScrollableSheet(
-      minChildSize: 0.35,
-      initialChildSize: 0.35,
-      maxChildSize: 0.35,
+      minChildSize: 0.30,
+      initialChildSize: 0.30,
+      maxChildSize: 0.30,
       builder: (context, scrollController) {
         return Container(
           decoration: const BoxDecoration(
@@ -164,13 +164,10 @@ class ClusterMapScreenState extends State<ClusterMapScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          clusterController.pickupController.value.text.length >
-                              40
-                              ? '${clusterController.pickupController.value.text
-                              .substring(0, 40)}...'
-                              : clusterController
-                              .destinationController.value.text,
+                          clusterController.pickupController.value.text,
                           style: CustomTextStyles.regular,
+                          maxLines: 1,
+                          overflow:  TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -551,16 +548,11 @@ class ClusterMapScreenState extends State<ClusterMapScreen> {
                                           child: Image.network(
                                             vehicleCategoryModel
                                                 .data![index].imageUrl ??
-                                                'assets/images/meme.jpg',
+                                                'assets/images/avatar.jpg',
                                             fit: BoxFit.cover,
                                           ),
                                         ),
                                       ),
-                                      /*Image.network(
-                                          vehicleCategoryModel.data![index].imageUrl ??
-                                              'assets/images/meme.jpg', width: 60,
-                                        height: 60,
-                                        fit: BoxFit.cover,),*/
                                       title: Text(
                                         vehicleCategoryModel.data![index].name
                                             .toString(),

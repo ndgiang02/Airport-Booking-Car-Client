@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:customerapp/views/longtrip_screen/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vietmap_flutter_gl/vietmap_flutter_gl.dart';
@@ -26,7 +27,7 @@ class _LongTripScreenState extends State<LongTripScreen> {
         elevation: 0,
         title: Text(
           'where do you want to go?'.tr,
-          style: CustomTextStyles.app,
+          style: CustomTextStyles.header.copyWith(color: Colors.white),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -185,7 +186,6 @@ class _LongTripScreenState extends State<LongTripScreen> {
                         } else {
                           latLong = await bookController.reverseGeocode(suggestion['ref_id']!);
                         }
-                        log('AUTO COMPLETE: $latLong');
                         if (bookController.focusedField.value == 'pickup') {
                           bookController.pickupController.text = selectedText;
                           bookController.pickupLatLong.value = latLong;
@@ -193,7 +193,7 @@ class _LongTripScreenState extends State<LongTripScreen> {
                           bookController.destinationController.text = selectedText;
                           bookController.destinationLatLong.value = latLong;
                           bookController.isMapDrawn.value = true;
-                          Get.to(() => const MapScreen(),
+                          Get.to(() => const LongTripMapScreen(),
                               duration: const Duration(milliseconds: 400),
                               transition: Transition.rightToLeft);
                         } else if (bookController.focusedField.value.startsWith('stopover_')) {
@@ -208,7 +208,7 @@ class _LongTripScreenState extends State<LongTripScreen> {
                             bookController.stopoverControllers[index].text = selectedText;
                             bookController.stopoverLatLng[index] = latLong!;
                           } catch (e) {
-                            debugPrint('$e');
+                            log('$e');
                           }
                         }
                         bookController.suggestions.clear();

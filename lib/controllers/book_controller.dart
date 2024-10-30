@@ -54,6 +54,39 @@ class BookController extends GetxController {
   RxString focusedField = "".obs;
   var paymentMethod = ''.obs;
 
+  var staticSuggestionsAirport = [
+    {
+      'display': 'Cảng Hàng Không Quốc Tế Nội Bài',
+      'lat': 21.214138,
+      'lng': 105.80334199999999
+    },
+    {
+      'display': 'Cảng Hàng Không Quốc Tế Cát Bi',
+      'lat': 20.8224975,
+      'lng': 106.72470190000001
+    },
+    {
+      'display': 'Cảng Hàng Không Quốc Tế Đà Nẵng',
+      'lat': 16.053276,
+      'lng': 108.20319
+    },
+    {
+      'display': 'Cảng Hàng Không Quốc Tế Cam Ranh',
+      'lat': 12.243852,
+      'lng': 109.19269300000002
+    },
+    {
+      'display': 'Cảng Hàng Không Quốc Tế Tân Sơn Nhất',
+      'lat': 10.813373,
+      'lng': 106.662531,
+    },
+    {
+      'display': 'Cảng Hàng Không Quốc Tế Cần Thơ',
+      'lat': 10.080556,
+      'lng': 105.71202199999999,
+    },
+  ].obs;
+
   var staticSuggestions = [
     {
       'display': 'Thành phố Bắc Ninh',
@@ -396,7 +429,7 @@ class BookController extends GetxController {
       await mapController.addPolyline(
         PolylineOptions(
           geometry: polylinePoints,
-          polylineColor: Colors.blue,
+          polylineColor: Colors.black,
           polylineWidth: 5.0,
         ),
       );

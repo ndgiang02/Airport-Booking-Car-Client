@@ -16,7 +16,6 @@ import '../service/api.dart';
 
 class ClusterController extends GetxController {
 
-
   var isLoading = true.obs;
   RxString selectedVehicle = "".obs;
   RxDouble distance = 0.0.obs;
@@ -376,9 +375,6 @@ class ClusterController extends GetxController {
 
           distance.value = distanceInMeters / 1000.0;
           duration.value = timeInMillis / 60000.0;
-
-          log("Distance: ${distance.value} km");
-          log("Duration: ${duration.value} minutes");
         } else {
           throw Exception('No paths found in the response');
         }
@@ -398,7 +394,7 @@ class ClusterController extends GetxController {
       await mapController.addPolyline(
         PolylineOptions(
           geometry: polylinePoints,
-          polylineColor: Colors.blue,
+          polylineColor: Colors.black,
           polylineWidth: 5.0,
         ),
       );

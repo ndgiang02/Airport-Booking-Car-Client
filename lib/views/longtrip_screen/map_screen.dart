@@ -16,14 +16,14 @@ import '../../utils/themes/dialog_box.dart';
 import '../../utils/themes/text_style.dart';
 import '../navigation_screen/navigation_bar.dart';
 
-class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+class LongTripMapScreen extends StatefulWidget {
+  const LongTripMapScreen({super.key});
 
   @override
   MapScreenState createState() => MapScreenState();
 }
 
-class MapScreenState extends State<MapScreen> {
+class MapScreenState extends State<LongTripMapScreen> {
 
   final bookController = Get.put(BookController());
 
@@ -104,9 +104,9 @@ class MapScreenState extends State<MapScreen> {
 
   Widget buildConfirm() {
     return DraggableScrollableSheet(
-      minChildSize: 0.35,
-      initialChildSize: 0.35,
-      maxChildSize: 0.35,
+      minChildSize: 0.30,
+      initialChildSize: 0.30,
+      maxChildSize: 0.30,
       builder: (context, scrollController) {
         return Container(
             decoration: const BoxDecoration(
@@ -633,7 +633,7 @@ class MapScreenState extends State<MapScreen> {
                                             child: Image.network(
                                               vehicleCategoryModel
                                                       .data![index].imageUrl ??
-                                                  'assets/images/meme.jpg',
+                                                  'assets/images/avatar.jpg',
                                               fit: BoxFit.cover,
                                             ),
                                           ),

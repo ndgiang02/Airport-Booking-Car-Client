@@ -40,7 +40,7 @@ class MobileNumberScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          isLogin == true ? 'login_with_phone_number'.tr : "Signup Phone".tr,
+                          isLogin == true ? 'login_with_phone_number'.tr.toUpperCase() : "Signup Phone".tr,
                           style: const TextStyle(
                               letterSpacing: 0.60,
                               fontSize: 22,

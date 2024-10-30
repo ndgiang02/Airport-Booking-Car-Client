@@ -1,4 +1,5 @@
 import 'package:customerapp/controllers/cluster_controller.dart';
+import 'package:customerapp/routes/app_routes.dart';
 import 'package:customerapp/views/cluster_screen/cluster_mapscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,7 +24,7 @@ class _ClusterScreenState extends State<ClusterScreen> {
         elevation: 0,
         title: Text(
           'where do you want to go?'.tr,
-          style: CustomTextStyles.header,
+          style: CustomTextStyles.header.copyWith(color: Colors.white),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(

@@ -2,7 +2,7 @@ import 'dart:io';
 import '../utils/preferences/preferences.dart';
 
 class API {
-  static const baseUrl = "http://192.168.11.30:8000/api/";
+  static const baseUrl = "http://appbooking.xyz/api/";
   static const apiKey = "";
 
   static Map<String, String> authheader = {

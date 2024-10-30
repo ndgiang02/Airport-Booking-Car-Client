@@ -28,9 +28,9 @@ class SupportScreen extends StatelessWidget {
                 onPress: () {
                   CustomAlert.showCustomDialog(
                       context: context,
-                      title: 'Hỗ trợ qua điện thoại',
-                      content: 'Bạn có muốn gọi 113 không?',
-                      callButtonText: 'Call',
+                      title: 'phone support'.tr,
+                      content: 'call 113'.tr,
+                      callButtonText: 'call'.tr,
                       onCallPressed: () {
                         const phoneNumber = "113";
                         launchUrl(Uri.parse("tel://$phoneNumber"));

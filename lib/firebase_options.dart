@@ -58,12 +58,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDIzlEniWikZ_Iez-JAVVj8KT_44fErAuE',
-    appId: '1:99131808994:android:728c92f0b1f4c9034992bb',
+    appId: '1:99131808994:ios:6a52c0feb94e3de64992bb',
     messagingSenderId: '99131808994',
     projectId: 'booking-app-backend-b0410',
     storageBucket: 'booking-app-backend-b0410.appspot.com',
     androidClientId: '527452785533-2edrgcd3depj6nc35git9jtoue6eohvc.apps.googleusercontent.com',
     iosClientId: '527452785533-j2rnl02dp8ckvm9mab345b17cu6bq3ug.apps.googleusercontent.com',
-    iosBundleId: 'com.cabme.ios',
+    iosBundleId: 'com.appbooking.ios',
   );
 }

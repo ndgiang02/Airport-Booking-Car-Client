@@ -148,7 +148,7 @@ class ManageScreen extends StatelessWidget {
                   icon: LineAwesomeIcons.share_square,
                   onPress: () {
                     Clipboard.setData(
-                            const ClipboardData(text: "https://yourapp.link"))
+                            const ClipboardData(text: "http://appbooking.xyz"))
                         .then((_) {
                       ShowDialog.showToast('copy'.tr);
                     });

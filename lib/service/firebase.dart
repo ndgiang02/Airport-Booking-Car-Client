@@ -57,7 +57,6 @@ class FirebaseService {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      log("Notification opened from background: ${message.notification?.title}");
       if (message.data['type'] == 'accepted') {
 
         String title = message.notification?.title ??

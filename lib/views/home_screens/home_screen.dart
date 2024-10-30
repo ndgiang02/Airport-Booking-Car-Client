@@ -17,7 +17,6 @@ class HomeState extends State<HomeScreen> {
 
   final homeController = Get.put(HomeController());
 
-
   String? name =  Preferences.getString(Preferences.userName);
 
   final PageController _pageController = PageController();
@@ -52,7 +51,7 @@ class HomeState extends State<HomeScreen> {
               children: [
                 const SizedBox(width: 5),
                 Text(
-                  '${getGreeting()}, ${name!}',
+                  '${'Hi'.tr} ${name!} !',
                   style: CustomTextStyles.app.copyWith(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -113,7 +112,7 @@ class HomeState extends State<HomeScreen> {
               ),
               buildServiceCard(
                 title: 'show_info_fly'.tr,
-                imagePath: 'assets/images/flight.jpg',
+                imagePath: 'assets/images/airplane.png',
                 destinationScreen: '/flight',
               ),
               const SizedBox(
@@ -123,7 +122,7 @@ class HomeState extends State<HomeScreen> {
               const SizedBox(
                 height: 10,
               ),
-              SizedBox(
+             /* SizedBox(
                 height: 180,
                 child: PageView.builder(
                   controller: _pageController,
@@ -158,7 +157,7 @@ class HomeState extends State<HomeScreen> {
               Obx(() => Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(3, (index) => buildDot(index, homeController.currentPage.value)),
-              )),
+              )),*/
             ],
           ),
         ),

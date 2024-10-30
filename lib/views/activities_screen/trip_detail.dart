@@ -21,9 +21,17 @@ class TripDetail extends StatelessWidget {
     //String returnTime = DateFormat('HH:mm, dd/MM').format(trip.returnTime!);
     return Scaffold(
       appBar: AppBar(
-        title: Text('details'.tr),
+        title: Text('detail'.tr, style: CustomTextStyles.header.copyWith(color: Colors.white),),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blueAccent, Colors.lightBlueAccent],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -62,7 +70,7 @@ class TripDetail extends StatelessWidget {
                   onPress: trip.tripStatus == 'requested' ? () async {
                     CustomAlert.showCustomDialog(
                       context: context,
-                      title: 'cancel_trip'.tr,
+                      title: 'cancel'.tr,
                       content: 'Do you want to cancel the trip?'.tr,
                       callButtonText: 'yes'.tr,
                       onCallPressed: () async {
@@ -221,7 +229,7 @@ class TripDetail extends StatelessWidget {
         return {
           'backgroundColor': Colors.red[100]!,
           'textColor': Colors.red,
-          'statusText': 'cancelled'.tr,
+          'statusText': 'canceled'.tr,
         };
       case 'in_progress':
         return {

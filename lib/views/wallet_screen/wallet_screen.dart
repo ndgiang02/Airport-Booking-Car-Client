@@ -60,46 +60,44 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       ),
       body: Obx(() {
         log('transaction: ${walletController.transactions}');
-        if (walletController.transactions.isEmpty) {
-          return Center(child: Text('no_information_wallet'.tr));
-        } else {
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  walletController.balance.value.toStringAsFixed(2),
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
-                ),
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                walletController.balance.value.toStringAsFixed(2),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: walletController.transactions.length,
-                  itemBuilder: (context, index) {
-                    final transaction = walletController.transactions[index];
-                    return ListTile(
-                      title: Text(transaction.type),
-                      subtitle: Text(transaction.date.toString()),
-                      trailing: Text(
-                        '\$${transaction.amount.toStringAsFixed(2)}',
-                        style: TextStyle(
-                          color: transaction.amount < 0
-                              ? Colors.red
-                              : Colors.green,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        }
+            ),
+            walletController.transactions.isEmpty
+                ? Center(child: Text('no_information_wallet'.tr))
+                : Expanded(
+                    child: ListView.builder(
+                      itemCount: walletController.transactions.length,
+                      itemBuilder: (context, index) {
+                        final transaction =
+                            walletController.transactions[index];
+                        return ListTile(
+                          title: Text(transaction.type),
+                          subtitle: Text(transaction.date.toString()),
+                          trailing: Text(
+                            '\$${transaction.amount.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              color: transaction.amount < 0
+                                  ? Colors.red
+                                  : Colors.green,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+          ],
+        );
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          log('Top-up button pressed');
           showDialog(
             context: context,
             builder: (BuildContext context) {
