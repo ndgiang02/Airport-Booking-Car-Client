@@ -8,7 +8,6 @@ import '../../utils/themes/text_style.dart';
 import 'airport_mapscreen.dart';
 
 class AirportScreen extends StatefulWidget {
-
   const AirportScreen({super.key});
 
   @override
@@ -16,7 +15,6 @@ class AirportScreen extends StatefulWidget {
 }
 
 class _AirportScreenState extends State<AirportScreen> {
-
   final bookController = Get.find<BookController>();
 
   @override
@@ -145,21 +143,24 @@ class _AirportScreenState extends State<AirportScreen> {
               ),
             ),
             const SizedBox(height: 20.0),
-             Text(
+            Text(
               'Popular Destinations'.tr,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Expanded(
               child: Obx(() {
-                final isStaticList = (bookController.focusedField.value == 'pickup' &&
-                    bookController.pickupController.text.isEmpty) ||
+                final isStaticList = (bookController.focusedField.value ==
+                            'pickup' &&
+                        bookController.pickupController.text.isEmpty) ||
                     (bookController.focusedField.value == 'destination' &&
                         bookController.destinationController.text.isEmpty) ||
-                    (bookController.focusedField.value.startsWith('stopover_') &&
+                    (bookController.focusedField.value
+                            .startsWith('stopover_') &&
                         bookController.stopoverControllers.isNotEmpty &&
                         bookController
-                            .stopoverControllers[int.parse(bookController.focusedField.value
-                            .split('_')[1])]
+                            .stopoverControllers[int.parse(bookController
+                                .focusedField.value
+                                .split('_')[1])]
                             .text
                             .isEmpty);
 
@@ -176,36 +177,49 @@ class _AirportScreenState extends State<AirportScreen> {
                   itemBuilder: (context, index) {
                     final suggestion = displaySuggestions[index];
                     return ListTile(
-                      leading: const Icon(Icons.pin_drop_outlined, color: Colors.blue),
+                      leading: const Icon(Icons.pin_drop_outlined,
+                          color: Colors.blue),
                       title: Text(suggestion['display']!),
                       onTap: () async {
                         final selectedText = suggestion['display']!;
                         LatLng? latLong;
                         if (isStaticList) {
-                          latLong = LatLng(suggestion['lat'], suggestion['lng']);
+                          latLong =
+                              LatLng(suggestion['lat'], suggestion['lng']);
                         } else {
-                          latLong = await bookController.reverseGeocode(suggestion['ref_id']!);
+                          latLong = await bookController
+                              .reverseGeocode(suggestion['ref_id']!);
                         }
                         if (bookController.focusedField.value == 'pickup') {
                           bookController.pickupController.text = selectedText;
                           bookController.pickupLatLong.value = latLong;
-                        } else if (bookController.focusedField.value == 'destination') {
-                          bookController.destinationController.text = selectedText;
+                        } else if (bookController.focusedField.value ==
+                            'destination') {
+                          bookController.destinationController.text =
+                              selectedText;
                           bookController.destinationLatLong.value = latLong;
                           bookController.isMapDrawn.value = true;
                           Get.to(() => const AirportMapScreen(),
                               duration: const Duration(milliseconds: 400),
                               transition: Transition.rightToLeft);
-                        } else if (bookController.focusedField.value.startsWith('stopover_')) {
+                        } else if (bookController.focusedField.value
+                            .startsWith('stopover_')) {
                           try {
-                            final index = int.parse(bookController.focusedField.value.split('_')[1]);
-                            while (bookController.stopoverControllers.length <= index) {
-                              bookController.stopoverControllers.add(TextEditingController());
+                            final index = int.parse(bookController
+                                .focusedField.value
+                                .split('_')[1]);
+                            while (bookController.stopoverControllers.length <=
+                                index) {
+                              bookController.stopoverControllers
+                                  .add(TextEditingController());
                             }
-                            while (bookController.stopoverLatLng.length <= index) {
-                              bookController.stopoverLatLng.add(const LatLng(0, 0));
+                            while (
+                                bookController.stopoverLatLng.length <= index) {
+                              bookController.stopoverLatLng
+                                  .add(const LatLng(0, 0));
                             }
-                            bookController.stopoverControllers[index].text = selectedText;
+                            bookController.stopoverControllers[index].text =
+                                selectedText;
                             bookController.stopoverLatLng[index] = latLong!;
                           } catch (e) {
                             log('$e');

@@ -12,8 +12,10 @@ import 'package:customerapp/views/splash_screen/splash_screen.dart';
 import 'package:get/get.dart';
 
 
+import '../bindings/cluster_binding/cluster_binding.dart';
 import '../views/activities_screen/activities_screen.dart';
 import '../views/airport_screen/airport_screen.dart';
+import '../views/cluster_screen/cluster_screen.dart';
 import '../views/longtrip_screen/longtrip_screen.dart';
 
 class AppRoutes {
@@ -36,7 +38,6 @@ class AppRoutes {
 
   static const String clusterScreen = '/cluster';
 
-  static const String clusterMapScreen = '/clustermap';
 
   static const String flightScreen = '/flight';
 
@@ -75,6 +76,13 @@ class AppRoutes {
       page: () => NotificationScreen(),
       bindings: [
         NotificationBinding(),
+      ],
+    ),
+    GetPage(
+      name: clusterScreen,
+      page: () => const ClusterScreen(),
+      bindings: [
+        ClusterBinding(),
       ],
     ),
     GetPage(
