@@ -31,7 +31,7 @@ This Flutter app lets customers book airport rides easily and quickly.
 
 ### Real-Time Driver Tracking
 <p align="center">
-<img src="assets/screenshot/Screenshot_20241030-110044.jpg" alt="Driver Tracking" width="24%">
+<img src="assets/screenshot/Screenshot_20241101-110044.jpg" alt="Driver Tracking" width="24%">
 </p>
 
 ### Activities
