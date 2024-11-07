@@ -16,7 +16,7 @@ This Flutter app lets customers book airport rides easily and quickly.
 ## Screenshots
 
 ### Home Screen
-![Home Screen](assets/screenshot/Screenshot_20241030-142835.jpg)
+<img src="assets/screenshot/Screenshot_20241030-142835.jpg" alt="Home Screen" width="24%">
 
 ### Booking Details Screen
 
