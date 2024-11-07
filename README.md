@@ -16,7 +16,9 @@ This Flutter app lets customers book airport rides easily and quickly.
 ## Screenshots
 
 ### Home Screen
+<p align="center">
 <img src="assets/screenshot/Screenshot_20241030-142835.jpg" alt="Home Screen" width="24%">
+</p>
 
 ### Booking Details Screen
 
@@ -28,9 +30,11 @@ This Flutter app lets customers book airport rides easily and quickly.
 </p>
 
 ### Real-Time Driver Tracking
-![Driver Tracking](assets/screenshot/Screenshot_20241101-110044.jpg)
-
+<p align="center">
+<img src="assets/screenshot/Screenshot_20241030-110044.jpg" alt="Driver Tracking" width="24%">
+</p>
 
 ### Activities
-![Activities](assets/screenshot/Screenshot_20241030-143606.jpg)
-
+<p align="center">
+<img src="assets/screenshot/Screenshot_20241030-143606.jpg" alt="Activities" width="24%">
+</p>
