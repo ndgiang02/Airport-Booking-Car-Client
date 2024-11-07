@@ -1,16 +1,36 @@
-# customerapp
+# Airport Booking Car App - Client Side
 
-A new Flutter project.
+A customer-facing airport ride booking application developed using Flutter.
 
-## Getting Started
+## Introduction
 
-This project is a starting point for a Flutter application.
+This Flutter app lets customers book airport rides easily and quickly.
 
-A few resources to get you started if this is your first Flutter project:
+## Technologies Used
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Flutter**: Main framework for cross-platform UI..
+- **GetX**: Manages state, navigation, and dependencies.
+- **Firebase**: Enables real-time push notifications.
+- **Pusher**:  Provides real-time driver tracking.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Screenshots
+
+### Home Screen
+![Home Screen](assets/screenshot/Screenshot_20241030-142835.jpg)
+
+### Booking Details Screen
+
+<p align="center">
+  <img src="assets/screenshot/Screenshot_20241030-142835.jpg" alt="Step 1: Confirm" width="1080" style="margin-right: 5px;">
+  <img src="assets/screenshot/Screenshot_20241030-143436.jpg" alt="Step 2: Next" width="1080" style="margin-right: 5px;">
+  <img src="assets/screenshot/Screenshot_20241030-143525.jpg" alt="Step 3: Next" width="1080" style="margin-right: 5px;">
+  <img src="assets/screenshot/Screenshot_20241030-143537.jpg" alt="Step 4: Complete" width="1080">
+</p>
+
+### Real-Time Driver Tracking
+![Driver Tracking](assets/screenshot/Screenshot_20241101-110044.jpg)
+
+
+### Activities
+![Activities](assets/screenshot/Screenshot_20241030-143606.jpg)
+

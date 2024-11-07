@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,6 +18,7 @@ class DriverMapController extends GetxController {
   int? userId = Preferences.getInt(Preferences.userId);
 
   Rx<LatLng> driverPosition = LatLng(0, 0).obs;
+  var driverRotation = 0.0.obs;
   late PusherChannelsFlutter pusher;
   late String channelName;
 
@@ -39,7 +40,7 @@ class DriverMapController extends GetxController {
     if (trip != null && trip.driverId != null) {
       startListeningToDriverLocation(trip.driverId!);
     } else {
-      log("No valid trip or driverId provided");
+      debugPrint("No valid trip or driverId provided");
     }
   }
 
@@ -54,7 +55,7 @@ class DriverMapController extends GetxController {
         onAuthorizer:
             (String channelName, String socketId, dynamic options) async {
           final response = await http.post(
-            Uri.parse("http://192.168.11.30:8000/broadcasting/auth"),
+            Uri.parse("http://appbooking.xyz/broadcasting/auth"),
             headers: API.header,
             body: jsonEncode({
               'channel_name': channelName,
@@ -68,23 +69,23 @@ class DriverMapController extends GetxController {
           }
         },
         onSubscriptionSucceeded: (String channelName, dynamic data) {
-          log("Successfully subscribed to $channelName");
+          //log("Successfully subscribed to $channelName");
         },
         onSubscriptionError: (String message, dynamic error) {
-          log("Error subscribing to channel: $message, error: $error");
+          //log("Error subscribing to channel: $message, error: $error");
         },
         onEvent: (PusherEvent event) {
-          log("Event received: ${event.eventName} on channel: ${event.channelName}");
+          //log("Event received: ${event.eventName} on channel: ${event.channelName}");
         },
         onError: (String message, int? code, dynamic error) {
-          log("Pusher error: $message, code: $code, error: $error");
+          //log("Pusher error: $message, code: $code, error: $error");
         },
       );
 
       await pusher.connect();
-      log("Pusher connected");
+      //log("Pusher connected");
     } catch (e) {
-      log("Pusher initialization failed: $e");
+      debugPrint("Pusher initialization failed: $e");
     }
   }
 
@@ -97,9 +98,9 @@ class DriverMapController extends GetxController {
       }
 
       await pusher.subscribe(channelName: channelName).then((_) {
-        log("Successfully subscribed to $channelName");
+        //log("Successfully subscribed to $channelName");
       }).catchError((error) {
-        log("Error subscribing to channel: $error");
+        //log("Error subscribing to channel: $error");
       });
 
       pusher.onEvent = (PusherEvent event) {
@@ -114,7 +115,7 @@ class DriverMapController extends GetxController {
         }
       };
     } catch (e) {
-      log("HELOO Pusher : $e");
+      debugPrint("HELOO Pusher : $e");
     }
   }
 
@@ -122,7 +123,7 @@ class DriverMapController extends GetxController {
     try {
       await pusher.unsubscribe(channelName: channelName);
     } catch (e) {
-      log("$e");
+      debugPrint("$e");
     }
   }
 
@@ -151,7 +152,7 @@ class DriverMapController extends GetxController {
             'Failed to load route data: Status code ${response.statusCode}');
       }
     } catch (e) {
-      log('Error fetching route data: $e');
+      debugPrint('Error fetching route data: $e');
     } finally {
       isLoading.value = false;
     }
@@ -162,7 +163,7 @@ class DriverMapController extends GetxController {
       await mapController.addPolyline(
         PolylineOptions(
           geometry: polylinePoints,
-          polylineColor: Colors.blue,
+          polylineColor: Colors.black38,
           polylineWidth: 5.0,
         ),
       );
@@ -227,6 +228,20 @@ class DriverMapController extends GetxController {
         CameraUpdate.newLatLngBounds(bounds, bottom: 1000),
       );
     }
+  }
+
+  void updateDriverPosition(LatLng newPosition) {
+    LatLng oldPosition = driverPosition.value;
+    driverPosition.value = newPosition;
+    updateDriverRotation(oldPosition, newPosition);
+  }
+
+  void updateDriverRotation(LatLng oldPosition, LatLng newPosition) {
+    double deltaLat = newPosition.latitude - oldPosition.latitude;
+    double deltaLng = newPosition.longitude - oldPosition.longitude;
+    double rotation = atan2(deltaLng, deltaLat);
+
+    driverRotation.value = rotation;
   }
 
   @override

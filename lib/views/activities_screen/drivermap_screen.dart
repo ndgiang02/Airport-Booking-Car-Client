@@ -13,7 +13,6 @@ import '../../models/trip_model.dart';
 import '../../utils/themes/button.dart';
 import '../../utils/themes/text_style.dart';
 
-
 class DriverMapScreen extends StatefulWidget {
   const DriverMapScreen({super.key});
 
@@ -29,7 +28,7 @@ class DriverMapScreenState extends State<DriverMapScreen> {
   final DriverMapController drController = Get.put(DriverMapController());
 
   final CameraPosition _kInitialPosition =
-  const CameraPosition(target: LatLng(10.762317, 106.654551), zoom: 10);
+      const CameraPosition(target: LatLng(10.762317, 106.654551), zoom: 10);
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,7 @@ class DriverMapScreenState extends State<DriverMapScreen> {
             minMaxZoomPreference: const MinMaxZoomPreference(0, 24),
             rotateGesturesEnabled: false,
             styleString:
-            '${Constant.baseUrl}/maps/light/styles.json?apikey=${Constant.VietMapApiKey}',
+                '${Constant.baseUrl}/maps/light/styles.json?apikey=${Constant.VietMapApiKey}',
             initialCameraPosition: _kInitialPosition,
             onMapCreated: (VietmapController controller) async {
               _mapController = controller;
@@ -54,29 +53,44 @@ class DriverMapScreenState extends State<DriverMapScreen> {
           ),
           Obx(() {
             LatLng position = drController.driverPosition.value;
+            double rotation = drController.driverRotation.value;
+
             return _mapController != null
                 ? MarkerLayer(
-              ignorePointer: true,
-              mapController: _mapController!,
-              markers: [
-                Marker(
-                  child: Image.asset(icDriver), //Icon(Icons.location_on),
-                  latLng: LatLng(position.latitude, position.longitude),
-                ),
-              ],
-            )
+                    ignorePointer: true,
+                    mapController: _mapController!,
+                    markers: [
+                      Marker(
+                        child: Transform.rotate(
+                          angle: rotation,
+                          child: Image.asset(icDriver, scale: 2),
+                        ),
+                        latLng: LatLng(position.latitude, position.longitude),
+                      ),
+                    ],
+                  )
                 : Container();
           }),
           buildInFormation(),
           Positioned(
             top: 50,
             right: 20,
-            child: IconButton(
-              icon: const Icon(Icons.directions),
-              onPressed: () {
-                drawRoute();
-              },
-            ),
+            child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: InkWell(
+                  onTap: () {
+                    drawRoute();
+                  },
+                  child: Image.asset(
+                    icRoute,
+                    width: 40,
+                    height: 40,
+                    color: Colors.lightBlue,
+                  ),
+                )),
           ),
         ],
       ),
@@ -132,7 +146,7 @@ class DriverMapScreenState extends State<DriverMapScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
+                      /* Container(
                         margin: const EdgeInsets.only(bottom: 8),
                         width: 40,
                         height: 5,
@@ -140,7 +154,7 @@ class DriverMapScreenState extends State<DriverMapScreen> {
                           color: Colors.grey[400],
                           borderRadius: BorderRadius.circular(10),
                         ),
-                      ),
+                      ),*/
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -173,7 +187,7 @@ class DriverMapScreenState extends State<DriverMapScreen> {
                                 CircleAvatar(
                                   radius: 20,
                                   backgroundColor:
-                                  Colors.blueAccent.withOpacity(0.1),
+                                      Colors.blueAccent.withOpacity(0.1),
                                   child: const Icon(Icons.person,
                                       color: Colors.blueAccent),
                                 ),
@@ -192,56 +206,51 @@ class DriverMapScreenState extends State<DriverMapScreen> {
                             Row(
                               children: [
                                 Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.green.withOpacity(0.1),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: IconButton(
-                                    icon: const Icon(Icons.phone,
-                                        color: Colors.green),
-                                    iconSize: 25,
-                                    onPressed: () {
-                                      final phoneNumber =
-                                      trip.driverPhoneNumber!;
-                                      final encodedPhoneNumber =
-                                      phoneNumber.replaceFirst("+", "%2B");
-                                      launchUrl(Uri.parse(
-                                          "tel://$encodedPhoneNumber"));
-                                    },
-                                  ),
-                                ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green.withOpacity(0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: InkWell(
+                                      onTap: () {
+                                        final phoneNumber =
+                                            trip.driverPhoneNumber!;
+                                        final encodedPhoneNumber = phoneNumber
+                                            .replaceFirst("+", "%2B");
+                                        launchUrl(Uri.parse(
+                                            "tel://$encodedPhoneNumber"));
+                                      },
+                                      child: Image.asset(
+                                        icCall,
+                                        width: 40,
+                                        height: 40,
+                                      ),
+                                    )),
                                 const SizedBox(width: 10),
                                 Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.withOpacity(0.1),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: IconButton(
-                                    icon: const Icon(Icons.message,
-                                        color: Colors.blue),
-                                    iconSize: 25,
-                                    onPressed: () async {
-                                      String phoneNumber =
-                                      trip.driverPhoneNumber!;
-                                      String smsUrl = 'sms:$phoneNumber';
+                                    decoration: BoxDecoration(
+                                      color: Colors.green.withOpacity(0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: InkWell(
+                                      onTap: () async {
+                                        String phoneNumber =
+                                            trip.driverPhoneNumber!;
+                                        String smsUrl = 'sms:$phoneNumber';
 
-                                      Uri smsUri = Uri.parse(smsUrl);
+                                        Uri smsUri = Uri.parse(smsUrl);
 
-                                      if (await canLaunchUrl(smsUri)) {
-                                        await launchUrl(smsUri);
-                                      } else {
-                                        log('Could not launch $smsUrl');
-                                      }
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.withOpacity(0.1),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
+                                        if (await canLaunchUrl(smsUri)) {
+                                          await launchUrl(smsUri);
+                                        } else {
+                                          log('Could not launch $smsUrl');
+                                        }
+                                      },
+                                      child: Image.asset(
+                                        icChat,
+                                        width: 40,
+                                        height: 40,
+                                      ),
+                                    )),
                               ],
                             ),
                           ],
@@ -266,4 +275,3 @@ class DriverMapScreenState extends State<DriverMapScreen> {
     );
   }
 }
-

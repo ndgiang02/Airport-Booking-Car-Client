@@ -17,9 +17,10 @@ const icSwap = 'assets/icons/swap.png';
 const icPickup = 'assets/icons/pickup.png';
 const icDropoff = 'assets/icons/dropoff.png';
 const icStop = 'assets/icons/pink.png';
-const icDriver = 'assets/icons/driver.png';
-
-const API_KEY_LOCATION = '46f110f0e3msh0377381c278bffep11c5c9jsn20829ea2b0e4';
+const icDriver = 'assets/icons/ic_taxi.png';
+const icChat = 'assets/icons/chat_icon.png';
+const icCall = 'assets/icons/call_icon.png';
+const icRoute = 'assets/icons/ic_distance.png';
 
 class Constant {
   static String VietMapApiKey = 'de05231caf176a61b2886deaf1e6dd46944b6b2d0638ec4f';
