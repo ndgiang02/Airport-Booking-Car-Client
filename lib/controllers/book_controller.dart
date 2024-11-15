@@ -287,7 +287,7 @@ class BookController extends GetxController {
         headers: API.header,
       );
       Map<String, dynamic> responseBody = json.decode(response.body);
-
+      log('Vehicle $responseBody');
       if (response.statusCode == 200) {
         final jsonData = responseBody;
         vehicleCategoryModel.value = VehicleCategoryModel.fromJson(jsonData);
